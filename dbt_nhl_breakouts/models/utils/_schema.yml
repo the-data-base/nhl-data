@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: dbt_nhl_breakouts
+    database: nhl-breakouts
+    schema: raw
+    tables:
+      - name: date     
