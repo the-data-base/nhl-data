@@ -1,0 +1,1 @@
+select * from {{ source('meltano', 'draft_prospects') }}
