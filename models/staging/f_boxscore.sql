@@ -110,4 +110,4 @@ with home_team as (
     select * from away_team
 
 )
-select * from boxscore;
+select * from boxscore

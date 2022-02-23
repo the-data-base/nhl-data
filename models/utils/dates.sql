@@ -1,3 +1,4 @@
+with raw_dates as (
    select 
         calendar_date
         , format_datetime('%Y%m%d', calendar_date) as date_id

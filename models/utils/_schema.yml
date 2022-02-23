@@ -5,4 +5,4 @@ sources:
     database: nhl-breakouts
     schema: raw
     tables:
-      - name: date     
+      - name: dates

@@ -1,12 +1,12 @@
 version: 2
 
 sources:
-  - name: dbt_nhl_breakouts
+  - name: meltano
     database: nhl-breakouts
     schema: raw
     tables:
       - name: conferences     
-      - name: division     
+      - name: divisions   
       - name: draft     
       - name: draft_prospects     
       - name: live_boxscore     
