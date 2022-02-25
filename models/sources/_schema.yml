@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: meltano
+    database: nhl-breakouts
+    schema: raw
+    tables:
+      - name: conferences     
+      - name: divisions   
+      - name: draft     
+      - name: draft_prospects     
+      - name: live_boxscore     
+      - name: live_plays     
+      - name: players     
+      - name: schedule
+      - name: seasons
+      - name: teams
