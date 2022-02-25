@@ -1,0 +1,2 @@
+SELECT *
+FROM {{ref('dates')}}
