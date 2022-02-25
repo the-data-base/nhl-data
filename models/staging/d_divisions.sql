@@ -1,4 +1,4 @@
-select 
+select
     /* Primary Key */
     id
 

@@ -1,3 +1,3 @@
 --#TODO
-SELECT *
-FROM {{ ref('players') }}
+select *
+from {{ ref('players') }}

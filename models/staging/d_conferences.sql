@@ -1,3 +1,3 @@
 --#TODO
-SELECT *
-FROM {{ source('meltano', 'conferences') }}
+select *
+from {{ source('meltano', 'conferences') }}
