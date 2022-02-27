@@ -1,8 +1,8 @@
 with date_spine as (
     {{ dbt_utils.date_spine(
         datepart="day",
-        start_date="cast('2001-01-01' as date)",
-        end_date="cast('2050-01-01' as date)"
+        start_date="cast('2010-01-01' as date)",
+        end_date="cast('2030-01-01' as date)"
         )
     }}
 )

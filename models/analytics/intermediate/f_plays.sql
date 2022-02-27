@@ -1,57 +1,7 @@
 with
 
--- Create f_boxscore_player (boxcore--player granularity)
-
--- CTE1
-cte_away_player_team as (
-
-    select
-        b.game_id
-        , ap.person.id as player_id
-        , b.teams.away.team.id as team_id
-        , 'No' as player_home_team
-
-
-    from
-        {{ ref('live_boxscore') }} as b
-    , unnest(b.teams.away.players) as ap
-
-)
-
--- CTE2
-, cte_home_player_team as (
-
-    select
-        b.game_id
-        , hp.person.id as player_id
-        , b.teams.home.team.id as team_id
-        , 'Yes' as player_home_team
-
-    from
-        {{ref('live_boxscore')}} as b
-    , unnest(b.teams.home.players) as hp
-)
-
--- CTE3
-, cte_game_player_team as (
-
-    select
-        hpt.*
-
-    from
-        cte_home_player_team as hpt
-
-    union all
-
-    select
-        apt.*
-    from
-        cte_away_player_team as apt
-
-)
-
 -- CTE: Play-level information (each row is a player's involvement in a play)
-, cte_base_plays as (
+cte_base_plays as (
     select
         concat(x.game_id, '_', x.about.eventidx, '_', p.player.id) as id
         , x.game_id
@@ -118,7 +68,7 @@ cte_away_player_team as (
                 then 1
             else 0
         end as hit_home
-        -- FACEOFFS 
+        -- FACEOFFS
         , case
             when x.result.eventtypeid in ('FACEOFF')
                 and x.team.id = s.teams.away.team.id
@@ -213,10 +163,10 @@ cte_away_player_team as (
         , x.about.goals.home as goals_home
 
     from
-        {{ref('live_plays')}} as x
-    , unnest(x.players) as p
-    left join {{ref('schedule')}} as s on s.gamepk = x.game_id
-    left join cte_game_player_team as gpt on gpt.game_id = x.game_id and gpt.player_id = p.player.id
+        {{ref('stg_meltano__live_plays')}} as x
+    , unnest(x.players) as players
+    left join {{ref('stg_meltano__schedule')}} as s on s.game_id = x.game_id
+    left join {{ ref('stg_meltano__boxscore') }} on stg_meltano__live_plays.game_id = stg_meltano__boxscore.game_id and players.player.id = stg_meltano__boxscore.player_id
 )
 
 -- Add in cumulative metrics

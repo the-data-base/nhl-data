@@ -11,5 +11,6 @@ select
     , link as division_url
     , abbreviation as division_abbreviation
     , active as is_active
-
-from {{ ref('divisions') }}
+    , _time_extracted as extracted_at
+    , _time_loaded as loaded_at
+from {{ source('meltano', 'divisions') }}
