@@ -40,7 +40,7 @@ boxscore_away_team as (
 
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key('stg_meltano__boxscore.game_id', 'boxscore_away_team.team_id', 'boxscore_away_team.team_id']) as id
+    {{ dbt_utils.surrogate_key(['stg_meltano__boxscore.game_id', 'boxscore_away_team.team_id', 'boxscore_away_team.team_id']) }} as id
 
     /* Foreign Keys */
     , stg_meltano__boxscore.game_id
@@ -75,4 +75,4 @@ from
     left join boxscore_away_team on stg_meltano__boxscore.id = boxscore_away_team.id
 
 order by
-    b.game_id desc
+    stg_meltano__boxscore.game_id desc
