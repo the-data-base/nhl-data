@@ -6,6 +6,21 @@ Try running the following commands:
 - dbt run
 - dbt test
 
+### Setting up profiles
+```yml
+dbt_nhl_breakouts:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      location: us-west1
+      method: service-account
+      keyfile: ./path/to/secrets/file.json
+      project: nhl-breakouts
+      dataset: dbt_<your_name>
+      threads: 4
+```
+
 ### Using the SQLFluff linter
 
 Install tox:
