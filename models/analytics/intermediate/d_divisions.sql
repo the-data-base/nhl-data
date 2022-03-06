@@ -1,16 +1,15 @@
-SELECT 
+select
     /* Primary Key */
-    d.id
+    id
 
     /* Foreign Keys */
-    ,d.conference.id as conference_id
+    , conference_id
 
     /* Properties */
-    ,d.name as division_name
-    ,d.nameshort as division_name_short
-    ,d.link as division_url
-    ,d.abbreviation as division_abbreviation
-    ,d.active as is_active
+    , division_name
+    , division_name_short
+    , division_url
+    , division_abbreviation
+    , is_active
 
-FROM 
-    {{ ref('stg_meltano__divisions') }}
+from {{ ref('stg_meltano__divisions') }}

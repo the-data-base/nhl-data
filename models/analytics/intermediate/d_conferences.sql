@@ -1,14 +1,11 @@
-
-SELECT 
+--#TODO
+select
     /* Primary Key */
-    c.id
-
+    id
     /* Properties */
-    , c.name as conference_name
-    , c.shortName as conference_short_name
-    , c.abbreviation as conference_abbreviation
-    , c.active as is_active
-    , c.link as conference_url
-
-FROM 
-    {{ ref('stg_meltano__conferences') }}
+    , conference_name
+    , conference_url
+    , conference_abbreviation
+    , conference_short_name
+    , is_active
+from {{ ref('stg_meltano__conferences') }}
