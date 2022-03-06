@@ -1,20 +1,20 @@
-select
+SELECT
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['year', 'pickoverall']) }} as id
+    --{{ dbt_utils.surrogate_key(['year', 'pickoverall']) }} as id
+    CONCAT(CAST(d.year as STRING), LPAD(CAST(d.pickOverall as STRING), 3, '0')) AS id
 
     /* Foreign Keys */
-    , team.id as team_id
-    , prospect.id as prospect_id
-
+    ,d.prospect.id as draft_prospect_id
+    ,d.team.id as draft_team_id
+    
     /* Properties */
-    , year as draft_year
-    , round
-    , pickOverall as pick_overall
-    , pickInRound as pick_in_round
-    , team.name as team_name
-    , team.link as team_url
-    , prospect.fullName as prospect_full_name
-    , prospect.link as prospect_url
-    , _time_extracted as extracted_at
-    , _time_loaded as loaded_at
+    ,d.year as draft_year
+    ,d.pickOverall as draft_overall_pick
+    ,d.round as draft_round
+    ,d.pickInRound as draft_round_pick
+    ,d.prospect.fullName as draft_prospect_name
+    ,d.prospect.link as draft_url
+    ,d.team.name as draft_team_name
+
+FROM 
 from {{ source('meltano', 'draft') }}

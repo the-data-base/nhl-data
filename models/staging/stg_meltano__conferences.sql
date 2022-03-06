@@ -1,13 +1,12 @@
-select
+SELECT 
     /* Primary Key */
-    id
+    c.id
 
     /* Properties */
-    , name as conference_name
-    , link as conference_url
-    , abbreviation as conference_abbreviation
-    , shortName as conference_short_name
-    , active as is_active
-    , _time_extracted as extracted_at
-    , _time_loaded as loaded_at
-from {{ source('meltano', 'conferences') }}
+    , c.name as conference_name
+    , c.shortName as conference_short_name
+    , c.abbreviation as conference_abbreviation
+    , c.active as is_active
+    , c.link as conference_url
+FROM 
+    {{ source('meltano', 'conferences') }}

@@ -1,38 +1,37 @@
-select
+SELECT 
     /* Primary Key */
-    id
+    p.id
 
     /* Foreign Keys */
-    , nhlPlayerId as nhl_player_id
-    , prospectCategory.id as prospect_category_id
-
+    ,p.nhlPlayerId as prospect_player_id
+    ,p.prospectCategory.id as prospect_category_id
+    
     /* Properties */
-    , fullName as full_name
-    , link as url
-    , firstName as first_name
-    , lastName as last_name
-    , birthDate as birth_date
-    , birthCity as birth_city
-    , birthStateProvince as birth_state_province
-    , birthCountry as birth_country
-    , height
-    , weight
-    , shootsCatches as shoots_catches
-    , primaryPosition as primary_position
-    , primaryPosition.code as primary_position_code
-    , primaryPosition.name as primary_position_name
-    , primaryPosition.type as primary_position_type
-    , primaryPosition.abbreviation as primary_position_abbreviation
-    , draftStatus
-    , prospectCategory.shortName as prospect_category_short_name
-    , prospectCategory.name as prospect_category_name
-    , amateurTeam as amateur_team
-    , amateurTeam.name as amateur_team_name
-    , amateurTeam.link as amateur_team_url
-    , amateurLeague.name as amateur_league_name
-    , amateurLeague.link as amateur_league_url
-    , ranks.midterm as ranks_midterm
-    , ranks.draftYear as ranks_draft_year
-    , _time_extracted as extracted_at
-    , _time_loaded as loaded_at
-from {{ source('meltano', 'draft_prospects') }}
+    ,p.firstName as prospect_first_name
+    ,p.lastName as prospect_last_name
+    ,p.fullName as prospect_full_name
+    ,PARSE_DATE('%Y-%m-%d',  p.birthDate) as prospect_birth_date
+    ,DATE_DIFF(CURRENT_DATE(),PARSE_DATE('%Y-%m-%d',  p.birthDate), YEAR) AS prospect_age_years
+    ,DATE_DIFF(CURRENT_DATE(),PARSE_DATE('%Y-%m-%d',  p.birthDate), DAY) AS prospect_age_days
+    ,p.birthCity as prospect_birth_city
+    ,p.birthStateProvince as prospect_birth_state_province
+    ,p.birthCountry as prospect_birth_country
+    ,p.height as prospect_height
+    ,p.weight as prospect_weight
+    ,p.shootsCatches as prospect_shoots_catches
+    ,p.primaryPosition.name as prospect_position_name
+    ,p.primaryPosition.abbreviation as prospect_position_abbreviation
+    ,p.draftStatus as prospect_draft_status -- wtf is this?
+    ,p.prospectCategory.name as prospect_category_name 
+    ,p.prospectCategory.shortName as prospect_category_short_name
+    ,p.amateurTeam.name as prospect_amateur_team_name
+    ,p.amateurTeam.link as prospect_amateur_team_url
+    ,p.amateurLeague.name as prospect_amateur_league_name
+    ,p.amateurLeague.link as prospect_amateur_league_url
+    ,p.ranks.midterm as prospect_rank_midterm
+    ,p.ranks.draftYear as prospect_rank_draft_year
+    ,p.link as prospect_url
+FROM 
+    {{ source('meltano', 'draft_prospects') }}
+ORDER BY
+    PARSE_DATE('%Y-%m-%d',  p.birthDate)  desc
