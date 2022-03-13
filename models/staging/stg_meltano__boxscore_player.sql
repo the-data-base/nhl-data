@@ -5,131 +5,179 @@ live_boxscore as (
 ),
 
 -- CTE1
-home_team as (
+home_team_player as (
     select
         /* Primary Key */
-        {{ dbt_utils.surrogate_key(['live_boxscore.game_id']) }} as id
-
+        -- create later
+        
         /* Foreign Keys */
-        , live_boxscore.game_id
+        live_boxscore.game_id
         , teams.home.team.id as team_id
+        , home_players.person.id as player_id
 
         /* Properties */
         , 'Home' as team_type
 
-        /* Team stats*/
-        , teams.home.team.name as team_name
-        , teams.home.teamStats.teamSkaterStats.goals as team_goals
-        , teams.home.teamStats.teamSkaterStats.pim as team_pim
-        , teams.home.teamStats.teamSkaterStats.shots as team_shots
-        , teams.home.teamStats.teamSkaterStats.powerPlayGoals as team_powerplay_goals
-        , teams.home.teamStats.teamSkaterStats.powerPlayOpportunities as team_powerplay_opportunities
-        , teams.home.teamStats.teamSkaterStats.faceOffWinPercentage as team_faceoff_percentage
-        , teams.home.teamStats.teamSkaterStats.blocked as team_blocked
-        , teams.home.teamStats.teamSkaterStats.takeaways as team_takeaways
-        , teams.home.teamStats.teamSkaterStats.giveaways as team_giveaways
-        , teams.home.teamStats.teamSkaterStats.hits as team_hits
+        /* Player stats */
+        , home_players.person.fullname as player_full_name
+        , home_players.person.rosterstatus as player_roster_status
+        , home_players.position.code as player_position_code
+        , home_players.stats.playerstats.timeonice as time_on_ice
+        , home_players.stats.playerstats.assists as assists
+        , home_players.stats.playerstats.goals as goals
+        , home_players.stats.playerstats.shots as shots
+        , home_players.stats.playerstats.hits as hits
+        , home_players.stats.playerstats.powerplaygoals as powerplay_goals
+        , home_players.stats.playerstats.powerplayassists as powerplay_assists
+        , home_players.stats.playerstats.penaltyminutes as penalty_minutes
+        , home_players.stats.playerstats.faceoffwins as faceoff_wins
+        , home_players.stats.playerstats.faceofftaken as faceoff_taken
+        , home_players.stats.playerstats.takeaways as takeaways
+        , home_players.stats.playerstats.giveaways as giveaways
+        , home_players.stats.playerstats.shorthandedgoals as short_handed_goals
+        , home_players.stats.playerstats.shorthandedassists as short_handed_assists
+        , home_players.stats.playerstats.blocked as blocked
+        , home_players.stats.playerstats.plusminus as plus_minus
+        , home_players.stats.playerstats.eventimeonice as even_time_on_ice
+        , home_players.stats.playerstats.powerplaytimeonice as powerplay_time_on_ice
+        , home_players.stats.playerstats.shorthandedtimeonice as short_handed_time_on_ice
+        , home_players.stats.playerstats.pim as pim
+        , home_players.stats.playerstats.saves as saves
+        , home_players.stats.playerstats.powerplaysaves as powerplay_saves
+        , home_players.stats.playerstats.shorthandedsaves as short_handed_saves
+        , home_players.stats.playerstats.evensaves as even_saves
+        , home_players.stats.playerstats.shorthandedshotsagainst as short_handed_shots_against
+        , home_players.stats.playerstats.evenshotsagainst as even_shots_against
+        , home_players.stats.playerstats.powerplayshotsagainst as powerplay_shots_against
+        , home_players.stats.playerstats.decision as decision
+        , home_players.stats.playerstats.savepercentage as save_percentage
+        , home_players.stats.playerstats.powerplaysavepercentage as powerplay_save_percentage
+        , home_players.stats.playerstats.evenstrengthsavepercentage as even_strength_save_percentage
 
     from
         live_boxscore
+        , unnest(teams.home.players) as home_players
+
         )
 
 -- CTE2
-, away_team as (
+, away_team_player as (
     select
         /* Primary Key */
-        {{ dbt_utils.surrogate_key(['live_boxscore.game_id']) }} as id
+        -- create later
 
         /* Foreign Keys */
-        , live_boxscore.game_id
+        live_boxscore.game_id
         , teams.away.team.id as team_id
+        , away_players.person.id as player_id
 
         /* Properties */
         , 'Away' as team_type
 
-        /* Team stats*/
-        , teams.away.team.name as team_name
-        , teams.away.teamStats.teamSkaterStats.goals as team_goals
-        , teams.away.teamStats.teamSkaterStats.pim as team_pim
-        , teams.away.teamStats.teamSkaterStats.shots as team_shots
-        , teams.away.teamStats.teamSkaterStats.powerPlayGoals as team_powerplay_goals
-        , teams.away.teamStats.teamSkaterStats.powerPlayOpportunities as team_powerplay_opportunities
-        , teams.away.teamStats.teamSkaterStats.faceOffWinPercentage as team_faceoff_percentage
-        , teams.away.teamStats.teamSkaterStats.blocked as team_blocked
-        , teams.away.teamStats.teamSkaterStats.takeaways as team_takeaways
-        , teams.away.teamStats.teamSkaterStats.giveaways as team_giveaways
-        , teams.away.teamStats.teamSkaterStats.hits as team_hits
+        /* Player stats */
+        , away_players.person.fullname as player_full_name
+        , away_players.person.rosterstatus as player_roster_status
+        , away_players.position.code as player_position_code
+        , away_players.stats.playerstats.timeonice as time_on_ice
+        , away_players.stats.playerstats.assists as assists
+        , away_players.stats.playerstats.goals as goals
+        , away_players.stats.playerstats.shots as shots
+        , away_players.stats.playerstats.hits as hits
+        , away_players.stats.playerstats.powerplaygoals as powerplay_goals
+        , away_players.stats.playerstats.powerplayassists as powerplay_assists
+        , away_players.stats.playerstats.penaltyminutes as penalty_minutes
+        , away_players.stats.playerstats.faceoffwins as faceoff_wins
+        , away_players.stats.playerstats.faceofftaken as faceoff_taken
+        , away_players.stats.playerstats.takeaways as takeaways
+        , away_players.stats.playerstats.giveaways as giveaways
+        , away_players.stats.playerstats.shorthandedgoals as short_handed_goals
+        , away_players.stats.playerstats.shorthandedassists as short_handed_assists
+        , away_players.stats.playerstats.blocked as blocked
+        , away_players.stats.playerstats.plusminus as plus_minus
+        , away_players.stats.playerstats.eventimeonice as even_time_on_ice
+        , away_players.stats.playerstats.powerplaytimeonice as powerplay_time_on_ice
+        , away_players.stats.playerstats.shorthandedtimeonice as short_handed_time_on_ice
+        , away_players.stats.playerstats.pim as pim
+        , away_players.stats.playerstats.saves as saves
+        , away_players.stats.playerstats.powerplaysaves as powerplay_saves
+        , away_players.stats.playerstats.shorthandedsaves as short_handed_saves
+        , away_players.stats.playerstats.evensaves as even_saves
+        , away_players.stats.playerstats.shorthandedshotsagainst as short_handed_shots_against
+        , away_players.stats.playerstats.evenshotsagainst as even_shots_against
+        , away_players.stats.playerstats.powerplayshotsagainst as powerplay_shots_against
+        , away_players.stats.playerstats.decision as decision
+        , away_players.stats.playerstats.savepercentage as save_percentage
+        , away_players.stats.playerstats.powerplaysavepercentage as powerplay_save_percentage
+        , away_players.stats.playerstats.evenstrengthsavepercentage as even_strength_save_percentage
 
     from
         live_boxscore
+        , unnest(teams.away.players) as away_players
+
         )
 
--- CTE4
-, winning_team as (
-    select 
-        home_team.game_id
-        , home_team.id as home_team_id
-        , away_team.id as away_team_id
-        , home_team.team_goals as home_team_score
-        , away_team.team_goals as away_team_score
-        , case 
-            when home_team.team_goals > away_team.team_goals then 'Home'
-            when home_team.team_goals < away_team.team_goals then 'Away'
-            else NULL
-        end as winning_team
-        , ABS(home_team.team_goals - away_team.team_goals) as absolute_goal_differential
-    from
-        home_team
-        inner join away_team on home_team.game_id = away_team.game_id
-
-)
-
--- CTE5
-, boxscore_team as (
-    select * from home_team
+-- CTE3
+, boxscore_player as (
+    select * from home_team_player
     union all
-    select * from away_team
+    select * from away_team_player
 
 )
 
 -- Final query, return everything
 select  
     /* Primary Key */
-    boxscore_team.id
+    {{ dbt_utils.surrogate_key(['boxscore_player.game_id']) }} as id
 
     /* Foreign Keys */
-    , boxscore_team.game_id
-    , boxscore_team.team_id
+    , boxscore_player.game_id
+    , boxscore_player.team_id
+    , boxscore_player.player_id
 
     /* Properties */
-     ,boxscore_team.team_type
+    , boxscore_player.team_type
 
-    /* Team stats*/
-    , boxscore_team.team_name
-    , case 
-        when boxscore_team.team_type = winning_team.winning_team then "true"
-        when boxscore_team.team_type <> winning_team.winning_team then "false"
-        else null
-    end as team_winner
-    , boxscore_team.team_goals
-    , case 
-        when boxscore_team.team_type = winning_team.winning_team then winning_team.absolute_goal_differential
-        when boxscore_team.team_type <> winning_team.winning_team then winning_team.absolute_goal_differential * -1
-        else null
-    end as team_goal_differential
-    , boxscore_team.team_pim
-    , boxscore_team.team_shots
-    , boxscore_team.team_powerplay_goals
-    , boxscore_team.team_powerplay_opportunities
-    , boxscore_team.team_faceoff_percentage
-    , boxscore_team.team_blocked
-    , boxscore_team.team_takeaways
-    , boxscore_team.team_giveaways
-    , boxscore_team.team_hits
+    /* Player stats */
+    , boxscore_player.player_full_name
+    , boxscore_player.player_roster_status
+    , boxscore_player.player_position_code
+
+    , boxscore_player.time_on_ice
+    , boxscore_player.assists
+    , boxscore_player.goals
+    , boxscore_player.shots
+    , boxscore_player.hits
+    , boxscore_player.powerplay_goals
+    , boxscore_player.powerplay_assists
+    , boxscore_player.penalty_minutes
+    , boxscore_player.faceoff_wins
+    , boxscore_player.faceoff_taken
+    , boxscore_player.takeaways
+    , boxscore_player.giveaways
+    , boxscore_player.short_handed_goals
+    , boxscore_player.short_handed_assists
+    , boxscore_player.blocked
+    , boxscore_player.plus_minus
+    , boxscore_player.even_time_on_ice
+    , boxscore_player.powerplay_time_on_ice
+    , boxscore_player.short_handed_time_on_ice
+    , boxscore_player.pim
+    , boxscore_player.saves
+    , boxscore_player.powerplay_saves
+    , boxscore_player.short_handed_saves
+    , boxscore_player.even_saves
+    , boxscore_player.short_handed_shots_against
+    , boxscore_player.even_shots_against
+    , boxscore_player.powerplay_shots_against
+    , boxscore_player.decision
+    , boxscore_player.save_percentage
+    , boxscore_player.powerplay_save_percentage
+    , boxscore_player.even_strength_save_percentage
 
 from     
-    boxscore_team
-    left join winning_team on boxscore_team.game_id = winning_team.game_id
+    boxscore_player
 
 order by
-    boxscore_team.game_id desc
+    boxscore_player.game_id desc
+    , boxscore_player.team_id desc
+    , boxscore_player.player_id  desc
