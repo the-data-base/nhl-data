@@ -8,10 +8,10 @@ live_boxscore as (
 home_team_player as (
     select
         /* Primary Key */
-        -- create later
+        {{ dbt_utils.surrogate_key(['boxscore_player.game_id']) }} as id
         
         /* Foreign Keys */
-        live_boxscore.game_id
+        , live_boxscore.game_id
         , teams.home.team.id as team_id
         , home_players.person.id as player_id
 
@@ -64,10 +64,10 @@ home_team_player as (
 , away_team_player as (
     select
         /* Primary Key */
-        -- create later
+        {{ dbt_utils.surrogate_key(['boxscore_player.game_id']) }} as id
 
         /* Foreign Keys */
-        live_boxscore.game_id
+        , live_boxscore.game_id
         , teams.away.team.id as team_id
         , away_players.person.id as player_id
 
@@ -141,7 +141,6 @@ select
     , boxscore_player.player_full_name
     , boxscore_player.player_roster_status
     , boxscore_player.player_position_code
-
     , boxscore_player.time_on_ice
     , boxscore_player.assists
     , boxscore_player.goals
