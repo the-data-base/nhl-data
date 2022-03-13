@@ -1,36 +1,36 @@
 select
     /* Primary Key */
-    id
+    teams.id
 
     /* Foreign Keys */
-    , venue.timeZone.id as venue_timezone_id
-    , division.id as division_id
-    , conference.id as conference_id
-    , franchise.franchiseId as franchise_id
+    , teams.venue.timeZone.id as venue_timezone_id
+    , teams.division.id as division_id
+    , teams.conference.id as conference_id
+    , teams.franchise.franchiseId as franchise_id
 
     /* Properties */
-    , name as name
-    , link as team_url
-    , venue.name as venue_name
-    , venue.link as venue_url
-    , venue.city as venue_city
-    , venue.timeZone.offset as venue_timezone_offset
-    , venue.timeZone.tz as venue_timezone_name
-    , abbreviation as abbreviation
-    , teamName as team_name
-    , locationName as location_name
-    , firstYearOfPlay as first_year_of_play
-    , division.name as division_name
-    , division.nameShort as division_short_name
-    , division.link as division_url
-    , division.abbreviation as division_abbreviation
-    , conference.name as conference_name
-    , conference.link as conference_url
-    , franchise.teamName as franchise_team_name
-    , franchise.link as franchise_url
-    , shortName as short_name
-    , officialSiteUrl as official_site_url
-    , active as is_active
-    , _time_extracted as extracted_at
-    , _time_loaded as loaded_at
-from {{ source('meltano', 'teams') }}
+    , teams.name as name
+    , teams.link as team_url
+    , teams.venue.name as venue_name
+    , teams.venue.link as venue_url
+    , teams.venue.city as venue_city
+    , teams.venue.timeZone.offset as venue_timezone_offset
+    , teams.venue.timeZone.tz as venue_timezone_name
+    , teams.abbreviation as abbreviation
+    , teams.teamName as team_name
+    , teams.locationName as location_name
+    , teams.firstYearOfPlay as first_year_of_play
+    , teams.division.name as division_name
+    , teams.division.nameShort as division_short_name
+    , teams.division.link as division_url
+    , teams.division.abbreviation as division_abbreviation
+    , teams.conference.name as conference_name
+    , teams.conference.link as conference_url
+    , teams.franchise.teamName as franchise_team_name
+    , teams.franchise.link as franchise_url
+    , teams.shortName as short_name
+    , teams.officialSiteUrl as official_site_url
+    , teams.active as is_active
+    , teams._time_extracted as extracted_at
+    , teams._time_loaded as loaded_at
+from {{ source('meltano', 'teams') }} as teams
