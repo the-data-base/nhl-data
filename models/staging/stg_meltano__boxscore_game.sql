@@ -1,4 +1,3 @@
-
 with
 
 live_boxscore as (
@@ -17,18 +16,24 @@ boxscore_game as (
         , teams.away.team.id as away_team_id
 
         /* Properties */
+        , concat(teams.home.teamStats.teamSkaterStats.goals, '-', teams.away.teamStats.teamSkaterStats.goals, ' (Home-Away)') as game_score
         , concat(teams.home.team.name, ' (Home) vs ', teams.away.team.name, ' (Away)') as game_matchup
         , case 
             when teams.home.teamStats.teamSkaterStats.goals  > teams.away.teamStats.teamSkaterStats.goals  then teams.home.team.id
-            when teams.home.teamStats.teamSkaterStats.goals  < teams.home.teamStats.teamSkaterStats.goals  then teams.away.team.id
+            when teams.home.teamStats.teamSkaterStats.goals  < teams.away.teamStats.teamSkaterStats.goals  then teams.away.team.id
             else NULL
-        end as game_winning_team
+        end as game_winning_team_id
+        , case 
+            when teams.home.teamStats.teamSkaterStats.goals  > teams.away.teamStats.teamSkaterStats.goals  then teams.home.team.name
+            when teams.home.teamStats.teamSkaterStats.goals  < teams.away.teamStats.teamSkaterStats.goals  then teams.away.team.name
+            else NULL
+        end as game_winning_team_name
         , case 
             when teams.home.teamStats.teamSkaterStats.goals  > teams.away.teamStats.teamSkaterStats.goals  then 'Home'
-            when teams.home.teamStats.teamSkaterStats.goals  < teams.home.teamStats.teamSkaterStats.goals  then 'Away'
+            when teams.home.teamStats.teamSkaterStats.goals < teams.away.teamStats.teamSkaterStats.goals  then 'Away'
             else NULL
         end as game_winning_team_type
-        , ABS(home_team.team_goals - away_team.team_goals) as absolute_goal_differential
+        , ABS(teams.home.teamStats.teamSkaterStats.goals - teams.away.teamStats.teamSkaterStats.goals) as absolute_goal_differential
 
         /* Home team stats*/
         , teams.home.team.name as home_team_name
@@ -70,10 +75,12 @@ select
     , boxscore_game.away_team_id
 
     /* Properties */
-     , boxscore_game.game_matchup
-     , boxscore_game.gamewinning_team_id
+     , boxscore_game.game_matchup as game_matchup_desc
+     , boxscore_game.game_score as game_score_desc
+     , boxscore_game.game_winning_team_id
+     , boxscore_game.game_winning_team_name
      , boxscore_game.game_winning_team_type
-     , boxscore_game.game_winning_team_type
+    , boxscore_game.absolute_goal_differential as game_absolute_goal_differential
 
     /* Home team stats*/
     , boxscore_game.home_team_name

@@ -1,4 +1,3 @@
-
 with
 
 live_boxscore as (
