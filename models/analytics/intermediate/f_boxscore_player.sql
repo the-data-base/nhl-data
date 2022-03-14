@@ -68,7 +68,7 @@ select
     , stg_meltano__boxscore.even_strength_save_percentage as player_even_save_percentage
 
 from
-    {{ ref('stg_meltano__boxscore') }}
+    {{ ref('stg_meltano__boxscore_player') }}
     left join {{ ref('f_boxscore_game') }} on stg_meltano__boxscore.game_id = f_boxscore_game.game_id
 
 order by

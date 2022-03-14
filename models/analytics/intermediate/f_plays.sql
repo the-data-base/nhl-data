@@ -166,7 +166,7 @@ cte_base_plays as (
         {{ref('stg_meltano__live_plays')}} as x
     , unnest(x.players) as players
     left join {{ref('stg_meltano__schedule')}} as s on s.game_id = x.game_id
-    left join {{ ref('stg_meltano__boxscore') }} on stg_meltano__live_plays.game_id = stg_meltano__boxscore.game_id and players.player.id = stg_meltano__boxscore.player_id
+    left join {{ ref('stg_meltano__boxscore_game') }} on stg_meltano__live_plays.game_id = stg_meltano__boxscore.game_id and players.player.id = stg_meltano__boxscore.player_id
 )
 
 -- Add in cumulative metrics

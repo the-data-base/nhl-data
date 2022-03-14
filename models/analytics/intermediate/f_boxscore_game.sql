@@ -15,7 +15,7 @@ boxscore_away_team as (
         , team_takeaways
         , team_giveaways
         , team_hits
-    from {{ ref('stg_meltano__boxscore') }}
+    from {{ ref('stg_meltano__boxscore_team') }}
     where team_type = 'Away'
 )
 
@@ -34,7 +34,7 @@ boxscore_away_team as (
         , team_takeaways
         , team_giveaways
         , team_hits
-    from {{ ref('stg_meltano__boxscore') }}
+    from {{ ref('stg_meltano__boxscore_team') }}
     where team_type = 'Home'
 )
 
@@ -70,9 +70,9 @@ select
     , boxscore_home_team.team_hits as home_team_hits
 
 from
-    {{ ref('stg_meltano__boxscore') }}
-    left join boxscore_home_team on stg_meltano__boxscore.id = boxscore_home_team.id
-    left join boxscore_away_team on stg_meltano__boxscore.id = boxscore_away_team.id
+    {{ ref('stg_meltano__boxscore_team') }}
+    left join boxscore_home_team on stg_meltano__boxscore_team.id = boxscore_home_team.id
+    left join boxscore_away_team on stg_meltano__boxscore_team.id = boxscore_away_team.id
 
 order by
     stg_meltano__boxscore.game_id desc
