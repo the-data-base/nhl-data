@@ -8,7 +8,7 @@ live_boxscore as (
 home_team_player as (
     select
         /* Primary Key */
-        {{ dbt_utils.surrogate_key(['boxscore_player.game_id']) }} as id
+        concat(live_boxscore.game_id, teams.home.team.id, home_players.person.id) as id
         
         /* Foreign Keys */
         , live_boxscore.game_id
@@ -16,6 +16,7 @@ home_team_player as (
         , home_players.person.id as player_id
 
         /* Properties */
+        , teams.home.team.name as team_name
         , 'Home' as team_type
 
         /* Player stats */
@@ -64,14 +65,16 @@ home_team_player as (
 , away_team_player as (
     select
         /* Primary Key */
-        {{ dbt_utils.surrogate_key(['boxscore_player.game_id']) }} as id
+        concat(live_boxscore.game_id, teams.away.team.id, away_players.person.id) as id
 
         /* Foreign Keys */
         , live_boxscore.game_id
         , teams.away.team.id as team_id
         , away_players.person.id as player_id
 
+
         /* Properties */
+        , teams.away.team.name as team_name
         , 'Away' as team_type
 
         /* Player stats */
@@ -127,7 +130,7 @@ home_team_player as (
 -- Final query, return everything
 select  
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['boxscore_player.game_id']) }} as id
+    {{ dbt_utils.surrogate_key(['boxscore_player.id']) }} as id
 
     /* Foreign Keys */
     , boxscore_player.game_id
@@ -135,6 +138,7 @@ select
     , boxscore_player.player_id
 
     /* Properties */
+    , boxscore_player.team_name
     , boxscore_player.team_type
 
     /* Player stats */
