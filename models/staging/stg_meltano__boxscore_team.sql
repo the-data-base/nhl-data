@@ -1,14 +1,18 @@
 with
 
-live_boxscore as (
-    select * from {{ source('meltano', 'live_boxscore') }}
-),
-
 -- CTE1
-home_team as (
+live_boxscore as (
+    select  
+        * 
+    from    
+        {{ source('meltano', 'live_boxscore') }}
+    )
+
+-- CTE2
+,home_team as (
     select
         /* Primary Key */
-        {{ dbt_utils.surrogate_key(['live_boxscore.game_id']) }} as id
+        concat(live_boxscore.game_id, teams.home.team.id ) as id
 
         /* Foreign Keys */
         , live_boxscore.game_id
@@ -38,7 +42,7 @@ home_team as (
 , away_team as (
     select
         /* Primary Key */
-        {{ dbt_utils.surrogate_key(['live_boxscore.game_id']) }} as id
+        concat(live_boxscore.game_id, teams.away.team.id ) as id
 
         /* Foreign Keys */
         , live_boxscore.game_id
@@ -95,7 +99,7 @@ home_team as (
 -- Final query, return everything
 select  
     /* Primary Key */
-    boxscore_team.id
+    {{ dbt_utils.surrogate_key(['boxscore_team.id']) }} as id
 
     /* Foreign Keys */
     , boxscore_team.game_id

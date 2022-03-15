@@ -1,10 +1,13 @@
 with
-
-live_boxscore as (
-    select * from {{ source('meltano', 'live_boxscore') }}
-),
-
 -- CTE1
+live_boxscore as (
+    select  
+        * 
+    from    
+        {{ source('meltano', 'live_boxscore') }}
+    )
+
+-- CTE2
 home_team_player as (
     select
         /* Primary Key */
@@ -61,7 +64,7 @@ home_team_player as (
 
         )
 
--- CTE2
+-- CTE3
 , away_team_player as (
     select
         /* Primary Key */
@@ -119,7 +122,7 @@ home_team_player as (
 
         )
 
--- CTE3
+-- CTE4
 , boxscore_player as (
     select * from home_team_player
     union all

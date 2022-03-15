@@ -1,11 +1,15 @@
 with
 
-live_boxscore as (
-    select * from {{ source('meltano', 'live_boxscore') }}
-),
-
 -- CTE1
-boxscore_game as (
+live_boxscore as (
+    select  
+        * 
+    from    
+        {{ source('meltano', 'live_boxscore') }}
+    )
+
+-- CTE2
+,boxscore_game as (
     select
         /* Primary Key */
         live_boxscore.game_id as id
