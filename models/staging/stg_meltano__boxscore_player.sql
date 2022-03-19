@@ -8,7 +8,7 @@ live_boxscore as (
     )
 
 -- CTE2
-home_team_player as (
+,home_team_player as (
     select
         /* Primary Key */
         concat(live_boxscore.game_id, teams.home.team.id, home_players.person.id) as id

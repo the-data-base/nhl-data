@@ -1,9 +1,9 @@
 SELECT
     /* Primary Key */
     {{ dbt_utils.surrogate_key(['year', 'pickoverall']) }} as id
-    ,CONCAT(CAST(draft.year as STRING), LPAD(CAST(draft.pickOverall as STRING), 3, '0')) AS overall_pick_id
 
     /* Foreign Keys */
+    ,CONCAT(CAST(draft.year as STRING), LPAD(CAST(draft.pickOverall as STRING), 3, '0')) AS overall_pick_id
     ,draft.prospect.id as draft_prospect_id
     ,draft.team.id as draft_team_id
     

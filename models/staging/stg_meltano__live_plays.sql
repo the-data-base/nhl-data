@@ -238,23 +238,23 @@ live_plays as (
         , abs(bp.goals_home - bp.goals_away) as goal_difference_current
         , case
             when(bp.goals_home - bp.goals_away) = 0
-                then 'TIE'
+                then 'Tie'
             when(bp.goals_home - bp.goals_away) > 0
-                then 'HOME'
+                then 'Home'
             when(bp.goals_home - bp.goals_away) < 0
-                then 'AWAY'
+                then 'Away'
         end as winning_team_current
         , case
             when abs(bp.goals_home - bp.goals_away) = 0
-                then 'TIE'
+                then 'Tie'
             when abs(bp.goals_home - bp.goals_away) = 1
-                then 'CLOSE'
+                then 'Close'
             when abs(bp.goals_home - bp.goals_away) = 2
-                then 'BUFFER'
+                then 'Buffer'
             when abs(bp.goals_home - bp.goals_away) = 3
-                then 'COMFORTABLE'
+                then 'Comfortable'
             when abs(bp.goals_home - bp.goals_away) >= 4
-                then 'BLOWOUT'
+                then 'Blowout'
         end as game_state_current
         -- First goal flag
         , case
@@ -311,76 +311,76 @@ live_plays as (
         , abs(c.goals_home_lag - c.goals_away_lag) as goal_difference_lag
         , case
             when(c.goals_home_lag - c.goals_away_lag) = 0
-                then 'TIE'
+                then 'Tie'
             when(c.goals_home_lag - c.goals_away_lag) > 0
-                then 'HOME'
+                then 'Home'
             when(c.goals_home_lag - c.goals_away_lag) < 0
-                then 'AWAY'
+                then 'Away'
         end as winning_team_lag
         -- Previous game state
         , case
             when abs(c.goals_home_lag - c.goals_away_lag) = 0
-                then 'TIE'
+                then 'Tie'
             when abs(c.goals_home_lag - c.goals_away_lag) = 1
-                then 'CLOSE'
+                then 'Close'
             when abs(c.goals_home_lag - c.goals_away_lag) = 2
-                then 'BUFFER'
+                then 'Buffer'
             when abs(c.goals_home_lag - c.goals_away_lag) = 3
-                then 'COMFORTABLE'
+                then 'Comfortable'
             when abs(c.goals_home_lag - c.goals_away_lag) >= 4
-                then 'BLOWOUT'
+                then 'Blowout'
         end as game_state_lag
         -- Home - what was the result of the play on score?
         , case
             when c.goal_difference_current = abs(c.goals_home_lag - c.goals_away_lag)
-                then 'NO CHANGE'
+                then 'No change'
             when c.goals_home > c.goals_home_lag
                 and c.goals_home < c.goals_away
-                then 'CHASE GOAL'
+                then 'Chase goal'
             when c.goals_home > c.goals_home_lag
                 and c.goals_home = c.goals_away
-                then 'TYING GOAL SCORED'
+                then 'Tying goal scored'
             when c.goals_home < c.goals_home_lag
                 and c.goals_home = c.goals_away
-                then 'TYING GOAL ALLOWED'
+                then 'Tying goal allowed'
             when c.goals_home > c.goals_home_lag
                 and c.goals_home_lag = c.goals_away_lag
                 and c.goals_home > c.goals_away
-                then 'GO-AHEAD GOAL SCORED'
+                then 'Go-ahead goal scored'
             when c.goals_home > c.goals_home_lag
                 and c.goals_home_lag > c.goals_away_lag
                 and c.goals_home > c.goals_away
-                then 'BUFFER GOAL'
+                then 'Buffer goal'
             when c.goals_away > c.goals_away_lag
                 and c.goals_away_lag = c.goals_home_lag
                 and c.goals_away > c.goals_home
-                then 'GO-AHEAD GOAL ALLOWED'
+                then 'Go-ahead goal allowed'
         end as home_result_of_play
         -- Away - what was the result of the play on score?
         , case
             when c.goal_difference_current = abs(c.goals_home_lag - c.goals_away_lag)
-                then 'NO CHANGE'
+                then 'No change'
             when c.goals_away > c.goals_away_lag
                 and c.goals_away < c.goals_home
-                then 'CHASE GOAL'
+                then 'Chase goal'
             when c.goals_away > c.goals_away_lag
                 and c.goals_away = c.goals_home
-                then 'TYING GOAL SCORED'
+                then 'Tying goal scored'
             when c.goals_home > c.goals_home_lag
                 and c.goals_home = c.goals_away
-                then 'TYING GOAL ALLOWED'
+                then 'Tying goal allowed'
             when c.goals_away > c.goals_away_lag
                 and c.goals_away_lag = c.goals_home_lag
                 and c.goals_away > c.goals_home
-                then 'GO-AHEAD GOAL SCORED'
+                then 'Go-ahead goal scored'
             when c.goals_away > c.goals_away_lag
                 and c.goals_away_lag > c.goals_home_lag
                 and c.goals_away > c.goals_home
-                then 'BUFFER GOAL'
+                then 'Buffer goal'
             when c.goals_home > c.goals_home_lag
                 and c.goals_home_lag = c.goals_away_lag
                 and c.goals_home > c.goals_away
-                then 'GO-AHEAD GOAL ALLOWED'
+                then 'Go-ahead goal allowed'
         end as away_result_of_play
         -- Either team - last goal a game winning goal?
         , case
