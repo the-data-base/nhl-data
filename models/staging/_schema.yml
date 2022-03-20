@@ -4,7 +4,7 @@ models:
   - name: d_conferences     
     description: Staged conferences data from nhl-api.
   - name: d_date
-    description: Staged date data.
+    description: Staged date data
   - name: d_divisions
     description: Staged division data from nhl-api.
   - name: d_draft     
