@@ -1,12 +1,12 @@
 SELECT 
     /* Primary Key */
-    c.id
+    conferences.id
 
     /* Properties */
-    , c.name as conference_name
-    , c.shortName as conference_short_name
-    , c.abbreviation as conference_abbreviation
-    , c.active as is_active
-    , c.link as conference_url
+    , conferences.name as conference_name
+    , conferences.shortName as conference_short_name
+    , conferences.abbreviation as conference_abbreviation
+    , conferences.active as is_active
+    , conferences.link as conference_url
 FROM 
-    {{ source('meltano', 'conferences') }}
+    {{ source('meltano', 'conferences') }} as conferences
