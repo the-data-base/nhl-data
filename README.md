@@ -6,6 +6,36 @@ Try running the following commands:
 - dbt run
 - dbt test
 
+### Setting up profiles
+```yml
+dbt_nhl_breakouts:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      location: us-west1
+      method: service-account
+      keyfile: ./path/to/secrets/file.json
+      project: nhl-breakouts
+      dataset: dbt_<your_name>
+      threads: 4
+```
+
+### Using the SQLFluff linter
+
+Install tox:
+```bash
+pipx install tox
+```
+
+Run the linter:
+```bash
+# Lint and autoapply fixes to an entire directory:
+tox -e fix path/to/model
+
+# Lint and autoapply fixes to a single model:
+tox -e fix path/to/model/file.sql
+```
 
 ### Resources:
 - Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
