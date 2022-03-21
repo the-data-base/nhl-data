@@ -3,34 +3,76 @@ version: 2
 models:
     
     - name: stg_meltano__conferences
-      description: Staged NHL conferences data from nhl-api
+      description: Staged NHL conferences data from the NHL-API
       columns:
         - name: id
           description: Unique identifier for NHL conferences
           tests: 
             - unique
             - not_null
-    
+        - name: conference_name
+          description: Name of the NHL conference
+        - name: conference_url
+          description: URL endpoint
+        - name: conference_abbreviation
+          description: Abbreviated NHL conference name
+        - name: conference_short_name
+          description: Short name for the NHL conference
+        - name: is_active
+          description: Whether or not the conference is still active
+
     - name: stg_meltano__divisions
-      description: Staged NHL division data from nhl-api
+      description: Staged NHL division data from the NHL-API
       columns:
         - name: id
           description: Unique identifier for NHL divisions
           tests:
             - unique
             - not_null
-    
+        - name: conference_id
+          description: Foreign key that maps to the NHL conference
+        - name: division_name
+          description: Name of the NHL division
+        - name: division_name_short
+          description: Short name for the NHL division  
+        - name: division_url
+          description: URL endpoint
+        - name: division_abbreviation
+          description: Abbreviated NHL conference name
+        - name: is_active
+          description: Whether or not the conference is still active        
+
     - name: stg_meltano__draft
-      description: Staged NHL draft data from nhl-api
+      description: Staged NHL entry draft data from the NHL-API
       columns:
         - name: id
-          description: Unique identifier for an NHL rookie draft
+          description: Unique identifier for an NHL rookie draft (generated via dbt_utils.surrogate_key)
           tests:
             - unique
             - not_null
+        - name: overall_pick_id
+          description: Unique identifier for an NHL rookie draft (draft year + overall pick)
+        - name: draft_prospect_id
+          description: Foreign key that maps to an NHL draft prospect
+        - name: draft_team_id
+          description: Foreign key that maps to the NHL team that drafted the NHL prospect
+        - name: draft_year
+          description: Year of the NHL entry draft
+        - name: draft_overall_pick
+          description: The overall pick in the NHL entry draft. For example, `1` is the first overall pick
+        - name: draft_round
+          description: The drafting round that the selection was made in
+        - name: draft_round_pick
+          description: The pick in the NHL entry draft made relative to the round
+        - name: draft_prospect_name
+          description: Name of the drafted NHL prospect
+        - name: draft_url
+          description: URL endpoint
+        - name: draft_team_name
+          description: Name of the NHL team that drafted the NHL prospect
     
     - name: stg_meltano__draft_prospects
-      description: Staged NHL draft_prospects data from nhl-api
+      description: Staged NHL draft_prospects data from the NHL-API
       columns:
         - name: id
           description: Unique identifier for a drafted NHL prospect
@@ -39,7 +81,7 @@ models:
             - not_null
     
     - name: stg_meltano__boxscore_game
-      description: Staged NHL boxscore data from nhl-api (will be replaced/enhanced by linescore)
+      description: Staged NHL boxscore data from the NHL-API (will be replaced/enhanced by linescore)
       columns:
         - name: id
           description: Unique identifier for an NHL game (game_id)
@@ -48,7 +90,7 @@ models:
             - not_null
     
     - name: stg_meltano__boxscore_team
-      description: Staged NHL boxscore game data from nhl-api (game-team level)
+      description: Staged NHL boxscore game data from the NHL-API (game-team level)
       columns:
         - name: id
           description: Unique identifier for an team's involvement in an NHL game (game_id + team_id)
@@ -57,7 +99,7 @@ models:
             - not_null
     
     - name: stg_meltano__boxscore_player
-      description: Staged NHL boxscore player data from nhl-api (game-player level)
+      description: Staged NHL boxscore player data from the NHL-API (game-player level)
       columns:
         - name: id
           description: Unique identifier for a player's summarized activity in an NHL game (game_id + team_id + player_id)
@@ -66,7 +108,7 @@ models:
             - not_null
     
     - name: stg_meltano__live_plays
-      description: Staged NHL event level data from nhl-api (player-play level)
+      description: Staged NHL event level data from the NHL-API (player-play level)
       columns:
         - name: id
           description: Unique identifier for a player's event-level activity in an NHL game (game_id + team_id + player_id + event_id)
@@ -75,7 +117,7 @@ models:
             - not_null
     
     - name: stg_meltano__players
-      description: Staged NHL player data from the nhl-api
+      description: Staged NHL player data from the NHL-API
       columns:
         - name: id
           description: Unique identifier for an NHL player
@@ -84,7 +126,7 @@ models:
             - not_null
     
     - name: stg_meltano__schedule
-      description: Staged NHL schedule data from nhl-api
+      description: Staged NHL schedule data from the NHL-API
       columns:
         - name: id
           description: Unique identifier for NHL scheduled games
@@ -93,7 +135,7 @@ models:
             - not_null
     
     - name: stg_meltano__seasons
-      description: Staged NHL seasons data from nhl-api
+      description: Staged NHL seasons data from the NHL-API
       columns:
         - name: id
           description: Unique identifier for an NHL season
@@ -102,7 +144,7 @@ models:
             - not_null
     
     - name: stg_meltano__teams
-      description: Staged NHL teams data from nhl-api
+      description: Staged NHL teams data from the NHL-API
       columns:
         - name: id
           description: Unique identifier for NHL teams
