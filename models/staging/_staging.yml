@@ -1,15 +1,111 @@
 version: 2
 
 models:
+    
     - name: stg_meltano__conferences
+      description: Staged NHL conferences data from nhl-api
+      columns:
+        - name: id
+          description: Unique identifier for NHL conferences
+          tests: 
+            - unique
+            - not_null
+    
     - name: stg_meltano__divisions
+      description: Staged NHL division data from nhl-api
+      columns:
+        - name: id
+          description: Unique identifier for NHL divisions
+          tests:
+            - unique
+            - not_null
+    
     - name: stg_meltano__draft
+      description: Staged NHL draft data from nhl-api
+      columns:
+        - name: id
+          description: Unique identifier for an NHL rookie draft
+          tests:
+            - unique
+            - not_null
+    
     - name: stg_meltano__draft_prospects
+      description: Staged NHL draft_prospects data from nhl-api
+      columns:
+        - name: id
+          description: Unique identifier for a drafted NHL prospect
+          tests:
+            - unique
+            - not_null
+    
     - name: stg_meltano__boxscore_game
+      description: Staged NHL boxscore data from nhl-api (will be replaced/enhanced by linescore)
+      columns:
+        - name: id
+          description: Unique identifier for an NHL game (game_id)
+          tests:
+            - unique
+            - not_null
+    
     - name: stg_meltano__boxscore_team
+      description: Staged NHL boxscore game data from nhl-api (game-team level)
+      columns:
+        - name: id
+          description: Unique identifier for an team's involvement in an NHL game (game_id + team_id)
+          tests:
+            - unique
+            - not_null
+    
     - name: stg_meltano__boxscore_player
+      description: Staged NHL boxscore player data from nhl-api (game-player level)
+      columns:
+        - name: id
+          description: Unique identifier for a player's summarized activity in an NHL game (game_id + team_id + player_id)
+          tests:
+            - unique
+            - not_null
+    
     - name: stg_meltano__live_plays
+      description: Staged NHL event level data from nhl-api (player-play level)
+      columns:
+        - name: id
+          description: Unique identifier for a player's event-level activity in an NHL game (game_id + team_id + player_id + event_id)
+          tests:
+            - unique
+            - not_null
+    
     - name: stg_meltano__players
+      description: Staged NHL player data from the nhl-api
+      columns:
+        - name: id
+          description: Unique identifier for an NHL player
+          tests:
+            - unique
+            - not_null
+    
     - name: stg_meltano__schedule
+      description: Staged NHL schedule data from nhl-api
+      columns:
+        - name: id
+          description: Unique identifier for NHL scheduled games
+          tests:
+            - unique
+            - not_null
+    
     - name: stg_meltano__seasons
+      description: Staged NHL seasons data from nhl-api
+      columns:
+        - name: id
+          description: Unique identifier for an NHL season
+          tests:
+            - unique
+            - not_null
+    
     - name: stg_meltano__teams
+      description: Staged NHL teams data from nhl-api
+      columns:
+        - name: id
+          description: Unique identifier for NHL teams
+          tests:
+            - unique
+            - not_null
