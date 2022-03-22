@@ -106,7 +106,7 @@ models:
         - name: prospect_weight
           description: Imperial weight, in pounds (e.g. 140)
         - name: prospect_shoots_catches
-          description: The handedness of the NHL prospect (R = right, L = left)
+          description: The handedness of the NHL prospect (e.g. R = right, L = left)
         - name: prospect_position_name
           description: Name of the position (e.g. Center, Left Wing, Defenseman)
         - name: prospect_position_abbreviation
@@ -145,6 +145,38 @@ models:
           tests:
             - unique
             - not_null
+        - name: game_id
+          description: Foreign key that maps to the NHL game ID - each game should have 2 rows in this table for each team involved in the game
+        - name: team_id
+          description: Foreign key that maps to the NHL team ID - each row represents a team playing in a game
+        - name: team_type
+          description: Describes the Away / Home status for each team playing in a game
+        - name: team_name
+          description: Name of the NHL team
+        - name: team_winner
+          description: True of the team scored more than the opposing team, False if the team scored less than the opposing team, NULL for Shootout results (will be fixed by linescore data, boxscore does not tell us the result of a shootout)
+        - name: team_goals
+          description: Number of goals scored by the team
+        - name: team_goal_differential
+          description: The difference between the number of goals scored, and the number of goals allowed by the team
+        - name: team_pim
+          description:  The number of penalties in minutes against the team
+        - name: team_shots
+          description: The number of shots (unsure if this is on goal or attempts) for the team
+        - name: team_powerplay_goals
+          description: The number of powerplay goals for the team
+        - name: team_powerplay_opportunities
+          description: The number of powerplay opportunities for the team
+        - name: team_faceoff_percentage
+          description:  The percentage of faceoffs won by the team (e.g. 100 * (faceoff wins / faceoff attempts))
+        - name: team_blocked
+          description: The number of blocked shots for the team
+        - name: team_takeaways
+          description: The number of takeaways for the team
+        - name: team_giveaways
+          description: The number of giveaways for the team
+        - name: team_hits
+          description: The number of hits for the team 
     
     - name: stg_meltano__boxscore_player
       description: Staged NHL boxscore player data from the NHL-API (game-player level)
@@ -154,6 +186,85 @@ models:
           tests:
             - unique
             - not_null
+        - name: game_id
+          description: 
+        - name: team_id
+          description: 
+        - name: player_id
+          description: 
+        - name: team_name
+          description: 
+        - name: team_type
+          description: 
+        - name: player_full_name
+          description: 
+        - name: player_roster_status
+          description: 
+        - name: player_position_code
+          description: 
+        - name: time_on_ice
+          description: 
+        - name: assists
+          description: 
+        - name: goals
+          description: 
+        - name: shots
+          description: 
+        - name: hits
+          description: 
+        - name: powerplay_goals
+          description: 
+        - name: powerplay_assists
+          description: 
+        - name: penalty_minutes
+          description: 
+        - name: faceoff_wins
+          description: 
+        - name: faceoff_taken
+          description: 
+        - name: takeaways
+          description: 
+        - name: giveaways
+          description: 
+        - name: short_handed_goals
+          description: 
+        - name: short_handed_assists
+          description: 
+        - name: blocked
+          description: 
+        - name: plus_minus
+          description: 
+        - name: even_time_on_ice
+          description: 
+        - name: powerplay_time_on_ice
+          description: 
+        - name: short_handed_time_on_ice
+          description: 
+        - name: pim
+          description: 
+        - name: saves
+          description: 
+        - name: powerplay_saves
+          description: 
+        - name: short_handed_saves
+          description: 
+        - name: even_saves
+          description: 
+        - name: short_handed_shots_against
+          description: 
+        - name: even_shots_against
+          description:  
+        - name: powerplay_shots_against
+          description:  
+        - name: decision
+          description:  
+        - name: save_percentage
+          description:  
+        - name: powerplay_save_percentage
+          description:  
+        - name: even_strength_save_percentage
+          description:  
+
     
     - name: stg_meltano__live_plays
       description: Staged NHL event level data from the NHL-API (player-play level)
