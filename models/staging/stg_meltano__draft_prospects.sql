@@ -1,6 +1,6 @@
 SELECT 
     /* Primary Key */
-    prospects.id
+    DISTINCT prospects.id
 
     /* Foreign Keys */
     ,prospects.nhlPlayerId as prospect_player_id

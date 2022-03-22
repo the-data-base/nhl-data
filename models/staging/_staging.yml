@@ -79,7 +79,55 @@ models:
           tests:
             - unique
             - not_null
-    
+        - name: prospect_player_id
+          description: Foreign key that maps to an NHL player ID
+        - name: prospect_category_id
+          description: Foreign key that maps to one of the four prospect categories - North American Skater (1), European Skater (2), North American Goalie (3) or European Goalie (4)
+        - name: prospect_first_name
+          description: First name of the NHL prospect
+        - name: prospect_last_name
+          description: Last name of the NHL prospect
+        - name: prospect_full_name
+          description: Full name of the NHL prospect
+        - name: prospect_birth_date
+          description: Birth date of the NHL prospect
+        - name: prospect_age_years
+          description: Age in years of the NHL prospect
+        - name: prospect_age_days
+          description: Age in days of the NHL prospect
+        - name: prospect_birth_city
+          description: Birth city of the NHL prospect
+        - name: prospect_birth_state_province
+          description: Birth state or province of the NHL prospect
+        - name: prospect_birth_country
+          description: Birth country of the NHL prospect
+        - name: prospect_height
+          description: Imperial height, in feet and inches (e.g. 5'10")
+        - name: prospect_weight
+          description: Imperial weight, in pounds (e.g. 140)
+        - name: prospect_shoots_catches
+          description: The handedness of the NHL prospect (R = right, L = left)
+        - name: prospect_position_name
+          description: Name of the position (e.g. Center, Left Wing, Defenseman)
+        - name: prospect_position_abbreviation
+          description: Abbreviation of the position (e.g. C, LW, D)
+        - name: prospect_draft_status
+          description: Unknown (e.g. NHL-10, NHL-54)
+        - name: prospect_category_name
+          description: Describes four prospect categories - North American Skater, European Skater, North American Goalie or European Goalie
+        - name: prospect_category_short_name
+          description: Describes four prospect categories - NA Skater, Euro Skater, NA Goalie or Euro Goalie
+        - name: prospect_amateur_team_name
+          description: Name of the amateur team that the NHL prospect plays for - unknown when, lots of nulls
+        - name: prospect_amateur_team_url
+          description: URL endpoint for amateur team
+        - name: prospect_rank_midterm
+          description: Unknown, lots of nulls
+        - name: prospect_rank_draft_year
+          description: Unknown, lots of null
+        - name: prospect_url
+          description: URL endpoint for the prospect
+
     - name: stg_meltano__boxscore_game
       description: Staged NHL boxscore data from the NHL-API (will be replaced/enhanced by linescore)
       columns:
