@@ -9,7 +9,7 @@ select
     , teams.franchise.franchiseId as franchise_id
 
     /* Properties */
-    , teams.name as name
+    , teams.name as full_name
     , teams.link as team_url
     , teams.venue.name as venue_name
     , teams.venue.link as venue_url

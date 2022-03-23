@@ -160,7 +160,7 @@ models:
         - name: team_goal_differential
           description: The difference between the number of goals scored, and the number of goals allowed by the team
         - name: team_pim
-          description:  The number of penalties in minutes against the team
+          description:  The number of penalties in minutes:seconds against the team
         - name: team_shots
           description: The number of shots (unsure if this is on goal or attempts) for the team
         - name: team_powerplay_goals
@@ -179,7 +179,7 @@ models:
           description: The number of hits for the team 
     
     - name: stg_meltano__boxscore_player
-      description: Staged NHL boxscore player data from the NHL-API (game-player level)
+      description: Staged NHL boxscore player data from the NHL-API (game-player level). Each row represents an individual player's summarized activity in an NHL game
       columns:
         - name: id
           description: Unique identifier for a player's summarized activity in an NHL game (game_id + team_id + player_id)
@@ -187,83 +187,83 @@ models:
             - unique
             - not_null
         - name: game_id
-          description: 
+          description: Foreign key that maps to an NHL game ID
         - name: team_id
-          description: 
+          description: Foreign key that maps to an NHL team ID
         - name: player_id
-          description: 
+          description: Foreign key that maps to an NHL player ID
         - name: team_name
-          description: 
+          description: Name of the NHL team
         - name: team_type
-          description: 
+          description: Describes the Away / Home status for the team that the player belonged to in that game
         - name: player_full_name
-          description: 
+          description: Full name of the NHL player
         - name: player_roster_status
-          description: 
+          description: Roster status of the NHL player (e.g. Y, N, I)
         - name: player_position_code
-          description: 
+          description: Position code (e.g. C, LW, D)
         - name: time_on_ice
-          description: 
+          description: Time on ice in minutes:seconds (e.g. 21:30)
         - name: assists
-          description: 
+          description: Number of assists (primary & secondary)
         - name: goals
-          description: 
+          description: Number of goals scored
         - name: shots
-          description: 
+          description: Number of shots taken
         - name: hits
-          description: 
+          description: Number of hits made
         - name: powerplay_goals
-          description: 
+          description: Number of powerplay goals scored
         - name: powerplay_assists
-          description: 
+          description: Number of powerplay assists (primary & secondary)
         - name: penalty_minutes
-          description: 
+          description: Number of penalties taken in minutes
         - name: faceoff_wins
-          description: 
+          description: Number of faceoffs won
         - name: faceoff_taken
-          description: 
+          description: Number of faceoffs taken
         - name: takeaways
-          description: 
+          description: Number of takeaways made
         - name: giveaways
-          description: 
+          description: Number of giveaways faulted for
         - name: short_handed_goals
-          description: 
+          description: Number of short-handed goals scored
         - name: short_handed_assists
-          description: 
+          description: Number of short-handed assists made
         - name: blocked
-          description: 
+          description: Number of blocked shots
         - name: plus_minus
-          description: 
+          description: Total plus minus in the game - plus for every goal scored while on the ice for, minus for every goal allowed while on the ice
         - name: even_time_on_ice
-          description: 
+          description: Time on ice in minutes:seconds at event-strength (5v5)
         - name: powerplay_time_on_ice
-          description: 
+          description: Time on ice in minutes:seconds on the man advantage / powerplay (5v4, 5v3, or 4v3)
         - name: short_handed_time_on_ice
-          description: 
+          description: Time on ice in minutes:seconds while short-handed / on the penalty kill (4v5, 3v5, or 3v4)
         - name: pim
-          description: 
+          description: Penalties in minutes:seconds
         - name: saves
-          description: 
+          description: Number of saves made
         - name: powerplay_saves
-          description: 
+          description: Number of saves made on the powerplay
         - name: short_handed_saves
-          description: 
+          description: Number of saves made on the penalty kill / short-handed
         - name: even_saves
-          description: 
+          description: Number of saves made at event strength
         - name: short_handed_shots_against
-          description: 
+          description: Number of shots against on the penalth kill / short-handed
         - name: even_shots_against
-          description:  
+          description:  Number of shots against at event strength
         - name: powerplay_shots_against
-          description:  
+          description: Number of shots against on the powerplay / mad advantage
         - name: decision
-          description:  
+          description: Win (W) or Loss (L) for goalies only (NULL if player)
         - name: save_percentage
-          description:  
+          description: Percentage of shots faced that were saved (100% * (Number of shots saved / Number of shots))
         - name: powerplay_save_percentage
-          description:  
+          description:  Percentage of shots faced on the powerplay that were saved (100% * (Number of shots saved / Number of shots))
         - name: even_strength_save_percentage
-          description:  
+          description:  Percentage of shots faced at even strength that were saved (100% * (Number of shots saved / Number of shots))
 
     
     - name: stg_meltano__live_plays
@@ -292,15 +292,103 @@ models:
           tests:
             - unique
             - not_null
-    
+        - name: game_id
+          description: Foreign key that maps to an NHL game
+        - name: season_id
+          description: Foreign key that maps to an NHL season
+        - name: away_team_id
+          description: Foreign key that maps to an NHL team (away team)
+        - name: home_team_id
+          description: Foreign key that maps to an NHL team (home team)
+        - name: venue_id
+          description: Foreign key tha tmaps to a team's venu (home team)
+        - name: game_number
+          description: Four digit number that is unique to a game in the context of a season (e.g. 0002)
+        - name: url
+          description: URL endpoint for schedule
+        - name: game_type
+          description: Code for the type of game (e.g. R = regular season)
+        - name: game_date
+          description: Date that the game takes place (e.g. 2021-01-14)
+        - name: abstract_game_state
+          description: Game state (e.g. Final)
+        - name: coded_game_state
+          description: Coded game state (e.g. 7)
+        - name: detailed_state
+          description: Detailed game state (e.g. Final) - should be different that game state, but look similar
+        - name: status_code
+          description: Unknown - looks similar to code_game_state
+        - name: is_start_time_tbd
+          description: Whether or not the start time is still to be decided (True / False)
+        - name: away_team_wins
+          description: Cumulative number of wins for the away team for the given season (wins for the team at that point in time)
+        - name: away_team_losses
+          description: Cumulative number of losses for the away team for the given season (losses for the team at that point in time)
+        - name: away_team_ot
+          description: Cumulative number of overtime wins for the away team for the given season (overtime wins for the team at that point in time)
+        - name: away_team_type
+          description: Type of away team (e.g. League)
+        - name: away_team_score
+          description: Goals scored by the away team
+        - name: away_team_name
+          description: Away team name
+        - name: away_team_url
+          description: Away team URL endpoint
+        - name: home_team_wins
+          description: Cumulative number of wins for the home team for the given season (wins for the team at that point in time)
+        - name: home_team_losses
+          description: Cumulative number of losses for the home team for the given season (losses for the team at that point in time)
+        - name: home_team_ot
+          description: Cumulative number of overtime wins for the home team for the given season (overtime wins for the team at that point in time)
+        - name: home_team_type
+          description: Type of home team (e.g. League)
+        - name: home_team_score
+          description: Goals scored by the home team
+        - name: home_team_name
+          description: Home team name
+        - name: home_team_url
+          description: Home team URL endpoint
+        - name: venue_name
+          description: Home team's venue / arena that the teams played in
+        - name: venue_url
+          description: URL endpoint for the venue
+        - name: content_url
+          description: URL endpoint for the content
+        - name: extracted_at
+          description: Timestamp that the data was retrieved
+        - name: loaded_at
+          description: Timestamp that the data was loaded
+
     - name: stg_meltano__seasons
       description: Staged NHL seasons data from the NHL-API
       columns:
         - name: id
-          description: Unique identifier for an NHL season
+          description: Unique identifier for an NHL season (e.g. "20172018")
           tests:
             - unique
             - not_null
+        - name: regular_season_start_date
+          description: The first date of the NHL regular season (e.g. "2017-10-04")
+        - name: regular_season_end_date
+          description: The last date of the NHL regular season (e.g. "2018-04-08")
+        - name: season_end_date
+          description: The last date of the NHL post season (e.g. "2018-06-07")
+        - name: number_of_games
+          description: The number of total games played by each NHL team
+        - name: has_ties_in_use
+          description: Whether or not ties were possible for that season (True / False)
+        - name: has_olympics_participation
+          description: Whether or not olympic participation at the NHL level was allowed for that season (True / False)
+        - name: has_conferences_in_use
+          description: Whether or not conferences were used for that season's playoff consideration (True / False)
+        - name: has_divisions_in_use
+          description: Whether or not divisions were used for that season's playoff consideration (True / False)
+        - name: has_wildcard_in_use
+          description: Whether or not wildcards were used for that season's playoff consideration (True / False)
+        - name: extracted_at
+          description: Timestamp that the data was retrieved
+        - name: loaded_at
+          description: Timestamp that the data was loaded
     
     - name: stg_meltano__teams
       description: Staged NHL teams data from the NHL-API
@@ -310,3 +398,59 @@ models:
           tests:
             - unique
             - not_null
+        - name: venue_timezone_id
+          description: Foreign key that maps to the timezone ID of the venue (e.g. America/Vancouver)
+        - name: division_id
+          description: Foreign key that maps to the division ID that the NHL team belongs to
+        - name: conference_id
+          description: Foreign key that maps to the conference ID that the NHL team belongs to
+        - name: franchise_id
+          description: Foreign key that maps to the franchise ID that the NHL originates from
+        - name: name
+          description: Full name of the NHL team (e.g. Vancouver Canucks)
+        - name: team_url
+          description: URL endpoint for the NHl team
+        - name: venue_name
+          description: Name of the venue / arena that the NHL team plays in
+        - name: venue_url
+          description: URL endpoint for the NHL team venue
+        - name: venue_city
+          description: City that the venue / arena is in
+        - name: venue_timezone_offset
+          description: Offset necessary to correct for timezone differences (e.g. Vancouver = -7)
+        - name: venue_timezone_name
+          description: Abbreviated timezone for the venue (e.g. PDT)
+        - name: abbreviation
+          description: Abbreviation for the NHL team (e.g. VAN)
+        - name: team_name
+          description: Second part of the team name (e.g. Canucks)
+        - name: location_name
+          description: First part of the team name (e.g. Vancouer)
+        - name: first_year_of_play
+          description: The inaugural year for the NHL team (e.g. 1970)
+        - name: division_name
+          description: Name of the division that the team currently plays in
+        - name: division_short_name
+          description: Short name for the division that the team currently plays in
+        - name: division_url
+          description: URL endpoint for division
+        - name: division_abbreviation
+          description: Abbreviated NHL division name (e.g. P)
+        - name: conference_name
+          description: Conference name that the team currently plays in
+        - name: conference_url
+          description: URL endpoint for the conference
+        - name: franchise_team_name
+          description: Name of the franchise (second part of full team name)
+        - name: franchise_url
+          description: URL endpoint for the franchise
+        - name: short_name
+          description: Slightly different short version of the team name
+        - name: official_site_url
+          description: Official site URL
+        - name: is_active
+          description: Whether or not the team is currently active in the NHL
+        - name: extracted_at
+          description: Timestamp that the data was retrieved
+        - name: loaded_at
+          description: Timestamp that the data was loaded
