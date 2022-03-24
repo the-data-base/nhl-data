@@ -1,13 +1,13 @@
 version: 2
 
 models:
+    - name: stg_meltano__boxscore
     - name: stg_meltano__conferences
     - name: stg_meltano__divisions
     - name: stg_meltano__draft
     - name: stg_meltano__draft_prospects
-    - name: stg_meltano__boxscore_game
-    - name: stg_meltano__boxscore_team
-    - name: stg_meltano__boxscore_player
+    - name: stg_meltano__games
+    - name: stg_meltano__linescore
     - name: stg_meltano__live_plays
     - name: stg_meltano__players
     - name: stg_meltano__schedule
