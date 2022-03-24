@@ -10,6 +10,7 @@ sources:
       - name: draft
       - name: draft_prospects
       - name: live_boxscore
+      - name: live_linescore
       - name: live_plays
       - name: players
       - name: schedule
