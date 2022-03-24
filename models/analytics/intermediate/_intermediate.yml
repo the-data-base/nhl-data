@@ -17,8 +17,6 @@ models:
     description: Staged seasons data from nhl-api
   - name: d_teams
     description: Staged teams data from nhl-api
-  - name: f_boxscore
-    description: Staged boxscore data from nhl-api
   - name: f_boxscore_game
     description: Staged boxscore game data from nhl-api (game level)
   - name: f_boxscore_team
