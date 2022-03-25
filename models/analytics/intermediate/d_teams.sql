@@ -8,7 +8,7 @@ select
     , franchise_id
 
     /* Properties */
-    , name
+    , full_name
     , team_url
     , venue_name
     , venue_url

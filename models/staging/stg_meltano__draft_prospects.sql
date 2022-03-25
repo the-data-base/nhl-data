@@ -1,6 +1,6 @@
-SELECT 
+select 
     /* Primary Key */
-    prospects.id
+    distinct prospects.id
 
     /* Foreign Keys */
     ,prospects.nhlPlayerId as prospect_player_id
@@ -31,7 +31,5 @@ SELECT
     ,prospects.ranks.midterm as prospect_rank_midterm
     ,prospects.ranks.draftYear as prospect_rank_draft_year
     ,prospects.link as prospect_url
-FROM 
+from 
     {{ source('meltano', 'draft_prospects') }} as prospects
-ORDER BY
-    PARSE_DATE('%Y-%m-%d',  prospects.birthDate)  desc
