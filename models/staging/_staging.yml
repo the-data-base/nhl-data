@@ -1,6 +1,8 @@
 version: 2
 
 models:
+    - name: stg_meltano__boxscore_player
+    - name: stg_meltano__boxscore_team
     - name: stg_meltano__boxscore
     - name: stg_meltano__conferences
     - name: stg_meltano__divisions
