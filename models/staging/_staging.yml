@@ -1,13 +1,13 @@
 version: 2
 
 models:
-    
+
     - name: stg_meltano__conferences
       description: Staged NHL conferences data from the NHL-API
       columns:
         - name: id
           description: Unique identifier for NHL conferences
-          tests: 
+          tests:
             - unique
             - not_null
         - name: conference_name
@@ -34,13 +34,13 @@ models:
         - name: division_name
           description: Name of the NHL division
         - name: division_name_short
-          description: Short name for the NHL division  
+          description: Short name for the NHL division
         - name: division_url
           description: URL endpoint
         - name: division_abbreviation
           description: Abbreviated NHL conference name
         - name: is_active
-          description: Whether or not the conference is still active        
+          description: Whether or not the conference is still active
 
     - name: stg_meltano__draft
       description: Staged NHL entry draft data from the NHL-API
@@ -70,7 +70,7 @@ models:
           description: URL endpoint
         - name: draft_team_name
           description: Name of the NHL team that drafted the NHL prospect
-    
+
     - name: stg_meltano__draft_prospects
       description: Staged NHL draft_prospects data from the NHL-API
       columns:
@@ -132,11 +132,13 @@ models:
       description: Staged NHL boxscore data from the NHL-API (will be replaced/enhanced by linescore)
       columns:
         - name: id
-          description: Unique identifier for an NHL game (game_id)
+          description: |
+            Unique identifier for an NHL game (game_id)
+            {{ doc("game_id_description") }}
           tests:
             - unique
             - not_null
-    
+
     - name: stg_meltano__boxscore_team
       description: Staged NHL boxscore game data from the NHL-API (game-team level)
       columns:
@@ -146,7 +148,9 @@ models:
             - unique
             - not_null
         - name: game_id
-          description: Foreign key that maps to the NHL game ID - each game should have 2 rows in this table for each team involved in the game
+          description: |
+            Foreign key that maps to the NHL game ID - each game should have 2 rows in this table for each team involved in the game
+            {{ doc("game_id_description") }}
         - name: team_id
           description: Foreign key that maps to the NHL team ID - each row represents a team playing in a game
         - name: team_type
@@ -176,8 +180,8 @@ models:
         - name: team_giveaways
           description: The number of giveaways for the team
         - name: team_hits
-          description: The number of hits for the team 
-    
+          description: The number of hits for the team
+
     - name: stg_meltano__boxscore_player
       description: Staged NHL boxscore player data from the NHL-API (game-player level). Each row represents an individual player's summarized activity in an NHL game
       columns:
@@ -187,7 +191,9 @@ models:
             - unique
             - not_null
         - name: game_id
-          description: Foreign key that maps to an NHL game ID
+          description: |
+            Foreign key that maps to an NHL game ID
+            {{ doc("game_id_description") }}
         - name: team_id
           description: Foreign key that maps to an NHL team ID
         - name: player_id
@@ -265,7 +271,7 @@ models:
         - name: even_strength_save_percentage
           description:  Percentage of shots faced at even strength that were saved (100% * (Number of shots saved / Number of shots))
 
-    
+
     - name: stg_meltano__live_plays
       description: Staged NHL event level data from the NHL-API (player-play level)
       columns:
@@ -275,7 +281,9 @@ models:
             - unique
             - not_null
         - name: game_id
-          description: Foreign key that maps to an NHL game ID
+          description: |
+            Foreign key that maps to an NHL game ID
+            {{ doc("game_id_description") }}
         - name: event_idx
           description: Foreign key that maps to the sequence of the event relative to that game, in ascending order (e.g. 1 = first event, 2 - second event)
         - name: event_id
@@ -373,14 +381,14 @@ models:
         - name: goals_home_lag
           description: Cumulative home team goals scored in the game 1 play before the current play (e.g. if event prior to this event was a home team goal, and the current play was a hit, then the value for this column would be 1)
         - name: goals_away_lag
-          description: Cumulative away team goals scored in the game 1 play before the current play (e.g. if event prior to this event was a away team goal, and the current play was a hit, then the value for this column would be 1)        
+          description: Cumulative away team goals scored in the game 1 play before the current play (e.g. if event prior to this event was a away team goal, and the current play was a hit, then the value for this column would be 1)
         - name: goal_difference_lag
           description: The absolute value difference in goals between the home and away teams in the game using the home and away team lagged goals scored
         - name: winning_team_lag
           description: Determines the previously winning team (e.g. "Tie", "Home" or "Away") before the play in question
         - name: game_state_lag
           description: The previous state of scoreboard prior to the play in question (e.g. "Tie", "Close" (1 goal difference), "Buffer" (2 goal difference), "Comfortable" (3 goal difference), "Blowout" (4 goal difference))
-    
+
     - name: stg_meltano__players
       description: Staged NHL player data from the NHL-API
       columns:
@@ -455,7 +463,9 @@ models:
             - unique
             - not_null
         - name: game_id
-          description: Foreign key that maps to an NHL game
+          description: |
+            Foreign key that maps to an NHL game
+            {{ doc("game_id_description") }}
         - name: season_id
           description: Foreign key that maps to an NHL season
         - name: away_team_id
@@ -551,7 +561,7 @@ models:
           description: Timestamp that the data was retrieved
         - name: loaded_at
           description: Timestamp that the data was loaded
-    
+
     - name: stg_meltano__teams
       description: Staged NHL teams data from the NHL-API
       columns:
