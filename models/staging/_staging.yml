@@ -32,7 +32,7 @@ models:
           description: Foreign key that maps to the NHL conference
         - name: division_name
           description: Name of the NHL division
-        - name: division_name_short
+        - name: division_short_name
           description: Short name for the NHL division
         - name: division_url
           description: URL endpoint
