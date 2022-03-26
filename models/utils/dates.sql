@@ -17,7 +17,8 @@ with date_spine as (
         , extract(week from date_day) as week_number
         , format_datetime('%b', date_day) as month_name
         , format_datetime('%a', date_day) as day_of_week_name
-    from date_spine
+    from 
+        date_spine
 )
 
 , dim_date as (
@@ -25,6 +26,7 @@ with date_spine as (
         date_id
         , date_day
         , day_of_week_name
+        , year_number
         , quarter_number
         , concat("Q", quarter_number, ' ', year_number) as quarter_desc
         , month_number
@@ -32,7 +34,23 @@ with date_spine as (
         , concat("M", lpad(cast(month_number as string), 2, '0'), ' ', year_number) as month_desc
         , week_number
         , concat("Wk ", lpad(cast(week_number as string), 2, '0'), ' ', year_number) as week_desc
-    from date_periods
+    from 
+        date_periods
 )
 
-select * from dim_date
+select 
+    /* Primary Key */
+    dim_date.date_id as id
+    /* Properties */
+    ,dim_date.date_day
+    ,dim_date.day_of_week_name
+    ,dim_date.year_number
+    ,dim_date.quarter_number
+    ,dim_date.quarter_desc
+    ,dim_date.month_number
+    ,dim_date.month_name
+    ,dim_date.month_desc
+    ,dim_date.week_number
+    ,dim_date.week_desc
+from 
+    dim_date

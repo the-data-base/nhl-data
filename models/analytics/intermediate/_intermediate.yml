@@ -20,6 +20,35 @@ models:
       - name: is_active
         description: Whether or not the conference is still active
 
+  - name: d_date
+    description: Final version of calendar days data (2010-01-01 - 2030-01-01)
+    columns:
+      - name: id
+        description: Unique identifier for a calendar day (formatted from date_day as '%Y%m%d')
+        tests:
+          - unique
+          - not_null
+      - name: date_day
+        description: Day expressed as YYYY-MM-DD
+      - name: day_of_week_name
+        description: Calendar day of week name (e.g. Monday)
+      - name: year_number
+        description: Year number (e.g. 2022)
+      - name: quarter_number
+        description: Quarter number (e.g. 1, 2, 3, 4)
+      - name: quarter_desc
+        description: Description of the quarter + year, with "Q" as the prefix
+      - name: month_number
+        description: Month number (e.g. 1, 2, 3, 4... 12)
+      - name: month_name
+        description: Name of the month (e.g. January)
+      - name: month_desc
+        description: Description of the month + year, with "M" as the prefix
+      - name: week_number
+        description: Week number relative to year
+      - name: week_desc
+        description: Description of the week + year, with "Wk" as the prefix
+
   - name: d_divisions
     description: Final version of NHL division data from the NHL-API
     columns:
@@ -193,7 +222,6 @@ models:
       - name: loaded_at
         description: Timestamp that the data was loaded
 
-
   - name: d_schedule
     description: Final version of NHL schedule data from nhl-api
     columns:
@@ -272,12 +300,100 @@ models:
         description: Timestamp that the data was loaded
 
   - name: d_seasons
-    description: Staged seasons data from nhl-api
-
+    description: Final version of NHL seasons data from nhl-api
+    columns:
+      - name: id
+        description: Unique identifier for an NHL season (e.g. "20172018")
+        tests:
+          - unique
+          - not_null
+      - name: regular_season_start_date
+        description: The first date of the NHL regular season (e.g. "2017-10-04")
+      - name: regular_season_end_date
+        description: The last date of the NHL regular season (e.g. "2018-04-08")
+      - name: season_end_date
+        description: The last date of the NHL post season (e.g. "2018-06-07")
+      - name: number_of_games
+        description: The number of total games played by each NHL team
+      - name: has_ties_in_use
+        description: Whether or not ties were possible for that season (True / False)
+      - name: has_olympics_participation
+        description: Whether or not olympic participation at the NHL level was allowed for that season (True / False)
+      - name: has_conferences_in_use
+        description: Whether or not conferences were used for that season's playoff consideration (True / False)
+      - name: has_divisions_in_use
+        description: Whether or not divisions were used for that season's playoff consideration (True / False)
+      - name: has_wildcard_in_use
+        description: Whether or not wildcards were used for that season's playoff consideration (True / False)
+      - name: extracted_at
+        description: Timestamp that the data was retrieved
+      - name: loaded_at
+        description: Timestamp that the data was loaded
 
   - name: d_teams
-    description: Staged teams data from nhl-api
-
+    description: Final version of NHL teams data from nhl-api
+    columns:
+      - name: id
+        description: Unique identifier for NHL teams
+        tests:
+          - unique
+          - not_null
+      - name: venue_timezone_id
+        description: Foreign key that maps to the timezone ID of the venue (e.g. America/Vancouver)
+      - name: division_id
+        description: Foreign key that maps to the division ID that the NHL team belongs to
+      - name: conference_id
+        description: Foreign key that maps to the conference ID that the NHL team belongs to
+      - name: franchise_id
+        description: Foreign key that maps to the franchise ID that the NHL originates from
+      - name: full_name
+        description: Full name of the NHL team (e.g. Vancouver Canucks)
+      - name: team_url
+        description: URL endpoint for the NHl team
+      - name: venue_name
+        description: Name of the venue / arena that the NHL team plays in
+      - name: venue_url
+        description: URL endpoint for the NHL team venue
+      - name: venue_city
+        description: City that the venue / arena is in
+      - name: venue_timezone_offset
+        description: Offset necessary to correct for timezone differences (e.g. Vancouver = -7)
+      - name: venue_timezone_name
+        description: Abbreviated timezone for the venue (e.g. PDT)
+      - name: abbreviation
+        description: Abbreviation for the NHL team (e.g. VAN)
+      - name: team_name
+        description: Second part of the team name (e.g. Canucks)
+      - name: location_name
+        description: First part of the team name (e.g. Vancouer)
+      - name: first_year_of_play
+        description: The inaugural year for the NHL team (e.g. 1970)
+      - name: division_name
+        description: Name of the division that the team currently plays in
+      - name: division_short_name
+        description: Short name for the division that the team currently plays in
+      - name: division_url
+        description: URL endpoint for division
+      - name: division_abbreviation
+        description: Abbreviated NHL division name (e.g. P)
+      - name: conference_name
+        description: Conference name that the team currently plays in
+      - name: conference_url
+        description: URL endpoint for the conference
+      - name: franchise_team_name
+        description: Name of the franchise (second part of full team name)
+      - name: franchise_url
+        description: URL endpoint for the franchise
+      - name: short_name
+        description: Slightly different short version of the team name
+      - name: official_site_url
+        description: Official site URL
+      - name: is_active
+        description: Whether or not the team is currently active in the NHL
+      - name: extracted_at
+        description: Timestamp that the data was retrieved
+      - name: loaded_at
+        description: Timestamp that the data was loaded
 
   - name: f_boxscore_player
     description: Staged boxscore player data from nhl-api (game-player level)
