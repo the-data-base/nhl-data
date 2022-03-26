@@ -127,7 +127,7 @@ models:
         - name: prospect_url
           description: URL endpoint for the prospect
 
-    - name: stg_meltano__boxscore_game
+    - name: stg_meltano__boxscore
       description: Staged NHL boxscore data from the NHL-API (will be replaced/enhanced by linescore)
       columns:
         - name: id
@@ -137,6 +137,89 @@ models:
           tests:
             - unique
             - not_null
+
+    - name: stg_meltano__linescore
+      description: Staged NHL linescore data from the NHL-API (enhancement on stg_meltano__boxscore)
+      columns:
+        - name: id
+          description: |
+            Unique identifier for an NHL game (game_id)
+            {{ doc("game_id_description") }}
+          tests:
+            - unique
+            - not_null
+
+   - name: stg_meltano__games
+      description: Staged NHL boxscore & linescore data from the NHL-API
+      columns:
+        - name: id
+          description: |
+            Unique identifier for an NHL game (game_id)
+            {{ doc("game_id_description") }}          tests:
+            - unique
+            - not_null
+        - name: game_id
+          description: |
+            Unique identifier for an NHL game (game_id)
+            {{ doc("game_id_description") }}        
+        - name: home_team_id
+          description: Foreign key that maps to an NHL team (home team)
+        - name: away_team_id
+          description: Foreign key that maps to an NHL team (away team)
+        - name: game_score_description
+          description: Description of the NHL game scoreline
+        - name: game_matchup_description
+          description: Description of the participants in the NHL game
+        - name: game_winning_team_id
+          description: Winning team's team ID
+        - name: game_winning_team_name
+          description: Winning team's team name
+        - name: game_absolute_goal_differential
+          description: Absolute goal differential between the winner and loser
+        - name: home_team_goals
+          description: Number of goals scored by the home team
+        - name: away_team_goals
+          description: Number of goals scored by the away team
+        - name: home_team_name
+          description: Home team's team name
+        - name: home_team_pim
+          description: Number of penalty minutes taken by the home team
+        - name: home_team_shots
+          description: Number of shots taken by the home team
+        - name: home_team_powerplay_goals
+          description: Number of powerplay goals scored by the home team
+        - name: home_team_powerplay_opportunities
+          description: Number of powerplay opportunities had by the home team
+        - name: home_team_faceoff_percentage
+          description: Faceoff percentage (wins / attempts) of the home team
+        - name: home_team_blocked
+          description: Number of blocked shots by the home team
+        - name: home_team_takeaways
+          description: Number of takeaways made by the home team
+        - name: home_team_giveaways
+          description: Number of giveaways faulted for by the home team
+        - name: home_team_hits
+          description: Number of hits made by the home team
+        - name: away_team_name
+          description: Away team's team name
+        - name: away_team_pim
+          description: Number of penalty minutes taken by the away team
+        - name: away_team_shots
+          description: Number of shots taken by the away team
+        - name: away_team_powerplay_goals
+          description: Number of powerplay goals scored by the away team
+        - name: away_team_powerplay_opportunities
+          description: Number of powerplay opportunities had by the away team
+        - name: away_team_faceoff_percentage
+          description: Faceoff percentage (wins / attempts) of the away team
+        - name: away_team_blocked
+          description: Number of blocked shots by the away team
+        - name: away_team_takeaways
+          description: Number of takeaways made by the away team
+        - name: away_team_giveaways
+          description: Number of giveaways faulted for by the away team
+        - name: away_team_hits
+          description: Number of hits made by the away team
 
     - name: stg_meltano__boxscore_team
       description: Staged NHL boxscore game data from the NHL-API (game-team level)

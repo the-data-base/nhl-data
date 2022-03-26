@@ -48,11 +48,11 @@ with
             , boxscore.away_team_takeaways
             , boxscore.away_team_giveaways
             , boxscore.away_team_hits
-        from linescore
-        left join boxscore
-            on linescore.game_id = boxscore.game_id
-            and linescore.home_team_id = boxscore.home_team_id
-            and linescore.away_team_id = boxscore.away_team_id
+        from 
+            linescore
+            left join boxscore on linescore.game_id = boxscore.game_id
+                               and linescore.home_team_id = boxscore.home_team_id
+                               and linescore.away_team_id = boxscore.away_team_id
     )
 
 select * from final

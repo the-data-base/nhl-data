@@ -396,12 +396,136 @@ models:
         description: Timestamp that the data was loaded
 
   - name: f_boxscore_player
-    description: Staged boxscore player data from nhl-api (game-player level)
-
+    description: Final version of NHL boxscore player data from the NHL-API (game-player level). Each row represents an individual player's summarized activity in an NHL game
+    columns:
+      - name: id
+        description: Unique identifier for a player's summarized activity in an NHL game (game_id + team_id + player_id)
+        tests:
+          - unique
+          - not_null
+      - name: game_id
+        description: |
+          Foreign key that maps to an NHL game ID
+          {{ doc("game_id_description") }}
+      - name: team_id
+        description: Foreign key that maps to an NHL team ID
+      - name: player_id
+        description: Foreign key that maps to an NHL player ID
+      - name: team_name
+        description: Name of the NHL team
+      - name: team_type
+        description: Describes the Away / Home status for the team that the player belonged to in that game
+      - name: player_full_name
+        description: Full name of the NHL player
+      - name: player_roster_status
+        description: Roster status of the NHL player (e.g. Y, N, I)
+      - name: player_position_code
+        description: Position code (e.g. C, LW, D)
+      - name: time_on_ice
+        description: Time on ice in minutes:seconds (e.g. 21:30)
+      - name: assists
+        description: Number of assists (primary & secondary)
+      - name: goals
+        description: Number of goals scored
+      - name: shots
+        description: Number of shots taken
+      - name: hits
+        description: Number of hits made
+      - name: powerplay_goals
+        description: Number of powerplay goals scored
+      - name: powerplay_assists
+        description: Number of powerplay assists (primary & secondary)
+      - name: penalty_minutes
+        description: Number of penalties taken in minutes
+      - name: faceoff_wins
+        description: Number of faceoffs won
+      - name: faceoff_taken
+        description: Number of faceoffs taken
+      - name: takeaways
+        description: Number of takeaways made
+      - name: giveaways
+        description: Number of giveaways faulted for
+      - name: short_handed_goals
+        description: Number of short-handed goals scored
+      - name: short_handed_assists
+        description: Number of short-handed assists made
+      - name: blocked
+        description: Number of blocked shots
+      - name: plus_minus
+        description: Total plus minus in the game - plus for every goal scored while on the ice for, minus for every goal allowed while on the ice
+      - name: even_time_on_ice
+        description: Time on ice in minutes:seconds at event-strength (5v5)
+      - name: powerplay_time_on_ice
+        description: Time on ice in minutes:seconds on the man advantage / powerplay (5v4, 5v3, or 4v3)
+      - name: short_handed_time_on_ice
+        description: Time on ice in minutes:seconds while short-handed / on the penalty kill (4v5, 3v5, or 3v4)
+      - name: pim
+        description: Penalties in minutes:seconds
+      - name: saves
+        description: Number of saves made
+      - name: powerplay_saves
+        description: Number of saves made on the powerplay
+      - name: short_handed_saves
+        description: Number of saves made on the penalty kill / short-handed
+      - name: even_saves
+        description: Number of saves made at event strength
+      - name: short_handed_shots_against
+        description: Number of shots against on the penalth kill / short-handed
+      - name: even_shots_against
+        description:  Number of shots against at event strength
+      - name: powerplay_shots_against
+        description: Number of shots against on the powerplay / mad advantage
+      - name: decision
+        description: Win (W) or Loss (L) for goalies only (NULL if player)
+      - name: save_percentage
+        description: Percentage of shots faced that were saved (100% * (Number of shots saved / Number of shots))
+      - name: powerplay_save_percentage
+        description:  Percentage of shots faced on the powerplay that were saved (100% * (Number of shots saved / Number of shots))
+      - name: even_strength_save_percentage
+        description:  Percentage of shots faced at even strength that were saved (100% * (Number of shots saved / Number of shots))
 
   - name: f_boxscore_team
-    description: Staged boxscore player data from nhl-api (game-team level)
-
+    description: Final version of NHL boxscore game data from the NHL-API (game-team level)
+    columns:
+      - name: id
+        description: Unique identifier for an team's involvement in an NHL game (game_id + team_id)
+        tests:
+          - unique
+          - not_null
+      - name: game_id
+        description: |
+          Foreign key that maps to the NHL game ID - each game should have 2 rows in this table for each team involved in the game
+          {{ doc("game_id_description") }}
+      - name: team_id
+        description: Foreign key that maps to the NHL team ID - each row represents a team playing in a game
+      - name: team_type
+        description: Describes the Away / Home status for each team playing in a game
+      - name: team_name
+        description: Name of the NHL team
+      - name: team_winner
+        description: True of the team scored more than the opposing team, False if the team scored less than the opposing team, NULL for Shootout results (will be fixed by linescore data, boxscore does not tell us the result of a shootout)
+      - name: team_goals
+        description: Number of goals scored by the team
+      - name: team_goal_differential
+        description: The difference between the number of goals scored, and the number of goals allowed by the team
+      - name: team_pim
+        description:  The number of penalties in minutes:seconds against the team
+      - name: team_shots
+        description: The number of shots (unsure if this is on goal or attempts) for the team
+      - name: team_powerplay_goals
+        description: The number of powerplay goals for the team
+      - name: team_powerplay_opportunities
+        description: The number of powerplay opportunities for the team
+      - name: team_faceoff_percentage
+        description:  The percentage of faceoffs won by the team (e.g. 100 * (faceoff wins / faceoff attempts))
+      - name: team_blocked
+        description: The number of blocked shots for the team
+      - name: team_takeaways
+        description: The number of takeaways for the team
+      - name: team_giveaways
+        description: The number of giveaways for the team
+      - name: team_hits
+        description: The number of hits for the team
 
   - name: f_games
     description: Staged game data from nhl-api (game level)
