@@ -1,7 +1,6 @@
 version: 2
 
 models:
-
     - name: stg_meltano__conferences
       description: Staged NHL conferences data from the NHL-API
       columns:
