@@ -4,21 +4,21 @@ models:
   - name: d_conferences
     description: Final version of NHL conferences data from nhl-api.
     columns:
-   - name: id
-          description: Unique identifier for NHL conferences
-          tests:
-            - unique
-            - not_null
-        - name: conference_name
-          description: Name of the NHL conference
-        - name: conference_url
-          description: URL endpoint
-        - name: conference_abbreviation
-          description: Abbreviated NHL conference name
-        - name: conference_short_name
-          description: Short name for the NHL conference
-        - name: is_active
-          description: Whether or not the conference is still active
+      - name: id
+        description: Unique identifier for NHL conferences
+        tests:
+          - unique
+          - not_null
+      - name: conference_name
+        description: Name of the NHL conference
+      - name: conference_url
+        description: URL endpoint
+      - name: conference_abbreviation
+        description: Abbreviated NHL conference name
+      - name: conference_short_name
+        description: Short name for the NHL conference
+      - name: is_active
+        description: Whether or not the conference is still active
 
   - name: d_divisions
     description: Final version of NHL division data from the NHL-API
@@ -43,20 +43,233 @@ models:
 
 
   - name: d_draft
-    description: Staged draft data from nhl-api (still to-do)
-
+    description: Final version of NHL rookie draft data from nhl-api (still to-do)
+    columns:
+      - name: id
+        description: Unique identifier for an NHL rookie draft (generated via dbt_utils.surrogate_key)
+        tests:
+          - unique
+          - not_null
+      - name: overall_pick_id
+        description: Unique identifier for an NHL rookie draft (draft year + overall pick)
+      - name: draft_prospect_id
+        description: Foreign key that maps to an NHL draft prospect
+      - name: draft_team_id
+        description: Foreign key that maps to the NHL team that drafted the NHL prospect
+      - name: draft_year
+        description: Year of the NHL entry draft
+      - name: draft_overall_pick
+        description: The overall pick in the NHL entry draft. For example, `1` is the first overall pick
+      - name: draft_round
+        description: The drafting round that the selection was made in
+      - name: draft_round_pick
+        description: The pick in the NHL entry draft made relative to the round
+      - name: draft_prospect_name
+        description: Name of the drafted NHL prospect
+      - name: draft_url
+        description: URL endpoint
+      - name: draft_team_name
+        description: Name of the NHL team that drafted the NHL prospect
 
   - name: d_draft_prospects
-    description: Staged draft_prospects data from nhl-api (still to-do)
-
+    description: Final version of NHL rookie draft prospects data from nhl-api (still to-do)
+    columns:
+      - name: id
+        description: Unique identifier for a drafted NHL prospect
+        tests:
+          - unique
+          - not_null
+      - name: prospect_player_id
+        description: Foreign key that maps to an NHL player ID
+      - name: prospect_category_id
+        description: Foreign key that maps to one of the four prospect categories - North American Skater (1), European Skater (2), North American Goalie (3) or European Goalie (4)
+      - name: prospect_first_name
+        description: First name of the NHL prospect
+      - name: prospect_last_name
+        description: Last name of the NHL prospect
+      - name: prospect_full_name
+        description: Full name of the NHL prospect
+      - name: prospect_birth_date
+        description: Birth date of the NHL prospect
+      - name: prospect_age_years
+        description: Age in years of the NHL prospect
+      - name: prospect_age_days
+        description: Age in days of the NHL prospect
+      - name: prospect_birth_city
+        description: Birth city of the NHL prospect
+      - name: prospect_birth_state_province
+        description: Birth state or province of the NHL prospect
+      - name: prospect_birth_country
+        description: Birth country of the NHL prospect
+      - name: prospect_height
+        description: Imperial height, in feet and inches (e.g. 5'10")
+      - name: prospect_weight
+        description: Imperial weight, in pounds (e.g. 140)
+      - name: prospect_shoots_catches
+        description: The handedness of the NHL prospect (e.g. R = right, L = left)
+      - name: prospect_position_name
+        description: Name of the position (e.g. Center, Left Wing, Defenseman)
+      - name: prospect_position_abbreviation
+        description: Abbreviation of the position (e.g. C, LW, D)
+      - name: prospect_draft_status
+        description: Unknown (e.g. NHL-10, NHL-54)
+      - name: prospect_category_name
+        description: Describes four prospect categories - North American Skater, European Skater, North American Goalie or European Goalie
+      - name: prospect_category_short_name
+        description: Describes four prospect categories - NA Skater, Euro Skater, NA Goalie or Euro Goalie
+      - name: prospect_amateur_team_name
+        description: Name of the amateur team that the NHL prospect plays for - unknown when, lots of nulls
+      - name: prospect_amateur_team_url
+        description: URL endpoint for amateur team
+      - name: prospect_rank_midterm
+        description: Unknown, lots of nulls
+      - name: prospect_rank_draft_year
+        description: Unknown, lots of null
+      - name: prospect_url
+        description: URL endpoint for the prospect
 
   - name: d_players
-    description: Staged player data from nhl-api
+    description: Final version of NHL player data from nhl-api (still to-do)
+    columns:
+      - name: id
+        description: Unique identifier for an NHL player
+        tests:
+          - unique
+          - not_null
+      - name: current_team_id
+        description: Foreign key that maps to the NHL team ID that the NHL player currently plays for
+      - name: full_name
+        description: Full name of the NHL player
+      - name: player_url
+        description: URL endpoint for NHL player
+      - name: first_name
+        description: First name of the NHL player
+      - name: last_name
+        description: Last name of the NHL player
+      - name: primary_number
+        description: Number that the player usually wears
+      - name: birth_date
+        description: Birth date of the NHL player
+      - name: current_age
+        description: Age in years of the NHL player
+      - name: birth_city
+        description: Birth city of the NHL player
+      - name: birth_state_province
+        description: Birth state or province of the NHL player
+      - name: birth_country
+        description: Birth country of the NHL player
+      - name: nationality
+        description: Nationality of the NHL player
+      - name: height
+        description: Imperial height, in feet and inches (e.g. 5'10")
+      - name: weight
+        description: Imperial weight, in pounds (e.g. 140)
+      - name: is_active
+        description: Whether or not the NHL player is currently active (True / False)
+      - name: is_alternate_captain
+        description: Whether or not the NHL player is currently an alternate captain for their team (True / False)
+      - name: is_captain
+        description: Whether or not the NHL player is currently the captain of their team (True / False)
+      - name: is_rookie
+        description: Whether or not the NHL player is currently a rookie (True / False)
+      - name: shoots_catches
+        description: The handedness of the NHL player (e.g. R = right, L = left)
+      - name: roster_status
+        description: Roster status of the NHL player (e.g. Y, N, I)
+      - name: current_team_name
+        description: Name of the NHL team the player currently plays for
+      - name: current_team_url
+        description: URL endpoint for current NHL team
+      - name: primary_position_code
+        description: Position code of the position most played (e.g. C, L, D)
+      - name: primary_position_name
+        description: Position name of the position most played (e.g. Center, Left Wing, Defenseman)
+      - name: primary_position_type
+        description: Position grouping for the position most played (e.g. Forward, Defenseman)
+      - name: primary_position_abbreviation
+        description: Position abbreviation of the position most played (e.g. C, LW, D)
+      - name: extracted_at
+        description: Timestamp that the data was retrieved
+      - name: loaded_at
+        description: Timestamp that the data was loaded
 
 
   - name: d_schedule
-    description: Staged schedule data from nhl-api
-
+    description: Final version of NHL schedule data from nhl-api
+    columns:
+      - name: id
+        description: Unique identifier for NHL scheduled games
+        tests:
+          - unique
+          - not_null
+      - name: game_id
+        description: |
+          Foreign key that maps to an NHL game
+          {{ doc("game_id_description") }}
+      - name: season_id
+        description: Foreign key that maps to an NHL season
+      - name: away_team_id
+        description: Foreign key that maps to an NHL team (away team)
+      - name: home_team_id
+        description: Foreign key that maps to an NHL team (home team)
+      - name: venue_id
+        description: Foreign key tha tmaps to a team's venu (home team)
+      - name: game_number
+        description: Four digit number that is unique to a game in the context of a season (e.g. 0002)
+      - name: url
+        description: URL endpoint for schedule
+      - name: game_type
+        description: Code for the type of game (e.g. R = regular season)
+      - name: game_date
+        description: Date that the game takes place (e.g. 2021-01-14)
+      - name: abstract_game_state
+        description: Game state (e.g. Final)
+      - name: coded_game_state
+        description: Coded game state (e.g. 7)
+      - name: detailed_state
+        description: Detailed game state (e.g. Final) - should be different that game state, but look similar
+      - name: status_code
+        description: Unknown - looks similar to code_game_state
+      - name: is_start_time_tbd
+        description: Whether or not the start time is still to be decided (True / False)
+      - name: away_team_wins
+        description: Cumulative number of wins for the away team for the given season (wins for the team at that point in time)
+      - name: away_team_losses
+        description: Cumulative number of losses for the away team for the given season (losses for the team at that point in time)
+      - name: away_team_ot
+        description: Cumulative number of overtime wins for the away team for the given season (overtime wins for the team at that point in time)
+      - name: away_team_type
+        description: Type of away team (e.g. League)
+      - name: away_team_score
+        description: Goals scored by the away team
+      - name: away_team_name
+        description: Away team name
+      - name: away_team_url
+        description: Away team URL endpoint
+      - name: home_team_wins
+        description: Cumulative number of wins for the home team for the given season (wins for the team at that point in time)
+      - name: home_team_losses
+        description: Cumulative number of losses for the home team for the given season (losses for the team at that point in time)
+      - name: home_team_ot
+        description: Cumulative number of overtime wins for the home team for the given season (overtime wins for the team at that point in time)
+      - name: home_team_type
+        description: Type of home team (e.g. League)
+      - name: home_team_score
+        description: Goals scored by the home team
+      - name: home_team_name
+        description: Home team name
+      - name: home_team_url
+        description: Home team URL endpoint
+      - name: venue_name
+        description: Home team's venue / arena that the teams played in
+      - name: venue_url
+        description: URL endpoint for the venue
+      - name: content_url
+        description: URL endpoint for the content
+      - name: extracted_at
+        description: Timestamp that the data was retrieved
+      - name: loaded_at
+        description: Timestamp that the data was loaded
 
   - name: d_seasons
     description: Staged seasons data from nhl-api
