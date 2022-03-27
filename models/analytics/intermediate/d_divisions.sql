@@ -1,15 +1,14 @@
 select
     /* Primary Key */
-    id
-
+    stg_meltano__divisions.id
     /* Foreign Keys */
-    , conference_id
-
+    ,stg_meltano__divisions.conference_id
     /* Properties */
-    , division_name
-    , division_name_short as division_short_name
-    , division_url
-    , division_abbreviation
-    , is_active
+    ,stg_meltano__divisions.division_name
+    ,stg_meltano__divisions.division_short_name 
+    ,stg_meltano__divisions.division_url
+    ,stg_meltano__divisions.division_abbreviation
+    ,stg_meltano__divisions.is_active
 
-from {{ ref('stg_meltano__divisions') }}
+from 
+    {{ ref('stg_meltano__divisions') }}
