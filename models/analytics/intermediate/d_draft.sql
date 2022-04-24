@@ -1,3 +1,3 @@
 --#TODO
 select *
-from {{ ref('stg_meltano__draft') }}
+from {{ ref('stg_nhl__draft') }}

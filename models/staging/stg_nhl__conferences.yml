@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_nhl__conferences
+    description: Staged NHL conferences data from the NHL-API
+    columns:
+      - name: id
+        description: Unique identifier for NHL conferences
+        tests:
+          - unique
+          - not_null
+      - name: conference_name
+        description: Name of the NHL conference
+      - name: conference_url
+        description: URL endpoint
+      - name: conference_abbreviation
+        description: Abbreviated NHL conference name
+      - name: conference_short_name
+        description: Short name for the NHL conference
+      - name: is_active
+        description: Whether or not the conference is still active

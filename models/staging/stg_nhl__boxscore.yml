@@ -1,0 +1,82 @@
+version: 2
+
+models:
+  - name: stg_nhl__boxscore
+    description: ""
+    columns:
+      - name: id
+        description: Unique identifier for the NHL boxscore game
+        tests:
+          - not_null
+          - unique
+
+      - name: game_id
+        description: |
+          Foreign key that maps to an NHL game
+          {{ doc("game_id_description") }}
+
+      - name: home_team_id
+        description: ""
+
+      - name: away_team_id
+        description: ""
+
+      - name: home_team_name
+        description: ""
+
+      - name: home_team_pim
+        description: ""
+
+      - name: home_team_shots
+        description: ""
+
+      - name: home_team_powerplay_goals
+        description: ""
+
+      - name: home_team_powerplay_opportunities
+        description: ""
+
+      - name: home_team_faceoff_percentage
+        description: ""
+
+      - name: home_team_blocked
+        description: ""
+
+      - name: home_team_takeaways
+        description: ""
+
+      - name: home_team_giveaways
+        description: ""
+
+      - name: home_team_hits
+        description: ""
+
+      - name: away_team_name
+        description: ""
+
+      - name: away_team_pim
+        description: ""
+
+      - name: away_team_shots
+        description: ""
+
+      - name: away_team_powerplay_goals
+        description: ""
+
+      - name: away_team_powerplay_opportunities
+        description: ""
+
+      - name: away_team_faceoff_percentage
+        description: ""
+
+      - name: away_team_blocked
+        description: ""
+
+      - name: away_team_takeaways
+        description: ""
+
+      - name: away_team_giveaways
+        description: ""
+
+      - name: away_team_hits
+        description: ""

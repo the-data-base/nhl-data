@@ -22,4 +22,4 @@ select
     , short_name
     , is_active
 
-from {{ ref('stg_meltano__teams') }}
+from {{ ref('stg_nhl__teams') }}

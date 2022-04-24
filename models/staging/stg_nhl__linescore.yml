@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: stg_nhl__linescore
+    description: Staged NHL linescore data from the NHL-API
+    columns:
+      - name: id
+        description: |
+          Unique identifier for an NHL game (game_id)
+          {{ doc("game_id_description") }}
+        tests:
+          - unique
+          - not_null
+
+      - name: game_id
+        description: ""
+
+      - name: home_team_id
+        description: ""
+
+      - name: away_team_id
+        description: ""
+
+      - name: game_score_description
+        description: ""
+
+      - name: game_matchup_description
+        description: ""
+
+      - name: game_winning_team_id
+        description: ""
+
+      - name: game_winning_team_name
+        description: ""
+
+      - name: game_winning_team_type
+        description: ""
+
+      - name: game_absolute_goal_differential
+        description: ""
+
+      - name: home_team_goals
+        description: ""
+
+      - name: away_team_goals
+        description: ""
