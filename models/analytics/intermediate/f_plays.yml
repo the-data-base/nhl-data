@@ -1,0 +1,175 @@
+version: 2
+
+models:
+  - name: f_plays
+    description: Staged NHL event level data from the NHL-API (player-play level)
+    columns:
+      # Primary Key
+      - name: id
+        description: Unique identifier for a player's event-level activity in an NHL game (hashed representation of game_id + team_id + player_id + event_id)
+        tests:
+          - unique
+          - not_null
+
+      # Foreign Keys
+      - name: game_id
+        description: |
+          Foreign key that maps to an NHL game ID
+          {{ doc("game_id_description") }}
+
+      - name: event_idx
+        description: Foreign key that maps to the sequence of the event relative to that game, in ascending order (e.g. 1 = first event, 2 - second event)
+
+      - name: event_id
+        description: Foreign key that maps to a distinct event ID
+
+      - name: player_id
+        description: Foreign key that maps to an NHL player ID
+
+      - name: team_id
+        description: Foreign key that maps to an NHL team ID
+
+      # Properties
+      - name: player_role
+        description: The role of the player in context to the event (e.g. Hitter, Hitee, Shooter, Winner, Loser, etc.)
+
+      - name: player_role_team
+        description: The home / away status of the player's team
+
+      - name: event_type
+        description: Short description of the event type
+
+      - name: event_code
+        description: Event code that is unique at the game-event level (e.g. PHI8, PHI10)
+
+      - name: event_description
+        description: Long description of the event (repeated for all the player's involved in the event)
+
+      - name: play_x_coordinate
+        description: The x-coordinate of where the event took place on the ice
+
+      - name: play_y_coordinate
+        description: The y-coordinate of where the event took place on the ice
+
+      - name: play_period
+        description: The period in which the event occured (e.g. 3)
+
+      - name: play_period_type
+        description: The type of period in which the event occured (e.g. Regular)
+
+      - name: play_period_time_elapsed
+        description: The time in minutes elapsed in the period
+
+      - name: play_period_time_remaining
+        description: The time in minutes remaining in the period
+
+      - name: play_period_seconds_elapsed
+        description: The time in seconds elapsed in the period
+
+      - name: play_period_seconds_remaining
+        description: The time in seconds remaining the period
+
+      - name: play_total_seconds_elapsed
+        description: The time in seconds elapsed in the entire game
+
+      - name: play_total_seconds_remaining
+        description: The time in seconds remaining in the entire game
+
+      - name: play_time
+        description: A timestamp of the event (e.g. 2021-01-13T22:32:45Z)
+
+      - name: shots_away
+        description: Cumulative away team shots taken in the game at the point in time where the event occured
+
+      - name: shots_home
+        description:  Cumulative ome team shots taken in the game at the point in time where the event occured
+
+      - name: hits_away
+        description:  Cumulative away team hits made in the game at the point in time where the event occured
+
+      - name: hits_home
+        description:  Cumulative home team hits made in the game at the point in time where the event occured
+
+      - name: faceoffs_away
+        description:  Cumulative away team faceoffs won in the game at the point in time where the event occured
+
+      - name: faceoffs_home
+        description:  Cumulative home team faceoffs won in the game at the point in time where the event occured
+
+      - name: takeaways_away
+        description: Cumulative away team takeaways forced in the game at the point in time where the event occured
+
+      - name: takeaways_home
+        description: Cumulative home team takeaways forced in the game at the point in time where the event occured
+
+      - name: giveaways_away
+        description: Cumulative away team giveaways made in the game at the point in time where the event occured
+
+      - name: giveaways_home
+        description: Cumulative home team giveaways made in the game at the point in time where the event occured
+
+      - name: missedshots_away
+        description: Cumulative away team missed shots taken in the game at the point in time where the event occured
+
+      - name: missedshots_home
+        description: Cumulative home team missed shots taken in the game at the point in time where the event occured
+
+      - name: blockedshots_away
+        description: Cumulative away team blocked shots made in the game at the point in time where the event occured
+
+      - name: blockedshots_home
+        description: Cumulative home team blocked shots made in the game at the point in time where the event occured
+
+      - name: penalties_away
+        description: Cumulative away team penalties in minutes taken in the game at the point in time where the event occured
+
+      - name: penalties_home
+        description: Cumulative home team penalties in minutes taken in the game at the point in time where the event occured
+
+      - name: first_goal_scored
+        description: Whether or not the event in question was the first goal of the game (1 or 0)
+
+      - name: last_goal_scored
+        description: Whether or not the event in question was the last goal of the game (1 or 0)
+
+      - name: goals_away
+        description: Cumulative away team goals scored in the game at the point in time where the event occured
+
+      - name: goals_home
+        description: Cumulative home team goals scored in the game at the point in time where the event occured
+
+      - name: goal_difference_current
+        description: The absolute value difference in goals between the home and away teams in the game at the point in time where the event occured
+
+      - name: winning_team_current
+        description: The name of the team_type (e.g. "Tie", "Home" or "Away") for the team currently winning
+
+      - name: game_state_current
+        description: The current state of scoreboard (e.g. "Tie", "Close" (1 goal difference), "Buffer" (2 goal difference), "Comfortable" (3 goal difference), "Blowout" (4 goal difference))
+
+      - name: home_result_of_play
+        description: Description of the result of the current event / play for the home team (e.g. "No change", "Chase goal", "Tying goal scored", "Tying goal allowed", "Go-ahead goal scored, Buffer goal", "Go-ahead goal allowed")
+
+      - name: away_result_of_play
+        description: Description of the result of the current event / play for the away team (e.g. "No change", "Chase goal", "Tying goal scored", "Tying goal allowed", "Go-ahead goal scored, Buffer goal", "Go-ahead goal allowed")
+
+      - name: last_goal_game_winning
+        description: Whether or not the the current goal was the last goal and also the game winning goal (1 or 0)
+
+      - name: last_goal_game_tying
+        description: Whether or not the the current goal was the last goal and also the game tying goal (1 or 0)
+
+      - name: goals_home_lag
+        description: Cumulative home team goals scored in the game 1 play before the current play (e.g. if event prior to this event was a home team goal, and the current play was a hit, then the value for this column would be 1)
+
+      - name: goals_away_lag
+        description: Cumulative away team goals scored in the game 1 play before the current play (e.g. if event prior to this event was a away team goal, and the current play was a hit, then the value for this column would be 1)
+
+      - name: goal_difference_lag
+        description: The absolute value difference in goals between the home and away teams in the game using the home and away team lagged goals scored
+
+      - name: winning_team_lag
+        description: Determines the previously winning team (e.g. "Tie", "Home" or "Away") before the play in question
+
+      - name: game_state_lag
+        description: The previous state of scoreboard prior to the play in question (e.g. "Tie", "Close" (1 goal difference), "Buffer" (2 goal difference), "Comfortable" (3 goal difference), "Blowout" (4 goal difference))

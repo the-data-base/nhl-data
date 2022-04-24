@@ -7,7 +7,7 @@ select
 
     /* Properties */
     , division_name
-    , division_name_short
+    , division_short_name
     , division_url
     , division_abbreviation
     , is_active
