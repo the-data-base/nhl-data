@@ -65,6 +65,9 @@ jobs:
           tr -s '\n' ' ')
           )"
 
+      - name: Print models that will be linted
+        run: echo ${{ steps.get_files_to_lint.outputs.lintees }}
+
       - name: Lint dbt models
         if: steps.get_files_to_lint.outputs.lintees != ''
         shell: bash -l {0}
