@@ -31,7 +31,7 @@ jobs:
       - name: Generate database credentials
         run: |
           touch ./.secrets/client_secrets.json
-          echo "$GOOGLE_APPLICATION_CREDENTIALS" >> ./.secrets/client_secrets.json
+          echo "$PROFILES_YML_BIGQUERY_CREDENTIALS" >> ./.secrets/client_secrets.json
         shell: bash
 
       - name: Test database connection
