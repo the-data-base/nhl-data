@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: stg_nhl__draft
+    description: Staged NHL entry draft data from the NHL-API
+    columns:
+      # Primary Key
+      - name: id
+        description: Unique identifier for an NHL rookie draft (generated via dbt_utils.surrogate_key)
+        tests:
+          - unique
+          - not_null
+
+      # Foreign Keys
+      - name: overall_pick_id
+        description: Unique identifier for an NHL rookie draft (draft year + overall pick)
+
+      - name: draft_prospect_id
+        description: Foreign key that maps to an NHL draft prospect
+
+      - name: draft_team_id
+        description: Foreign key that maps to the NHL team that drafted the NHL prospect
+
+      # Properties
+      - name: draft_year
+        description: Year of the NHL entry draft
+
+      - name: draft_overall_pick
+        description: The overall pick in the NHL entry draft. For example, `1` is the first overall pick
+
+      - name: draft_round
+        description: The drafting round that the selection was made in
+
+      - name: draft_round_pick
+        description: The pick in the NHL entry draft made relative to the round
+
+      - name: draft_prospect_name
+        description: Name of the drafted NHL prospect
+
+      - name: draft_url
+        description: URL endpoint
+
+      - name: draft_team_name
+        description: Name of the NHL team that drafted the NHL prospect

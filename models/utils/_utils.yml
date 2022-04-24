@@ -1,7 +1,0 @@
-version: 2
-
-models:
-  - name: dates
-    description: Date dimension table
-    config:
-      tags: ['dates']

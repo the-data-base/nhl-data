@@ -1,18 +1,18 @@
 with
 -- CTE1
 live_boxscore as (
-    select  
-        * 
-    from    
+    select
+        *
+    from
         {{ source('meltano', 'live_boxscore') }}
-    )
+)
 
 -- CTE2
-,home_team_player as (
+, home_team_player as (
     select
         /* Primary Key */
-        concat(live_boxscore.game_id, teams.home.team.id, home_players.person.id) as id
-        
+        {{ dbt_utils.surrogate_key(['live_boxscore.game_id', 'teams.home.team.id', 'home_players.person.id']) }} as id
+
         /* Foreign Keys */
         , live_boxscore.game_id
         , teams.home.team.id as team_id
@@ -58,11 +58,10 @@ live_boxscore as (
         , home_players.stats.playerstats.powerplaysavepercentage as powerplay_save_percentage
         , home_players.stats.playerstats.evenstrengthsavepercentage as even_strength_save_percentage
 
-    from
-        live_boxscore
-        , unnest(teams.home.players) as home_players
+    from live_boxscore
+    , unnest(teams.home.players) as home_players
 
-        )
+)
 
 -- CTE3
 , away_team_player as (
@@ -116,11 +115,10 @@ live_boxscore as (
         , away_players.stats.playerstats.powerplaysavepercentage as powerplay_save_percentage
         , away_players.stats.playerstats.evenstrengthsavepercentage as even_strength_save_percentage
 
-    from
-        live_boxscore
-        , unnest(teams.away.players) as away_players
+    from live_boxscore
+    , unnest(teams.away.players) as away_players
 
-        )
+)
 
 -- CTE4
 , boxscore_player as (
@@ -131,7 +129,7 @@ live_boxscore as (
 )
 
 -- Final query, return everything
-select  
+select
     /* Primary Key */
     {{ dbt_utils.surrogate_key(['boxscore_player.id']) }} as id
 
@@ -180,10 +178,9 @@ select
     , boxscore_player.powerplay_save_percentage
     , boxscore_player.even_strength_save_percentage
 
-from     
-    boxscore_player
+from boxscore_player
 
 order by
     boxscore_player.game_id desc
     , boxscore_player.team_id desc
-    , boxscore_player.player_id  desc
+    , boxscore_player.player_id desc

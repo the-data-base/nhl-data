@@ -1,5 +1,5 @@
 --#TODO
-select 
+select
     *
 from
-    {{ ref('stg_meltano__live_plays') }}
+    {{ ref('stg_nhl__live_plays') }}
