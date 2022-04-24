@@ -2,14 +2,11 @@ with
 
 -- CTE1
 live_plays as (
-    select
-        *
-    from
-        {{ source('meltano', 'live_plays') }}
-    )
+    select * from {{ source('meltano', 'live_plays') }}
+)
 
 -- CTE2 Play-level information (each row is a player's involvement in a play)
-,cte_base_plays as (
+, cte_base_plays as (
     select
         concat(live_plays.game_id, live_plays.about.eventidx, players.player.id) as id
         , live_plays.game_id
@@ -170,12 +167,11 @@ live_plays as (
         , live_plays.about.goals.away as goals_away
         , live_plays.about.goals.home as goals_home
 
-    from
-        live_plays
-        , unnest(live_plays.players) as players
-        left join {{ref('stg_nhl__schedule')}} as schedule on schedule.game_id = live_plays.game_id
-        left join {{ ref('stg_nhl__boxscore_player') }} as boxscore_player on boxscore_player.game_id = live_plays.game_id and players.player.id = boxscore_player.player_id
-    )
+    from live_plays
+    , unnest(live_plays.players) as players
+    left join {{ ref('stg_nhl__schedule') }} as schedule on schedule.game_id = live_plays.game_id
+    left join {{ ref('stg_nhl__boxscore_player') }} as boxscore_player on boxscore_player.game_id = live_plays.game_id and players.player.id = boxscore_player.player_id
+)
 
 -- Add in cumulative metrics
 , cte_cumulative as (
@@ -294,8 +290,7 @@ live_plays as (
                 then lag(bp.goals_away, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
         end as goals_away_lag
 
-    from
-        cte_base_plays as bp
+    from cte_base_plays as bp
 
     order by
         bp.game_id
@@ -399,72 +394,70 @@ live_plays as (
             else 0
         end as last_goal_game_tying
 
-    from
-        cte_cumulative as c
+    from cte_cumulative as c
 
 )
 
 -- Final return
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['g.id']) }} as id
+    {{ dbt_utils.surrogate_key(['id']) }} as id
 
     /* Foreign Keys */
-    , g.game_id
-    , g.event_idx
-    , g.event_id
-    , g.player_id
-    , g.team_id
+    , game_id
+    , event_idx
+    , event_id
+    , player_id
+    , team_id
 
     /* Properties */
-    , g.player_role
-    , g.player_role_team
-    , g.event_type
-    , g.event_code
-    , g.event_description
-    , g.play_x_coordinate
-    , g.play_y_coordinate
-    , g.play_period
-    , g.play_period_type
-    , g.play_period_time_elapsed
-    , g.play_period_time_remaining
-    , g.play_period_seconds_elapsed
-    , g.play_period_seconds_remaining
-    , g.play_total_seconds_elapsed
-    , g.play_total_seconds_remaining
-    , g.play_time
-    , g.shots_away
-    , g.shots_home
-    , g.hits_away
-    , g.hits_home
-    , g.faceoffs_away
-    , g.faceoffs_home
-    , g.takeaways_away
-    , g.takeaways_home
-    , g.giveaways_away
-    , g.giveaways_home
-    , g.missedshots_away
-    , g.missedshots_home
-    , g.blockedshots_away
-    , g.blockedshots_home
-    , g.penalties_away
-    , g.penalties_home
-    , g.first_goal_scored
-    , g.last_goal_scored
-    , g.goals_away
-    , g.goals_home
-    , g.goal_difference_current
-    , g.winning_team_current
-    , g.game_state_current
-    , g.home_result_of_play
-    , g.away_result_of_play
-    , g.last_goal_game_winning
-    , g.last_goal_game_tying
-    , g.goals_home_lag
-    , g.goals_away_lag
-    , g.goal_difference_lag
-    , g.winning_team_lag
-    , g.game_state_lag
+    , player_role
+    , player_role_team
+    , event_type
+    , event_code
+    , event_description
+    , play_x_coordinate
+    , play_y_coordinate
+    , play_period
+    , play_period_type
+    , play_period_time_elapsed
+    , play_period_time_remaining
+    , play_period_seconds_elapsed
+    , play_period_seconds_remaining
+    , play_total_seconds_elapsed
+    , play_total_seconds_remaining
+    , play_time
+    , shots_away
+    , shots_home
+    , hits_away
+    , hits_home
+    , faceoffs_away
+    , faceoffs_home
+    , takeaways_away
+    , takeaways_home
+    , giveaways_away
+    , giveaways_home
+    , missedshots_away
+    , missedshots_home
+    , blockedshots_away
+    , blockedshots_home
+    , penalties_away
+    , penalties_home
+    , first_goal_scored
+    , last_goal_scored
+    , goals_away
+    , goals_home
+    , goal_difference_current
+    , winning_team_current
+    , game_state_current
+    , home_result_of_play
+    , away_result_of_play
+    , last_goal_game_winning
+    , last_goal_game_tying
+    , goals_home_lag
+    , goals_away_lag
+    , goal_difference_lag
+    , winning_team_lag
+    , game_state_lag
 
-from
-    cte_game_state as g
+from cte_game_state
