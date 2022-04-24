@@ -6,7 +6,7 @@ models:
     columns:
       # Primary Key
       - name: id
-        description: Unique identifier for an team's involvement in an NHL game (game_id + team_id)
+        description: Unique identifier for an team's involvement in an NHL game (hashed representation of game_id + team_id)
         tests:
           - unique
           - not_null

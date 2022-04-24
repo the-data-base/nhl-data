@@ -8,7 +8,7 @@ models:
     columns:
       # Primary Key
       - name: id
-        description: Unique identifier for the NHL boxscore game
+        description: Unique identifier for the NHL boxscore game (hashed representation of game_id)
         tests:
           - not_null
           - unique

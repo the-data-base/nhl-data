@@ -9,7 +9,7 @@ models:
       # Primary Key
       - name: id
         description: |
-          Unique identifier for an NHL game (game_id)
+          Unique identifier for an NHL game (hashed representation of game_id)
           {{ doc("game_id_description") }}
         tests:
           - unique

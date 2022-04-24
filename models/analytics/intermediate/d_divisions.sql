@@ -1,13 +1,15 @@
 select
     /* Primary Key */
-    divisions.id
-    /* Foreign Keys */
-    , divisions.conference_id
-    /* Divisions Properties */
-    , divisions.division_name
-    , divisions.division_short_name
-    , divisions.division_url
-    , divisions.division_abbreviation
-    , divisions.is_active
+    id
 
-from {{ ref('stg_nhl__divisions') }} as divisions
+    /* Foreign Keys */
+    , conference_id
+
+    /* Properties */
+    , division_name
+    , division_short_name
+    , division_url
+    , division_abbreviation
+    , is_active
+
+from {{ ref('stg_nhl__divisions') }}

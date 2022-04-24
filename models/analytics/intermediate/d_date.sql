@@ -1,15 +1,15 @@
 select
     /* Primary Key */
-    dates.date_id
-    /* Date Properties */
-    , dates.date_day
-    , dates.day_of_week_name
-    , dates.quarter_number
-    , dates.quarter_desc
-    , dates.month_number
-    , dates.month_name
-    , dates.month_desc
-    , dates.week_number
-    , dates.week_desc
-from 
-    {{ ref('dates') }} as dates
+    date_id
+
+    /* Properties */
+    , date_day
+    , day_of_week_name
+    , quarter_number
+    , quarter_desc
+    , month_number
+    , month_name
+    , month_desc
+    , week_number
+    , week_desc
+from {{ ref('dates') }}
