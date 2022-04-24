@@ -2,7 +2,9 @@ version: 2
 
 models:
   - name: stg_nhl__boxscore
-    description: ""
+    description: >
+      Staged NHL linescore data from the NHL-API.
+      Contains summarized stats of the teams involved at the game level.
     columns:
       # Primary Key
       - name: id
@@ -18,68 +20,68 @@ models:
           {{ doc("game_id_description") }}
 
       - name: home_team_id
-        description: ""
+        description: Identifier for the home team, foreign key to stg_nhl__teams
 
       - name: away_team_id
-        description: ""
+        description: Identifier for the away team, foreign key to stg_nhl__teams
 
       # Properties
       - name: home_team_name
-        description: ""
+        description: Name of the home team
 
       - name: home_team_pim
-        description: ""
+        description: Total home team penalty infraction minutes
 
       - name: home_team_shots
-        description: ""
+        description: Total home team shots
 
       - name: home_team_powerplay_goals
-        description: ""
+        description: Total home team powerplay goals
 
       - name: home_team_powerplay_opportunities
-        description: ""
+        description: Total home team powerplay opportunities
 
       - name: home_team_faceoff_percentage
-        description: ""
+        description: Home team faceoff percentage
 
       - name: home_team_blocked
-        description: ""
+        description: Total home team shots blocked
 
       - name: home_team_takeaways
-        description: ""
+        description: Total home team takeaways
 
       - name: home_team_giveaways
-        description: ""
+        description: Total home team giveaways
 
       - name: home_team_hits
-        description: ""
+        description: Total home team hits
 
       - name: away_team_name
-        description: ""
+        description: Name of the away team
 
       - name: away_team_pim
-        description: ""
+        description: Total away team penalty infraction minutes
 
       - name: away_team_shots
-        description: ""
+        description: Total away team shots
 
       - name: away_team_powerplay_goals
-        description: ""
+        description: Total away team powerplay goals
 
       - name: away_team_powerplay_opportunities
-        description: ""
+        description: Total away team powerplay opportunities
 
       - name: away_team_faceoff_percentage
-        description: ""
+        description: Away team faceoff percentage
 
       - name: away_team_blocked
-        description: ""
+        description: Total away team shots blocked
 
       - name: away_team_takeaways
-        description: ""
+        description: Total away team takeaways
 
       - name: away_team_giveaways
-        description: ""
+        description: Total away team giveaways
 
       - name: away_team_hits
-        description: ""
+        description: Total away team hits

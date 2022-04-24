@@ -1,36 +1,36 @@
 select
     /* Primary Key */
-    id
+    {{ dbt_utils.surrogate_key(['players.id']) }} as id
 
     /* Foreign Keys */
-    , currentTeam.id as current_team_id
+    , currentteam.id as current_team_id
 
     /* Properties */
-    , players.fullName as full_name
+    , players.fullname as full_name
     , players.link as player_url
-    , players.firstName as first_name
-    , players.lastName as last_name
-    , players.primaryNumber as primary_number
-    , players.birthDate as birth_date
-    , players.currentAge as current_age
-    , players.birthCity as birth_city
-    , players.birthStateProvince as birth_state_province
-    , players.birthCountry as birth_country
+    , players.firstname as first_name
+    , players.lastname as last_name
+    , players.primarynumber as primary_number
+    , players.birthdate as birth_date
+    , players.currentage as current_age
+    , players.birthcity as birth_city
+    , players.birthstateprovince as birth_state_province
+    , players.birthcountry as birth_country
     , players.nationality as nationality
     , players.height
     , players.weight
     , players.active as is_active
-    , players.alternateCaptain as is_alternate_captain
+    , players.alternatecaptain as is_alternate_captain
     , players.captain as is_captain
     , players.rookie as is_rookie
-    , players.shootsCatches as shoots_catches
-    , players.rosterStatus as roster_status
-    , players.currentTeam.name as current_team_name
-    , players.currentTeam.link as current_team_url
-    , players.primaryPosition.code as primary_position_code
-    , players.primaryPosition.name as primary_position_name
-    , players.primaryPosition.type as primary_position_type
-    , players.primaryPosition.abbreviation as primary_position_abbreviation
+    , players.shootscatches as shoots_catches
+    , players.rosterstatus as roster_status
+    , players.currentteam.name as current_team_name
+    , players.currentteam.link as current_team_url
+    , players.primaryposition.code as primary_position_code
+    , players.primaryposition.name as primary_position_name
+    , players.primaryposition.type as primary_position_type
+    , players.primaryposition.abbreviation as primary_position_abbreviation
     , players._time_extracted as extracted_at
     , players._time_loaded as loaded_at
 from {{ source('meltano', 'players') }} as players
