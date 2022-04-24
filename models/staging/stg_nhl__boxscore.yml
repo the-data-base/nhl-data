@@ -4,12 +4,14 @@ models:
   - name: stg_nhl__boxscore
     description: ""
     columns:
+      # Primary Key
       - name: id
         description: Unique identifier for the NHL boxscore game
         tests:
           - not_null
           - unique
 
+      # Foreign Keys
       - name: game_id
         description: |
           Foreign key that maps to an NHL game
@@ -21,6 +23,7 @@ models:
       - name: away_team_id
         description: ""
 
+      # Properties
       - name: home_team_name
         description: ""
 

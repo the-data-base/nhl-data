@@ -4,30 +4,43 @@ models:
   - name: stg_nhl__seasons
     description: Staged NHL seasons data from the NHL-API
     columns:
+      # Primary Key
       - name: id
         description: Unique identifier for an NHL season (e.g. "20172018")
         tests:
           - unique
           - not_null
+
+      # Properties
       - name: regular_season_start_date
         description: The first date of the NHL regular season (e.g. "2017-10-04")
+
       - name: regular_season_end_date
         description: The last date of the NHL regular season (e.g. "2018-04-08")
+
       - name: season_end_date
         description: The last date of the NHL post season (e.g. "2018-06-07")
+
       - name: number_of_games
         description: The number of total games played by each NHL team
+
       - name: has_ties_in_use
         description: Whether or not ties were possible for that season (True / False)
+
       - name: has_olympics_participation
         description: Whether or not olympic participation at the NHL level was allowed for that season (True / False)
+
       - name: has_conferences_in_use
         description: Whether or not conferences were used for that season's playoff consideration (True / False)
+
       - name: has_divisions_in_use
         description: Whether or not divisions were used for that season's playoff consideration (True / False)
+
       - name: has_wildcard_in_use
         description: Whether or not wildcards were used for that season's playoff consideration (True / False)
+
       - name: extracted_at
         description: Timestamp that the data was retrieved
+
       - name: loaded_at
         description: Timestamp that the data was loaded
