@@ -10,10 +10,9 @@ linescore as (
 , final as (
     select
         /* Primary Key */
-        {{ dbt_utils.surrogate_key(['linescore.id']) }} as id
+        linescore.game_id as id
 
         /* Foreign Keys */
-        , linescore.game_id
         , linescore.home_team_id
         , linescore.away_team_id
 

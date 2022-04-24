@@ -1,6 +1,6 @@
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['seasons.seasonid']) }} as id
+    seasons.seasonid as id
 
     /* Properties */
     , seasons.regularseasonstartdate as regular_season_start_date

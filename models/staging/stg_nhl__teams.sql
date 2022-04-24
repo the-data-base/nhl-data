@@ -1,6 +1,6 @@
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['teams.id']) }} as id
+    teams.id as id
 
     /* Foreign Keys */
     , teams.venue.timezone.id as venue_timezone_id
