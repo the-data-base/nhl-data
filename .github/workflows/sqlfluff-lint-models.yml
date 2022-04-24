@@ -17,7 +17,7 @@ jobs:
       # SPECIFY database connection credentials as env vars below.
       # Env var values to be fetched from as GitHub Secrets.
       # HIGHLY recommended you use a unique set of connection credentials for this workflow alone.
-      PROFILES_YML_BIGQUERY_DATASET: ${{ secrets.PROFILES_YML_BIGQUERY_DATASET }}
+      PROFILES_YML_BIGQUERY_PROJECT: ${{ secrets.PROFILES_YML_BIGQUERY_PROJECT }}
       PROFILES_YML_BIGQUERY_CREDENTIALS: ${{ secrets.PROFILES_YML_BIGQUERY_CREDENTIALS }}
 
     steps:
