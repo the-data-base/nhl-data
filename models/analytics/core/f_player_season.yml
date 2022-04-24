@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: f_player_season
+    description: Model-ready dataset at the player-season level of granularity
