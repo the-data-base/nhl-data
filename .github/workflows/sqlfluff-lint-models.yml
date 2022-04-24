@@ -1,9 +1,9 @@
 name: "SQLFluff lint"
 
-'on':
+on:
   pull_request:
     branches:
-      - main
+      - 'main'
 
 jobs:
   sqlfluff-lint-models:
