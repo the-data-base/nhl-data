@@ -4,64 +4,94 @@ models:
   - name: stg_nhl__teams
     description: Staged NHL teams data from the NHL-API
     columns:
+      # Primary Key
       - name: id
         description: Unique identifier for NHL teams
         tests:
           - unique
           - not_null
+
+      # Foreign Keys
       - name: venue_timezone_id
         description: Foreign key that maps to the timezone ID of the venue (e.g. America/Vancouver)
+
       - name: division_id
         description: Foreign key that maps to the division ID that the NHL team belongs to
+
       - name: conference_id
         description: Foreign key that maps to the conference ID that the NHL team belongs to
+
       - name: franchise_id
         description: Foreign key that maps to the franchise ID that the NHL originates from
+
       - name: full_name
         description: Full name of the NHL team (e.g. Vancouver Canucks)
+
       - name: team_url
         description: URL endpoint for the NHl team
+
       - name: venue_name
         description: Name of the venue / arena that the NHL team plays in
+
       - name: venue_url
         description: URL endpoint for the NHL team venue
+
       - name: venue_city
         description: City that the venue / arena is in
+
       - name: venue_timezone_offset
         description: Offset necessary to correct for timezone differences (e.g. Vancouver = -7)
+
       - name: venue_timezone_name
         description: Abbreviated timezone for the venue (e.g. PDT)
+
       - name: abbreviation
         description: Abbreviation for the NHL team (e.g. VAN)
+
       - name: team_name
         description: Second part of the team name (e.g. Canucks)
+
       - name: location_name
         description: First part of the team name (e.g. Vancouer)
+
       - name: first_year_of_play
         description: The inaugural year for the NHL team (e.g. 1970)
+
       - name: division_name
         description: Name of the division that the team currently plays in
+
       - name: division_short_name
         description: Short name for the division that the team currently plays in
+
       - name: division_url
         description: URL endpoint for division
+
       - name: division_abbreviation
         description: Abbreviated NHL division name (e.g. P)
+
       - name: conference_name
         description: Conference name that the team currently plays in
+
       - name: conference_url
         description: URL endpoint for the conference
+
       - name: franchise_team_name
         description: Name of the franchise (second part of full team name)
+
       - name: franchise_url
         description: URL endpoint for the franchise
+
       - name: short_name
         description: Slightly different short version of the team name
+
       - name: official_site_url
         description: Official site URL
+
       - name: is_active
         description: Whether or not the team is currently active in the NHL
+
       - name: extracted_at
         description: Timestamp that the data was retrieved
+
       - name: loaded_at
         description: Timestamp that the data was loaded

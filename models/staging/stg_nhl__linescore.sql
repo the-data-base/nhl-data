@@ -12,16 +12,16 @@ with
             , game_id
             , teams.home.team.id as home_team_id
             , teams.away.team.id as away_team_id
-
-            /* Properties */
-            -- Game-level stats
-            , concat(teams.home.goals, '-', teams.away.goals, ' (Home-Away)') as game_score_description
-            , concat(teams.home.team.name, ' (Home) vs ', teams.away.team.name, ' (Away)') as game_matchup_description
             , case
                 when teams.home.goals  > teams.away.goals then teams.home.team.id
                 when teams.home.goals  < teams.away.goals then teams.away.team.id
                 else -1
               end as game_winning_team_id
+
+            /* Properties */
+            -- Game-level stats
+            , concat(teams.home.goals, '-', teams.away.goals, ' (Home-Away)') as game_score_description
+            , concat(teams.home.team.name, ' (Home) vs ', teams.away.team.name, ' (Away)') as game_matchup_description
             , case
                 when teams.home.goals  > teams.away.goals  then teams.home.team.name
                 when teams.home.goals  < teams.away.goals  then teams.away.team.name
