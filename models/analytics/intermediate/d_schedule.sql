@@ -37,4 +37,4 @@ select
     , content_url
     , extracted_at
     , loaded_at
-from {{ ref('stg_meltano__schedule') }}
+from {{ ref('stg_nhl__schedule') }}

@@ -1,3 +1,3 @@
 --#TODO
 select *
-from {{ ref('stg_meltano__players') }}
+from {{ ref('stg_nhl__players') }}

@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: stg_nhl__divisions
+    description: Staged NHL division data from the NHL-API
+    columns:
+      - name: id
+        description: Unique identifier for NHL divisions
+        tests:
+          - unique
+          - not_null
+      - name: conference_id
+        description: Foreign key that maps to the NHL conference
+      - name: division_name
+        description: Name of the NHL division
+      - name: division_name_short
+        description: Short name for the NHL division
+      - name: division_url
+        description: URL endpoint
+      - name: division_abbreviation
+        description: Abbreviated NHL conference name
+      - name: is_active
+        description: Whether or not the conference is still active

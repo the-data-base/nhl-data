@@ -2,9 +2,9 @@ with
 
 -- CTE1
 live_plays as (
-    select  
-        * 
-    from    
+    select
+        *
+    from
         {{ source('meltano', 'live_plays') }}
     )
 
@@ -173,8 +173,8 @@ live_plays as (
     from
         live_plays
         , unnest(live_plays.players) as players
-        left join {{ref('stg_meltano__schedule')}} as schedule on schedule.game_id = live_plays.game_id
-        left join {{ ref('stg_meltano__boxscore_player') }} as boxscore_player on boxscore_player.game_id = live_plays.game_id and players.player.id = boxscore_player.player_id
+        left join {{ref('stg_nhl__schedule')}} as schedule on schedule.game_id = live_plays.game_id
+        left join {{ ref('stg_nhl__boxscore_player') }} as boxscore_player on boxscore_player.game_id = live_plays.game_id and players.player.id = boxscore_player.player_id
     )
 
 -- Add in cumulative metrics

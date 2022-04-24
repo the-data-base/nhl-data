@@ -1,10 +1,10 @@
 with
     linescore as (
-        select * from {{ ref('stg_meltano__linescore') }}
+        select * from {{ ref('stg_nhl__linescore') }}
     )
 
     , boxscore as (
-        select * from {{ ref('stg_meltano__boxscore') }}
+        select * from {{ ref('stg_nhl__boxscore') }}
     )
 
     , final as (

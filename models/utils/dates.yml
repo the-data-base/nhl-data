@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: dates
+    description: Date spine containing calendar dates from 2010-01-01 through 2030-01-01
+    columns:
+      - name: date_id
+        description: Unique identifier for the date in YYYYMMDD format
+        tests:
+          - not_null
+          - unique
+
+      - name: date_day
+        description: Calendar date in YYYY-MM-DD format
+
+      - name: day_of_week_name
+        description: |
+          Three letter name for the day of week (i.e. Mon, Tue, Wed, Thu, Fri, Sat, Sun)
+
+      - name: quarter_number
+        description: Quarter of the year number ranging from 1 (Q1) to 4 (Q4)
+
+      - name: quarter_desc
+        description: Description of the quarter (i.e. Q1 2022 for Quarter 1 2022)
+
+      - name: month_number
+        description: Month of the year number ranging from 1 (January) to 12 (December)
+
+      - name: month_name
+        description: Abbreviated name of the month (i.e. Jan, Feb, Mar)
+
+      - name: month_desc
+        description: Description of the month (i.e. M01 2022 for January 2022)
+
+      - name: week_number
+        description: Week of the year number ranging from 1 to 52
+
+      - name: week_desc
+        description: Description of the week (i.e. W52 2022 for the last calendar week of 2022)
