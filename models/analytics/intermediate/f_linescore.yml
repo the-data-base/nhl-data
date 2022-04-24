@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: f_linescore
+    description: >
+      Staged NHL linescore data from the NHL-API.
+      Contains the summary of goals and teams involved at the game level.
+    columns:
+      # Primary Key
+      - name: id
+        description: |
+          Unique identifier for an NHL game (game_id)
+          {{ doc("game_id_description") }}
+        tests:
+          - unique
+          - not_null
+
+      # Foreign Keys
+      - name: game_id
+        description: |
+          Unique identifier for an NHL game (game_id)
+          {{ doc("game_id_description") }}
+
+      - name: home_team_id
+        description: Identifier for the home team, foreign key to stg_nhl__teams
+
+      - name: away_team_id
+        description: Identifier for the away team, foreign key to stg_nhl__teams
+
+      - name: game_winning_team_id
+        description: Identifier for the winning team, foreign key to stg_nhl__teams
+
+      # Properties
+      - name: game_score_description
+        description: Description of the game score in the format `<home_team_score>`-`<away_team_score>`
+
+      - name: game_matchup_description
+        description: Description of the team matchup in the format `<home_team_name>` vs `<away_team_name>`
+
+      - name: game_winning_team_name
+        description: Name of the winning team
+
+      - name: game_winning_team_type
+        description: Winning team type (home or away)
+        tests:
+          - accepted_values:
+              values: [Home, Away]
+              quote: true
+
+      - name: game_absolute_goal_differential
+        description: The absolute difference of the home and away team scores
+
+      - name: home_team_goals
+        description: Total goals scored by the home team
+
+      - name: away_team_goals
+        description: Total goals scored by the away team

@@ -1,25 +1,23 @@
 select
     /* Primary Key */
-    id
-
+    teams.id
     /* Foreign Keys */
-    , division_id
-    , conference_id
-    , franchise_id
-
-    /* Properties */
-    , full_name
-    , team_url
-    , venue_name
-    , venue_url
-    , venue_city
-    , venue_timezone_name
-    , venue_timezone_offset
-    , abbreviation
-    , team_name
-    , location_name
-    , first_year_of_play
-    , short_name
-    , is_active
-
-from {{ ref('stg_nhl__teams') }}
+    , teams.division_id
+    , teams.conference_id
+    , teams.franchise_id
+    /* Teams Properties */
+    , teams.full_name
+    , teams.team_url
+    , teams.venue_name
+    , teams.venue_url
+    , teams.venue_city
+    , teams.venue_timezone_name
+    , teams.venue_timezone_offset
+    , teams.abbreviation
+    , teams.team_name
+    , teams.location_name
+    , teams.first_year_of_play
+    , teams.short_name
+    , teams.is_active
+from 
+    {{ ref('stg_nhl__teams') }} as teams

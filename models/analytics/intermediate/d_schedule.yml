@@ -1,0 +1,115 @@
+version: 2
+
+models:
+  - name: d_schedule
+    description: Staged NHL schedule data from the NHL-API
+    columns:
+      # Primary Key
+      - name: id
+        description: Unique identifier for NHL scheduled games
+        tests:
+          - unique
+          - not_null
+
+      # Foreign Keys
+      - name: game_id
+        description: |
+          Foreign key that maps to an NHL game
+          {{ doc("game_id_description") }}
+
+      - name: season_id
+        description: Foreign key that maps to an NHL season
+
+      - name: away_team_id
+        description: Foreign key that maps to an NHL team (away team)
+
+      - name: home_team_id
+        description: Foreign key that maps to an NHL team (home team)
+
+      - name: venue_id
+        description: Foreign key tha tmaps to a team's venu (home team)
+
+      # Properties
+      - name: game_number
+        description: Four digit number that is unique to a game in the context of a season (e.g. 0002)
+
+      - name: url
+        description: URL endpoint for schedule
+
+      - name: game_type
+        description: Code for the type of game (e.g. R = regular season)
+
+      - name: game_date
+        description: Date that the game takes place (e.g. 2021-01-14)
+
+      - name: abstract_game_state
+        description: Game state (e.g. Final)
+
+      - name: coded_game_state
+        description: Coded game state (e.g. 7)
+
+      - name: detailed_state
+        description: Detailed game state (e.g. Final) - should be different that game state, but look similar
+
+      - name: status_code
+        description: Unknown - looks similar to code_game_state
+
+      - name: is_start_time_tbd
+        description: Whether or not the start time is still to be decided (True / False)
+
+      - name: away_team_wins
+        description: Cumulative number of wins for the away team for the given season (wins for the team at that point in time)
+
+      - name: away_team_losses
+        description: Cumulative number of losses for the away team for the given season (losses for the team at that point in time)
+
+      - name: away_team_ot
+        description: Cumulative number of overtime wins for the away team for the given season (overtime wins for the team at that point in time)
+
+      - name: away_team_type
+        description: Type of away team (e.g. League)
+
+      - name: away_team_score
+        description: Goals scored by the away team
+
+      - name: away_team_name
+        description: Away team name
+
+      - name: away_team_url
+        description: Away team URL endpoint
+
+      - name: home_team_wins
+        description: Cumulative number of wins for the home team for the given season (wins for the team at that point in time)
+
+      - name: home_team_losses
+        description: Cumulative number of losses for the home team for the given season (losses for the team at that point in time)
+
+      - name: home_team_ot
+        description: Cumulative number of overtime wins for the home team for the given season (overtime wins for the team at that point in time)
+
+      - name: home_team_type
+        description: Type of home team (e.g. League)
+
+      - name: home_team_score
+        description: Goals scored by the home team
+
+      - name: home_team_name
+        description: Home team name
+
+      - name: home_team_url
+        description: Home team URL endpoint
+
+      - name: venue_name
+        description: Home team's venue / arena that the teams played in
+
+      - name: venue_url
+        description: URL endpoint for the venue
+
+      - name: content_url
+        description: URL endpoint for the content
+
+      - name: extracted_at
+        description: Timestamp that the data was retrieved
+
+      - name: loaded_at
+        description: Timestamp that the data was loaded

@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: f_boxscore_team
+    description: Staged NHL boxscore game data from the NHL-API (game-team level)
+    columns:
+      # Primary Key
+      - name: id
+        description: Unique identifier for an team's involvement in an NHL game (game_id + team_id)
+        tests:
+          - unique
+          - not_null
+
+      # Foreign Keys
+      - name: game_id
+        description: |
+          Foreign key that maps to the NHL game ID - each game should have 2 rows in this table for each team involved in the game
+          {{ doc("game_id_description") }}
+
+      - name: team_id
+        description: Foreign key that maps to the NHL team ID - each row represents a team playing in a game
+
+      # Properties
+      - name: team_type
+        description: Describes the Away / Home status for each team playing in a game
+
+      - name: team_name
+        description: Name of the NHL team
+
+      - name: team_winner
+        description: True of the team scored more than the opposing team, False if the team scored less than the opposing team, NULL for Shootout results (will be fixed by linescore data, boxscore does not tell us the result of a shootout)
+
+      - name: team_goals
+        description: Number of goals scored by the team
+
+      - name: team_goal_differential
+        description: The difference between the number of goals scored, and the number of goals allowed by the team
+
+      - name: team_pim
+        description:  The number of penalties in minutes:seconds against the team
+
+      - name: team_shots
+        description: The number of shots (unsure if this is on goal or attempts) for the team
+
+      - name: team_powerplay_goals
+        description: The number of powerplay goals for the team
+
+      - name: team_powerplay_opportunities
+        description: The number of powerplay opportunities for the team
+
+      - name: team_faceoff_percentage
+        description:  The percentage of faceoffs won by the team (e.g. 100 * (faceoff wins / faceoff attempts))
+
+      - name: team_blocked
+        description: The number of blocked shots for the team
+
+      - name: team_takeaways
+        description: The number of takeaways for the team
+
+      - name: team_giveaways
+        description: The number of giveaways for the team
+
+      - name: team_hits
+        description: The number of hits for the team
