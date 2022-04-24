@@ -1,6 +1,6 @@
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['divisions.id']) }} as id
+    divisions.id as id
 
     /* Foreign Keys */
     , divisions.conference.id as conference_id

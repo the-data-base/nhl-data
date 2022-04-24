@@ -1,6 +1,6 @@
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['conferences.id']) }} as id
+    conferences.id as id
 
     /* Properties */
     , conferences.name as conference_name
