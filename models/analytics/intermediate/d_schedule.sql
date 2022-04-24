@@ -1,8 +1,9 @@
 select
     /* Primary Key */
-    game_id
+    id
 
     /* Foreign Keys */
+    , game_id
     , season_id
     , away_team_id
     , home_team_id
@@ -37,4 +38,5 @@ select
     , content_url
     , extracted_at
     , loaded_at
-from {{ ref('stg_nhl__schedule') }}
+from
+    {{ ref('stg_nhl__schedule') }}

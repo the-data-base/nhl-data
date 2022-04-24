@@ -12,5 +12,4 @@ select
     , has_conferences_in_use
     , has_divisions_in_use
     , has_wildcard_in_use
-
 from {{ ref('stg_nhl__seasons') }}

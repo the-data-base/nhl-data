@@ -1,7 +1,7 @@
---#TODO
 select
     /* Primary Key */
     id
+
     /* Properties */
     , conference_name
     , conference_url

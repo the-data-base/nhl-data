@@ -3,6 +3,7 @@ select
     id
 
     /* Foreign Keys */
+
     , division_id
     , conference_id
     , franchise_id
@@ -21,5 +22,4 @@ select
     , first_year_of_play
     , short_name
     , is_active
-
 from {{ ref('stg_nhl__teams') }}

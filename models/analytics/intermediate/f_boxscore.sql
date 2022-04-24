@@ -3,18 +3,11 @@ select
     id
 
     /* Foreign Keys */
+    , game_id
     , home_team_id
     , away_team_id
 
     /* Properties */
-    -- Game-level stats
-    , game_score_description
-    , game_matchup_description
-    , game_winning_team_id
-    , game_winning_team_name
-    , game_absolute_goal_differential
-    , home_team_goals
-    , away_team_goals
     -- Home team stats
     , home_team_name
     , home_team_pim
@@ -37,4 +30,4 @@ select
     , away_team_takeaways
     , away_team_giveaways
     , away_team_hits
-from {{ ref('stg_nhl__games') }}
+from {{ ref('stg_nhl__boxscore') }}
