@@ -1,0 +1,98 @@
+version: 2
+
+models:
+  - name: stg_nhl__players
+    description: Staged NHL player data from the NHL-API
+    columns:
+      # Primary Key
+      - name: id
+        description: Unique identifier for an NHL player
+        tests:
+          - unique
+          - not_null
+
+      # Foreign Keys
+      - name: current_team_id
+        description: Foreign key that maps to the NHL team ID that the NHL player currently plays for
+
+      # Properties
+      - name: full_name
+        description: Full name of the NHL player
+
+      - name: player_url
+        description: URL endpoint for NHL player
+
+      - name: first_name
+        description: First name of the NHL player
+
+      - name: last_name
+        description: Last name of the NHL player
+
+      - name: primary_number
+        description: Number that the player usually wears
+
+      - name: birth_date
+        description: Birth date of the NHL player
+
+      - name: current_age
+        description: Age in years of the NHL player
+
+      - name: birth_city
+        description: Birth city of the NHL player
+
+      - name: birth_state_province
+        description: Birth state or province of the NHL player
+
+      - name: birth_country
+        description: Birth country of the NHL player
+
+      - name: nationality
+        description: Nationality of the NHL player
+
+      - name: height
+        description: Imperial height, in feet and inches (e.g. 5'10")
+
+      - name: weight
+        description: Imperial weight, in pounds (e.g. 140)
+
+      - name: is_active
+        description: Whether or not the NHL player is currently active (True / False)
+
+      - name: is_alternate_captain
+        description: Whether or not the NHL player is currently an alternate captain for their team (True / False)
+
+      - name: is_captain
+        description: Whether or not the NHL player is currently the captain of their team (True / False)
+
+      - name: is_rookie
+        description: Whether or not the NHL player is currently a rookie (True / False)
+
+      - name: shoots_catches
+        description: The handedness of the NHL player (e.g. R = right, L = left)
+
+      - name: roster_status
+        description: Roster status of the NHL player (e.g. Y, N, I)
+
+      - name: current_team_name
+        description: Name of the NHL team the player currently plays for
+
+      - name: current_team_url
+        description: URL endpoint for current NHL team
+
+      - name: primary_position_code
+        description: Position code of the position most played (e.g. C, L, D)
+
+      - name: primary_position_name
+        description: Position name of the position most played (e.g. Center, Left Wing, Defenseman)
+
+      - name: primary_position_type
+        description: Position grouping for the position most played (e.g. Forward, Defenseman)
+
+      - name: primary_position_abbreviation
+        description: Position abbreviation of the position most played (e.g. C, LW, D)
+
+      - name: extracted_at
+        description: Timestamp that the data was retrieved
+
+      - name: loaded_at
+        description: Timestamp that the data was loaded

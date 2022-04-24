@@ -3,7 +3,7 @@ select
     *
 
 from
-    {{ ref('stg_meltano__games') }} AS boxscore_game
+    {{ ref('stg_nhl__games') }} AS boxscore_game
 
 order by
     boxscore_game.id desc

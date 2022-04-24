@@ -1,9 +1,9 @@
 -- #TODO
-select  
+select
    *
 
-from     
-    {{ ref('stg_meltano__boxscore_player') }} as boxscore_player
+from
+    {{ ref('stg_nhl__boxscore_player') }} as boxscore_player
 
 order by
     boxscore_player.game_id desc

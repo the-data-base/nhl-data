@@ -12,4 +12,4 @@ select
     , division_abbreviation
     , is_active
 
-from {{ ref('stg_meltano__divisions') }}
+from {{ ref('stg_nhl__divisions') }}

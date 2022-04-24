@@ -13,4 +13,4 @@ select
     , has_divisions_in_use
     , has_wildcard_in_use
 
-from {{ ref('stg_meltano__seasons') }}
+from {{ ref('stg_nhl__seasons') }}
