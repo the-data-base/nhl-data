@@ -11,10 +11,10 @@ live_boxscore as (
 , home_team_player as (
     select
         /* Primary Key */
-        {{ dbt_utils.surrogate_key(['live_boxscore.game_id', 'teams.home.team.id', 'home_players.person.id']) }} as id
+        {{ dbt_utils.surrogate_key(['live_boxscore.gameid', 'teams.home.team.id', 'home_players.person.id']) }} as id
 
         /* Foreign Keys */
-        , live_boxscore.game_id
+        , live_boxscore.gameid as game_id
         , teams.home.team.id as team_id
         , home_players.person.id as player_id
 
@@ -67,10 +67,10 @@ live_boxscore as (
 , away_team_player as (
     select
         /* Primary Key */
-        concat(live_boxscore.game_id, teams.away.team.id, away_players.person.id) as id
+        concat(live_boxscore.gameid, teams.away.team.id, away_players.person.id) as id
 
         /* Foreign Keys */
-        , live_boxscore.game_id
+        , live_boxscore.gameid as game_id
         , teams.away.team.id as team_id
         , away_players.person.id as player_id
 

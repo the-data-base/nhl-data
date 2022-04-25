@@ -8,8 +8,8 @@ live_plays as (
 -- CTE2 Play-level information (each row is a player's involvement in a play)
 , cte_base_plays as (
     select
-        concat(live_plays.game_id, live_plays.about.eventidx, players.player.id) as id
-        , live_plays.game_id
+        concat(live_plays.gameid, live_plays.about.eventidx, players.player.id) as id
+        , live_plays.gameid as game_id
         , live_plays.about.eventid as event_id
         , players.player.id as player_id
         , boxscore_player.team_id as team_id
@@ -169,8 +169,8 @@ live_plays as (
 
     from live_plays
     , unnest(live_plays.players) as players
-    left join {{ ref('stg_nhl__schedule') }} as schedule on schedule.game_id = live_plays.game_id
-    left join {{ ref('stg_nhl__boxscore_player') }} as boxscore_player on boxscore_player.game_id = live_plays.game_id and players.player.id = boxscore_player.player_id
+    left join {{ ref('stg_nhl__schedule') }} as schedule on schedule.game_id = live_plays.gameid
+    left join {{ ref('stg_nhl__boxscore_player') }} as boxscore_player on boxscore_player.game_id = live_plays.gameid and players.player.id = boxscore_player.player_id
 )
 
 -- Add in cumulative metrics

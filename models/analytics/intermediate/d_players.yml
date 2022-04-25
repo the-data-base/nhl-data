@@ -3,18 +3,29 @@ version: 2
 models:
   - name: d_players
     description: Staged NHL player data from the NHL-API
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - id
+            - team_id
+            - season_id
     columns:
       # Primary Key
       - name: id
         description: Unique identifier for an NHL player
         tests:
-          - unique
           - not_null
 
       # Foreign Keys
       - name: current_team_id
         description: Foreign key that maps to the NHL team ID that the NHL player currently plays for
 
+      - name: team_id
+        description: Foreign key that maps to the NHL team ID that the NHL player played for in a given season
+
+      - name: season_id
+        description: Foreign key that maps to the NHL season that player was in
+        
       # Properties
       - name: full_name
         description: Full name of the NHL player
@@ -33,9 +44,6 @@ models:
 
       - name: birth_date
         description: Birth date of the NHL player
-
-      - name: current_age
-        description: Age in years of the NHL player
 
       - name: birth_city
         description: Birth city of the NHL player
