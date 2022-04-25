@@ -1,0 +1,10 @@
+dbt_nhl_breakouts:
+  target: ci
+  outputs:
+    ci:
+      type: bigquery
+      location: us-west1
+      method: service-account
+      keyfile: .secrets/client_secrets.json
+      project: "{{ env_var('PROFILES_YML_BIGQUERY_PROJECT') }}"
+      dataset: sqlfluff
