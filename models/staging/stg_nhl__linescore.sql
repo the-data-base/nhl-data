@@ -6,10 +6,10 @@ live_linescore as (
 , final as (
     select
         /* Primary Key */
-        {{ dbt_utils.surrogate_key(['game_id']) }} as id
+        {{ dbt_utils.surrogate_key(['gameid']) }} as id
 
         /* Foreign Keys */
-        , game_id
+        , gameid as game_id
         , teams.home.team.id as home_team_id
         , teams.away.team.id as away_team_id
         , case

@@ -4,6 +4,8 @@ select
 
     /* Foreign Keys */
     , current_team_id
+    , team_id
+    , season_id
 
     /* Properties */
     , full_name
@@ -12,7 +14,6 @@ select
     , last_name
     , primary_number
     , birth_date
-    , current_age
     , birth_city
     , birth_state_province
     , birth_country
