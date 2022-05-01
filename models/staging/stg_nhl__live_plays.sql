@@ -386,6 +386,7 @@ live_plays as (
             else 0
         end as last_goal_game_winning
         -- Either team - last goal game tying?
+        -- #TODO this is not working as intended - goals that tied the games go to OT, and so there is 0 game tying goals with this logic
         , case
             when c.last_goal_scored = 1                       -- last goal
                 and abs(c.goals_away_lag - c.goals_home_lag) = 1  -- game was within 1 goal last play
