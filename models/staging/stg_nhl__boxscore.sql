@@ -25,6 +25,7 @@ live_boxscore as (
         , teams.home.teamstats.teamskaterstats.takeaways as home_team_takeaways
         , teams.home.teamstats.teamskaterstats.giveaways as home_team_giveaways
         , teams.home.teamstats.teamskaterstats.hits as home_team_hits
+        , teams.home.scratches as home_team_scratches
 
         -- Away team stats
         , teams.away.team.name as away_team_name
@@ -37,6 +38,7 @@ live_boxscore as (
         , teams.away.teamstats.teamskaterstats.takeaways as away_team_takeaways
         , teams.away.teamstats.teamskaterstats.giveaways as away_team_giveaways
         , teams.away.teamstats.teamskaterstats.hits as away_team_hits
+        , teams.away.scratches as away_team_scratches
     from live_boxscore
 )
 
