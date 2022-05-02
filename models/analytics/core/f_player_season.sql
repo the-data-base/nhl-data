@@ -82,8 +82,9 @@ order by
 
 select 
     /* Primary Key */
+    {{ dbt_utils.surrogate_key(['player_season.player_id', 'player_season.season_id']) }} as id
     /* Foreign Keys */
-    player_season.player_id
+    ,player_season.player_id
     ,player_season.season_id
     /* Season Properties */
     ,player_season.regular_season_start_date
@@ -99,6 +100,7 @@ select
     ,round(((player_season.time_on_ice_mins) + (player_season.time_on_ice_seconds / 60)) / player_season.boxscore_games,2) as avg_time_on_ice_mins
     -- Goal-scoring skater events (Goals, Assists, Points)
     ,player_season.goals
+    ,(player_season.goals / player_season.boxscore_games) as goals_pergame
     ,player_shots.goals_gamewinning
     ,player_shots.goals_chasegoal
     ,player_shots.goals_gametying
@@ -106,6 +108,7 @@ select
     ,player_shots.goals_buffergoal
     ,player_season.assists
     ,player_season.goals + player_season.assists as points
+    ,((player_season.goals + player_season.assists) / player_season.boxscore_games) as points_pergame
     -- Shooting skater events
     ,player_season.shots
     ,case when player_season.shots < 1 then 0 else round((player_season.goals / player_season.shots),2) end as pcnt_shooting
