@@ -34,9 +34,9 @@ player_season as (
         --,sum(case when bp.decision = "W" then 1 else 0) as wins
         --,sum(case when bp.decision = "L" then 1 else 0) as losses
     from
-        nhl-breakouts.dbt_dom.f_boxscore_player as bp
-        left join nhl-breakouts.dbt_dom.d_schedule as schedule on schedule.game_id = bp.game_id
-        left join nhl-breakouts.dbt_dom.d_seasons as season on season.id = schedule.season_id
+        {{ ref('f_boxscore_player') }} as bp
+        left join {{ ref('d_schedule') }} as schedule on schedule.game_id = bp.game_id
+        left join {{ ref('d_seasons') }} as season on season.id = schedule.season_id
     where 1 = 1
         and schedule.game_type = 'R'
         and bp.time_on_ice is not null
@@ -67,9 +67,9 @@ player_season as (
     ,sum(case when (plays.home_result_of_play = 'Tying goal scored' or plays.away_result_of_play = 'Tying goal scored') and plays.player_role = "SCORER" then 1 else 0 end) as goals_gametying
     ,sum(case when (plays.home_result_of_play = 'Go-ahead goal scored' or plays.away_result_of_play = 'Go-ahead goal scored') and plays.player_role = "SCORER" then 1 else 0 end) as goals_goahead
     ,sum(case when (plays.home_result_of_play = 'Buffer goal' or plays.away_result_of_play = 'Buffer goal') and plays.player_role = "SCORER" then 1 else 0 end) as goals_buffergoal
-from nhl-breakouts.dbt_dom.f_plays as plays
-    left join nhl-breakouts.dbt_dom.d_schedule as schedule on schedule.game_id = plays.game_id
-    left join nhl-breakouts.dbt_dom.d_seasons as season on season.id = schedule.season_id
+from {{ ref('f_plays') }}  as plays
+    left join {{ ref('d_schedule') }} as schedule on schedule.game_id = plays.game_id
+    left join {{ ref('d_seasons') }} as season on season.id = schedule.season_id
 where 1 = 1
     and plays.player_role in ("SHOOTER", "SCORER") 
     and plays.event_type in ("BLOCKED_SHOT", "MISSED_SHOT", "SHOT", "GOAL")
