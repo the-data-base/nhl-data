@@ -14,6 +14,7 @@ models:
       - name: stg_nhl__players_id
         description: Unique surrogate key from a combination of the NHL player ID, team ID and the season ID
         tests:
+          - unique
           - not_null
 
       # Identifiers
@@ -21,12 +22,6 @@ models:
         description: Unique identifier for an NHL player
         tests:
           - not_null
-
-      - name: team_id
-        description: Foreign key that maps to the NHL team ID that the NHL player played for in a given season
-
-      - name: season_id
-        description: Foreign key that maps to the NHL season that player was in
 
       - name: team_id
         description: Foreign key that maps to the NHL team ID that the NHL player played for in a given season
