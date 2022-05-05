@@ -1,6 +1,6 @@
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['players.id', 'players.teamid', 'players.seasonid'])}} as stg_nhl__players_id
+    {{ dbt_utils.surrogate_key(['players.id', 'players.teamid', 'players.seasonid']) }} as stg_nhl__players_id
 
     /* Identifiers */
     , players.id as player_id
