@@ -5,7 +5,7 @@ models:
     description: Staged NHL seasons data from the NHL-API
     columns:
       # Primary Key
-      - name: id
+      - name: season_id
         description: Unique identifier for an NHL season (e.g. "20172018")
         tests:
           - unique

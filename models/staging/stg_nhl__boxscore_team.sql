@@ -8,11 +8,8 @@ live_boxscore as (
 -- CTE2
 , home_team as (
     select
-        /* Primary Key */
-        {{ dbt_utils.surrogate_key(['live_boxscore.game_id', 'teams.home.team.id']) }} as id
-
-        /* Foreign Keys */
-        , live_boxscore.game_id
+        /* Identifiers */
+        live_boxscore.gameid as game_id
         , teams.home.team.id as team_id
 
         /* Properties */
@@ -37,11 +34,8 @@ live_boxscore as (
 -- CTE2
 , away_team as (
     select
-        /* Primary Key */
-        concat(live_boxscore.game_id, teams.away.team.id ) as id
-
-        /* Foreign Keys */
-        , live_boxscore.game_id
+        /* Identifiers */
+        live_boxscore.gameid as game_id
         , teams.away.team.id as team_id
 
         /* Properties */
@@ -67,8 +61,8 @@ live_boxscore as (
 , winning_team as (
     select
         home_team.game_id
-        , home_team.id as home_team_id
-        , away_team.id as away_team_id
+        , home_team.team_id as home_team_id
+        , away_team.team_id as away_team_id
         , home_team.team_goals as home_team_score
         , away_team.team_goals as away_team_score
         , case
@@ -92,9 +86,9 @@ live_boxscore as (
 -- Final query, return everything
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['boxscore_team.id']) }} as id
+    {{ dbt_utils.surrogate_key(['boxscore_team.game_id', 'boxscore_team.team_id']) }} as stg_nhl__boxscore_team_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , boxscore_team.game_id
     , boxscore_team.team_id
 

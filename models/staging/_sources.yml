@@ -12,7 +12,7 @@ sources:
       - name: live_boxscore
       - name: live_linescore
       - name: live_plays
-      - name: players
+      - name: people
       - name: schedule
       - name: seasons
       - name: teams

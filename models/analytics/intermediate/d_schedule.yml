@@ -5,29 +5,38 @@ models:
     description: Staged NHL schedule data from the NHL-API
     columns:
       # Primary Key
-      - name: id
+      - name: schedule_id
         description: Unique identifier for NHL scheduled games
         tests:
           - unique
           - not_null
 
-      # Foreign Keys
+      # Identifiers
       - name: game_id
         description: |
           Foreign key that maps to an NHL game
           {{ doc("game_id_description") }}
+        tests:
+          - not_null
+          - unique
 
       - name: season_id
         description: Foreign key that maps to an NHL season
+        tests:
+          - not_null
 
       - name: away_team_id
         description: Foreign key that maps to an NHL team (away team)
+        tests:
+          - not_null
 
       - name: home_team_id
         description: Foreign key that maps to an NHL team (home team)
+        tests:
+          - not_null
 
       - name: venue_id
-        description: Foreign key tha tmaps to a team's venu (home team)
+        description: Foreign key tha tmaps to a team's venue (home team)
 
       # Properties
       - name: game_number

@@ -7,23 +7,29 @@ models:
       Contains summarized stats of the teams involved at the game level.
     columns:
       # Primary Key
-      - name: id
+      - name: boxscore_id
         description: Unique identifier for the NHL boxscore game (hashed representation of game_id)
         tests:
           - not_null
           - unique
 
-      # Foreign Keys
+      # Identifiers
       - name: game_id
         description: |
           Foreign key that maps to an NHL game
           {{ doc("game_id_description") }}
+        tests:
+          - not_null
 
       - name: home_team_id
         description: Identifier for the home team, foreign key to stg_nhl__teams
+        tests:
+          - not_null
 
       - name: away_team_id
         description: Identifier for the away team, foreign key to stg_nhl__teams
+        tests:
+          - not_null
 
       # Properties
       - name: home_team_name

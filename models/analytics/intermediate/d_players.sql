@@ -1,9 +1,14 @@
+with deduplicated as (
+    {{ dedupe(
+        ref('stg_nhl__players'),
+        key_fields=['player_id'],
+        sort_fields=['season_id']
+    ) }}
+)
+
 select
     /* Primary Key */
-    id
-
-    /* Foreign Keys */
-    , current_team_id
+    player_id
 
     /* Properties */
     , full_name
@@ -12,7 +17,6 @@ select
     , last_name
     , primary_number
     , birth_date
-    , current_age
     , birth_city
     , birth_state_province
     , birth_country
@@ -25,13 +29,11 @@ select
     , is_rookie
     , shoots_catches
     , roster_status
-    , current_team_name
-    , current_team_url
     , primary_position_code
     , primary_position_name
     , primary_position_type
     , primary_position_abbreviation
     , extracted_at
     , loaded_at
-from {{ ref('stg_nhl__players') }}
+from deduplicated
 

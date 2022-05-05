@@ -7,15 +7,13 @@ models:
       Contains the summary of goals and teams involved at the game level.
     columns:
       # Primary Key
-      - name: id
-        description: |
-          Unique identifier for an NHL game (game_id)
-          {{ doc("game_id_description") }}
+      - name: stg_nhl__linescore_id
+        description: Unique identifier for the game linescore
         tests:
           - unique
           - not_null
 
-      # Foreign Keys
+      # Identifiers
       - name: game_id
         description: |
           Unique identifier for an NHL game (game_id)

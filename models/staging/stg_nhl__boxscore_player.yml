@@ -5,13 +5,13 @@ models:
     description: Staged NHL boxscore player data from the NHL-API (game-player level). Each row represents an individual player's summarized activity in an NHL game
     columns:
       # Primary Key
-      - name: id
-        description: Unique identifier for a player's summarized activity in an NHL game (game_id + team_id + player_id)
+      - name: stg_nhl__boxscore_player_id
+        description: Unique surrogate key for a player's summarized activity in an NHL game (game_id + team_id + player_id)
         tests:
           - unique
           - not_null
 
-      # Foreign Keys
+      # Identifiers
       - name: game_id
         description: |
           Foreign key that maps to an NHL game ID

@@ -5,25 +5,34 @@ models:
     description: Staged NHL teams data from the NHL-API
     columns:
       # Primary Key
-      - name: id
+      - name: team_id
         description: Unique identifier for NHL teams
         tests:
           - unique
           - not_null
 
-      # Foreign Keys
+      # Identifiers
       - name: venue_timezone_id
         description: Foreign key that maps to the timezone ID of the venue (e.g. America/Vancouver)
+        tests:
+          - not_null
 
       - name: division_id
         description: Foreign key that maps to the division ID that the NHL team belongs to
+        tests:
+          - not_null
 
       - name: conference_id
         description: Foreign key that maps to the conference ID that the NHL team belongs to
+        tests:
+          - not_null
 
       - name: franchise_id
         description: Foreign key that maps to the franchise ID that the NHL originates from
+        tests:
+          - not_null
 
+      # Properties
       - name: full_name
         description: Full name of the NHL team (e.g. Vancouver Canucks)
 

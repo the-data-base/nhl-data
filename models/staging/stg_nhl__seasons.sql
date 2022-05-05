@@ -1,6 +1,9 @@
 select
     /* Primary Key */
-    seasons.seasonid as id
+    {{ dbt_utils.surrogate_key(['seasons.seasonid']) }} as stg_nhl__seasons_id
+
+    /* Identifiers */
+    , seasons.seasonid as season_id
 
     /* Properties */
     , seasons.regularseasonstartdate as regular_season_start_date
