@@ -1,8 +1,8 @@
 select
     /* Primary Key */
-    id
+    stg_nhl__schedule_id as schedule_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , game_id
     , season_id
     , away_team_id

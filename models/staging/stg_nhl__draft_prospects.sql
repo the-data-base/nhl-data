@@ -1,8 +1,9 @@
 select distinct
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['prospects.id']) }} as id
+    {{ dbt_utils.surrogate_key(['prospects.id', 'prospects.nhlplayerid']) }} as stg_nhl__draft_prospects_id
 
-    /* Foreign Keys */
+    /* Identifiers */
+    , prospects.id as draft_prospect_id
     , prospects.nhlplayerid as prospect_player_id
     , prospects.prospectcategory.id as prospect_category_id
 

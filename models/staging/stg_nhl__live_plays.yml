@@ -5,13 +5,13 @@ models:
     description: Staged NHL event level data from the NHL-API (player-play level)
     columns:
       # Primary Key
-      - name: id
-        description: Unique identifier for a player's event-level activity in an NHL game (game_id + team_id + player_id + event_id)
+      - name: stg_nhl__live_plays_id
+        description: Unique surrogate key for a player's event-level activity in an NHL game (game_id + team_id + player_id + event_id)
         tests:
           - unique
           - not_null
 
-      # Foreign Keys
+      # Identifiers
       - name: game_id
         description: |
           Foreign key that maps to an NHL game ID

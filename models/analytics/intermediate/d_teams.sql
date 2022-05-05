@@ -1,9 +1,17 @@
+with deduplicated as (
+    {{ dedupe(
+        ref('stg_nhl__teams'),
+        key_fields=['team_id'],
+        sort_fields=['season_id']
+    ) }}
+)
+
 select
     /* Primary Key */
-    id
+    team_id
 
-    /* Foreign Keys */
-
+    /* Identifiers */
+    , venue_timezone_id
     , division_id
     , conference_id
     , franchise_id
@@ -22,4 +30,4 @@ select
     , first_year_of_play
     , short_name
     , is_active
-from {{ ref('stg_nhl__teams') }}
+from deduplicated

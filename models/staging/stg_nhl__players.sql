@@ -1,9 +1,9 @@
 select
     /* Primary Key */
-    players.id as id
+    {{ dbt_utils.surrogate_key(['players.id', 'players.teamid', 'players.seasonid'])}} as stg_nhl__players_id
 
-    /* Foreign Keys */
-    , currentteam.id as current_team_id
+    /* Identifiers */
+    , players.id as player_id
     , players.seasonid as season_id
     , players.teamid as team_id
 
@@ -26,8 +26,6 @@ select
     , players.rookie as is_rookie
     , players.shootscatches as shoots_catches
     , players.rosterstatus as roster_status
-    , players.currentteam.name as current_team_name
-    , players.currentteam.link as current_team_url
     , players.primaryposition.code as primary_position_code
     , players.primaryposition.name as primary_position_name
     , players.primaryposition.type as primary_position_type

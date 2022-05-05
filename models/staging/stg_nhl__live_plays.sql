@@ -8,7 +8,7 @@ live_plays as (
 -- CTE2 Play-level information (each row is a player's involvement in a play)
 , cte_base_plays as (
     select
-        concat(live_plays.gameid, live_plays.about.eventidx, players.player.id) as id
+        {{ dbt_utils.surrogate_key(['live_plays.gameid', 'live_plays.about.eventidx', 'players.player.id']) }} as stg_nhl__live_plays_id
         , live_plays.gameid as game_id
         , live_plays.about.eventid as event_id
         , players.player.id as player_id
@@ -177,9 +177,9 @@ live_plays as (
 , cte_cumulative as (
     select
         /* Primary Key */
-        bp.id
+        bp.stg_nhl__live_plays_id
 
-        /* Foreign Keys */
+        /* Identifiers */
         , bp.game_id
         , bp.event_idx
         , bp.event_id
@@ -401,9 +401,9 @@ live_plays as (
 -- Final return
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['id']) }} as id
+    stg_nhl__live_plays_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , game_id
     , event_idx
     , event_id

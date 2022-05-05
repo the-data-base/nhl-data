@@ -5,19 +5,20 @@ models:
     description: Staged NHL boxscore & linescore data from the NHL-API
     columns:
       # Primary Key
-      - name: id
-        description: |
-          Unique identifier for an NHL game (game_id)
-          {{ doc("game_id_description") }}
+      - name: stg_nhl__games_id
+        description: Unique surrogate key for an NHL game
         tests:
           - unique
           - not_null
 
-      # Foreign Keys
+      # Identifiers
       - name: game_id
         description: |
           Unique identifier for an NHL game (game_id)
           {{ doc("game_id_description") }}
+        tests:
+          - not_null
+          - unique
 
       - name: home_team_id
         description: Foreign key that maps to an NHL team (home team)

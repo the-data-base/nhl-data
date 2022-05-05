@@ -1,6 +1,6 @@
 select
     /* Primary Key */
-    id
+    conference_id
 
     /* Properties */
     , conference_name
