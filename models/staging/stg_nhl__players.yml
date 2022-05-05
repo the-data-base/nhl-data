@@ -3,12 +3,6 @@ version: 2
 models:
   - name: stg_nhl__players
     description: Staged NHL player data from the NHL-API
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - id
-            - season_id
-            - team_id
     columns:
       # Primary Key
       - name: stg_nhl__players_id
