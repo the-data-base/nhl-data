@@ -38,8 +38,10 @@ pip install dbt-bigquery
 ```
 
 Try running the following commands:
-- dbt run
-- dbt test
+```
+dbt run
+dbt test
+```
 
 ### Configuring your Google OAuth Credentials
 1. Download and install the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install). This will add the `gcloud` command to your terminal / command prompt.
