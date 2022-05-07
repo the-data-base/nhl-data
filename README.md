@@ -74,6 +74,21 @@ dbt_nhl_breakouts:
 
 [SQLFluff](https://www.sqlfluff.com/) is a SQL linter that helps validate code against pre-determined coding conventions. This is to ensure that multiple developers working on the same project maintain a consistent style, improving readability when others review your code.
 
+#### Method 1: Using sqlfluff
+Install sqlfluff templater for dbt:
+```bash
+pipx install sqlfluff-templater-dbt
+```
+
+Run the linter:
+```bash
+# Lint and autoapply fixes to an entire directory:
+sqlfluff fix path/to/model
+
+# Lint and autoapply fixes to a single model:
+sqlfluff fix path/to/model/file.sql
+```
+#### Method 2: Using tox
 Install tox:
 ```bash
 pipx install tox
@@ -95,7 +110,6 @@ tox -e fix path/to/model/file.sql
 - Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
-
 
 ## Developer contact
 ---
