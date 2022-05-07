@@ -1,0 +1,156 @@
+version: 2
+
+models:
+  - name: f_player_season
+    description: Model-ready, feature rich dataset at the player-season level of granularity
+    columns:
+      # Primary Key
+      - name: id
+        description: Unique identifier for a player's summarized activity in an NHL season (player_id + season_id)
+        tests:
+          - unique
+          - not_null
+
+      # Foreign Keys
+      - name: player_id
+        description: Foreign key that maps to an NHL player ID
+
+      - name: season_id
+        description: Foreign key that maps to an NHL season (e.g. "20172018")
+
+      # Season Properties
+      - name: regular_season_start_date
+        description: The first date of the NHL regular season (e.g. "2017-10-04")
+
+      - name: regular_season_end_date
+        description: The last date of the NHL regular season (e.g. "2018-04-08")
+
+      - name: full_season_games
+        description: The number of regular season games scheduled (e.g. 56 games in 2020-21 season)
+
+      - name: boxscore_games
+        description: The number of regular season games played. It is possible that the number of games played is different to the number of games scheduled because of injuries, scratches, or trades
+
+      # Player Stats
+      ## Time on ice
+      - name: player_full_name
+        description: Full name of the NHL player
+
+      - name: time_on_ice_seconds
+        description: The number of total seconds played in the regular season
+
+      - name: time_on_ice_minutes
+        description: The number of total minutes played in the regular season
+
+      - name: avg_time_on_ice_mins
+        description: The number of minutes played in the regular seasons divided by the number of games played in the regular season (e.g. 20.5 = 20 minutes and 30 seconds)
+
+      ## Goal-scoring skater events (Goals, Assists, Points)
+      - name: goals
+        description: The number of goals scored in the regular season
+
+      - name: goals_pergame
+        description: The number of goals scored in the regular season divided by the number of games played
+
+      - name: goals_gamewinning
+        description: The number of goals scored that ended up becoming the game winning goal (either last goal scored in regulation, or the OT winner)
+
+      - name: goals_chasegoal
+        description: The number of goals scored while behind by more than 1 goal
+      
+      - name: goals_gametying
+        description: The number of goals scored from behind that tied the game up
+
+      - name: goals_goahead
+        description: The number of goals scored to break the tie and take the lead in the game
+
+      - name: goals_buffergoal
+        description: The number of goals scored while the team was ahead by at least 1 goal
+
+      - name: assists
+        description: The number of assists on goals made in the regular season
+
+      - name: points
+        description: The number of points scored in the regular season
+
+      - name: points_pergame
+        description: The number of points scored in the regular season divided by the number of games played
+
+      ## Shooting skater stats
+      - name: shots
+        description: Number of shots taken
+
+      - name: pcnt_shooting
+        description: The percent of shots on goal that were goals (e.g. 10% shooting means 1 out of 10 shots on net were goals)
+
+      - name: shots_blocked
+        description: The number of shots taken that were blocked (e.g. shot taken that hits an opposing team defencemen)
+
+      - name: shots_missed
+        description: The number of shots taken that were missed (e.g. shot taken that missees the net)
+
+      - name: shots_saved
+        description: The number of shots taken that were on target but were saved
+
+      - name: shots_scored
+        description: The number of shots taken that converted as goals
+
+      ## Other skater stats
+      - name: faceoff_wins
+        description: Number of faceoffs won
+
+      - name: faceoff_taken
+        description: Number of faceoffs taken
+
+      - name: pcnt_faceoffwins
+        description: The percent of faceoffs taken that were won (e.g. 0.50 = 50% faceoffs won)
+
+      - name: hits
+        description: Number of hits made
+
+      - name: takeaways
+        description: Number of takeaways made
+
+      - name: giveaways
+        description: Number of giveaways faulted for
+
+      - name: blocked
+        description: Number of blocked shots
+
+      - name: plus_minus
+        description: Total plus minus in the game - plus for every goal scored while on the ice for, minus for every goal allowed while on the ice
+
+      - name: pim
+        description: Penalties in minutes:seconds
+
+      ## Special teams skater events
+      - name: powerplay_goals
+        description: Number of powerplay goals scored
+
+      - name: powerplay_assists
+        description: Number of powerplay assists (primary & secondary)
+
+      - name: short_handed_goals
+        description: Number of short-handed goals scored
+
+      - name: short_handed_assists
+        description: Number of short-handed assists made
+
+      ## Goalie events
+      - name: saves
+        description: Number of saves made
+
+      - name: powerplay_saves
+        description: Number of saves made on the powerplay
+
+      - name: even_saves
+        description: Number of saves made at event strength
+
+      - name: shorthanded_shots_against
+        description: Number of saves made on the penalty kill / short-handed
+
+      - name: even_shots_against
+        description: Number of shots against at event strength
+
+      - name: powerplay_shots_against
+        description: Number of shots against on the powerplay / man advantage
