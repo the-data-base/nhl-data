@@ -145,4 +145,3 @@ from
     left join player_shots on player_season.player_id = player_shots.player_id and player_season.season_id = player_shots.season_id
 order  by
     player_season.goals desc
-    ;
