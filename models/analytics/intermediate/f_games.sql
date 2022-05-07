@@ -1,8 +1,8 @@
 select
     /* Primary Key */
-    id
+    game_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , home_team_id
     , away_team_id
 

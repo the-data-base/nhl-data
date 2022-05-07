@@ -7,13 +7,13 @@ models:
       Contains summarized stats of the teams involved at the game level.
     columns:
       # Primary Key
-      - name: id
-        description: Unique identifier for the NHL boxscore game
+      - name: stg_nhl__boxscore_id
+        description: Unique surrogate key for the NHL boxscore game
         tests:
           - not_null
           - unique
 
-      # Foreign Keys
+      # Identifiers
       - name: game_id
         description: |
           Foreign key that maps to an NHL game

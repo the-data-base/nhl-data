@@ -1,8 +1,8 @@
 select
     /* Primary Key */
-    id
+    stg_nhl__boxscore_player_id as boxscore_player_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , game_id
     , team_id
     , player_id

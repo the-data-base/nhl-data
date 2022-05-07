@@ -1,12 +1,14 @@
 select
     /* Primary Key */
-    teams.id as id
+    {{ dbt_utils.surrogate_key(['teams.id', 'teams.seasonid']) }} as stg_nhl__teams_id
 
-    /* Foreign Keys */
+    /* Identifiers */
+    , teams.id as team_id
     , teams.venue.timezone.id as venue_timezone_id
     , teams.division.id as division_id
     , teams.conference.id as conference_id
     , teams.franchise.franchiseid as franchise_id
+    , teams.seasonid as season_id
 
     /* Properties */
     , teams.name as full_name

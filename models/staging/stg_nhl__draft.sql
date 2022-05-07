@@ -1,9 +1,9 @@
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['year', 'pickoverall']) }} as id
+    {{ dbt_utils.surrogate_key(['year', 'pickoverall']) }} as stg_nhl__draft_id
 
-    /* Foreign Keys */
-    , CONCAT(CAST(draft.year as STRING), LPAD(CAST(draft.pickoverall as STRING), 3, '0')) as overall_pick_id
+    /* Identifiers */
+    , concat(cast(draft.year as string), lpad(cast(draft.pickoverall as string), 3, '0')) as overall_pick_id
     , draft.prospect.id as draft_prospect_id
     , draft.team.id as draft_team_id
 
@@ -17,3 +17,4 @@ select
     , draft.team.name as draft_team_name
 
 from {{ source('meltano', 'draft') }} as draft
+where draft.prospect.fullname != 'Void' -- remove records that contain draft prospect named 'Void' as this appears to be bad data from the API

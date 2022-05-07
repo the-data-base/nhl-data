@@ -1,8 +1,8 @@
 select
     /* Primary Key */
-    id
+    division_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , conference_id
 
     /* Properties */

@@ -10,9 +10,10 @@ linescore as (
 , final as (
     select
         /* Primary Key */
-        linescore.game_id as id
+        {{ dbt_utils.surrogate_key(['linescore.game_id']) }} as stg_nhl__games_id
 
-        /* Foreign Keys */
+        /* Identifiers */
+        , linescore.game_id
         , linescore.home_team_id
         , linescore.away_team_id
 

@@ -5,15 +5,17 @@ models:
     description: Staged NHL division data from the NHL-API
     columns:
       # Primary Key
-      - name: id
+      - name: division_id
         description: Unique identifier for NHL divisions
         tests:
           - unique
           - not_null
 
-      # Foreign Keys
+      # Identifiers
       - name: conference_id
         description: Foreign key that maps to the NHL conference
+        tests:
+          - not_null
 
       # Properties
       - name: division_name

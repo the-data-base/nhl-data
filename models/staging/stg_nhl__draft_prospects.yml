@@ -5,13 +5,19 @@ models:
     description: Staged NHL draft_prospects data from the NHL-API
     columns:
       # Primary Key
-      - name: id
-        description: Unique identifier for a drafted NHL prospect
+      - name: stg_nhl__draft_prospects_id
+        description: Unique surrogate key for a drafted NHL prospect
         tests:
           - unique
           - not_null
 
-      # Foreign Keys
+      # Identifiers
+      - name: draft_prospect_id
+        description: Unique identifier for the NHL draft prospect
+        tests:
+          - not_null
+          - unique
+
       - name: prospect_player_id
         description: Foreign key that maps to an NHL player ID
 
