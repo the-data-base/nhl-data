@@ -12,35 +12,31 @@ Transforming the `raw` nhl data into `analytics-models` with dbt
 ## Introduction
 ---
 
-Welcome to the `dbt-nhl-breakouts` repo
+:wave: Welcome to the `dbt-nhl-breakouts` repo
 
-This repo is used to transform the `raw` nhl data into `analytics-models`. In other words, this is where the **SQL magic** happens by way of `dbt`. In the end, this work translates to:
-* Data analyst/scientist friendly datasets in a set target (we have chosen BigQuery)
-* Well-documented tables, columns, queries
-* Developer friendly models for testing the SQL
+This repo contains the source code used to transform `raw` nhl data from the NHL Stats API into **analysis-ready models**. In other words, this is where the **SQL magic** happens using `dbt`. Ultimately, this work converts confusing raw data into:
+* Data analyst/scientist friendly datasets all within one data warehouse (BigQuery)
+* Well-documented tables, field definitions, and queries
+* Reliable data that is tested and validated before ever making it into production
 
 ## Setup
 ---
-Set of instructions for running, testing, and materializing your queries with `dbt` in BigQuery
+To get started running, testing, and materializing your own queries with `dbt`, you will need to first install `python` into a virtual environment (such as conda).
 
 ### Dependencies
-Setup fresh conda environment on `python=3.8.12` (Note: you can call the environment whatever you want)
+Setup fresh conda environment on `python=3.8.12` (Note: you can name the environment whatever you want, we suggest something like `nhl-breakouts-dbt` to easily identify what the environment is used for).
+
+Create a new virtual environment:
 ```
-conda create -n dbt-nhl-breakouts python=3.8.12
+conda create -n YOUR_ENV_NAME python=3.8.12
 ```
-Activate conda
+Activate conda:
 ```
-conda activate dbt-nhl-breakouts
+conda activate YOUR_ENV_NAME
 ```
-Install dependencies
+Install `dbt`:
 ```
 pip install dbt-bigquery
-```
-
-Try running the following commands:
-```
-dbt run
-dbt test
 ```
 
 ### Configuring your Google OAuth Credentials
@@ -70,28 +66,15 @@ dbt_nhl_breakouts:
       threads: 4
 ```
 
-### Running SQLFluff locally
+## Running SQLFluff locally
+---
 
 [SQLFluff](https://www.sqlfluff.com/) is a SQL linter that helps validate code against pre-determined coding conventions. This is to ensure that multiple developers working on the same project maintain a consistent style, improving readability when others review your code.
 
-#### Method 1: Using sqlfluff
-Install sqlfluff templater for dbt:
-```bash
-pipx install sqlfluff-templater-dbt
-```
-
-Run the linter:
-```bash
-# Lint and autoapply fixes to an entire directory:
-sqlfluff fix path/to/model
-
-# Lint and autoapply fixes to a single model:
-sqlfluff fix path/to/model/file.sql
-```
-#### Method 2: Using tox
+#### **Method 1:** Using tox (recommended method)
 Install tox:
 ```bash
-pipx install tox
+pip install tox
 ```
 
 Run the linter:
@@ -102,6 +85,22 @@ tox -e fix path/to/model
 # Lint and autoapply fixes to a single model:
 tox -e fix path/to/model/file.sql
 ```
+
+#### **Method 2:** Using sqlfluff
+Install Sqlfluff templater for dbt:
+```bash
+pip install sqlfluff-templater-dbt
+```
+
+Run the linter:
+```bash
+# Lint and autoapply fixes to an entire directory:
+sqlfluff fix path/to/model
+
+# Lint and autoapply fixes to a single model:
+sqlfluff fix path/to/model/file.sql
+```
+
 
 ## Resources
 ---
