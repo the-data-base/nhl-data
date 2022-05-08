@@ -5,7 +5,7 @@ models:
     description: Model-ready, feature rich dataset at the player-season level of granularity
     columns:
       # Primary Key
-      - name: id
+      - name: player_season_id
         description: Unique identifier for a player's summarized activity in an NHL season (player_id + season_id)
         tests:
           - unique

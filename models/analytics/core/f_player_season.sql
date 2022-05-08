@@ -2,8 +2,8 @@ with
 player_season as (
     select
         bp.player_id
-        , bp.player_full_name
-        , season.id as season_id
+        , player.full_name as player_full_name
+        , season.season_id
         , season.regular_season_start_date
         , season.regular_season_end_date
         , season.number_of_games as full_season_games
@@ -35,14 +35,15 @@ player_season as (
     --,sum(case when bp.decision = "L" then 1 else 0) as losses
     from {{ ref('f_boxscore_player') }} as bp
     left join {{ ref('d_schedule') }} as schedule on schedule.game_id = bp.game_id
-    left join {{ ref('d_seasons') }} as season on season.id = schedule.season_id
+    left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
+    left join {{ ref('d_players') }} as player on player.player_id = bp.player_id
     where 1 = 1
         and schedule.game_type = 'R'
         and bp.time_on_ice is not null
     group by
         bp.player_id
-        , bp.player_full_name
-        , season.id
+        , player.full_name
+        , season.season_id
         , season.number_of_games
         , season.regular_season_start_date
         , season.regular_season_end_date
@@ -55,7 +56,7 @@ player_season as (
 , player_shots as (
     select
         plays.player_id
-        , season.id as season_id
+        , season.season_id
         , max(plays.event_description) as example_eventdescription
         , sum(case when plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_blocked
         , sum(case when plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_missed
@@ -68,20 +69,20 @@ player_season as (
         , sum(case when (plays.home_result_of_play = 'Buffer goal' or plays.away_result_of_play = 'Buffer goal') and plays.player_role = "SCORER" then 1 else 0 end) as goals_buffergoal
     from {{ ref('f_plays') }} as plays
     left join {{ ref('d_schedule') }} as schedule on schedule.game_id = plays.game_id
-    left join {{ ref('d_seasons') }} as season on season.id = schedule.season_id
+    left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
     where 1 = 1
         and plays.player_role in ("SHOOTER", "SCORER")
         and plays.event_type in ("BLOCKED_SHOT", "MISSED_SHOT", "SHOT", "GOAL")
     group by
         plays.player_id
-        , season.id
+        , season.season_id
     order by
         sum(case when plays.event_type = "GOAL" and plays.player_role = "SCORER" then 1 else 0 end) desc
 )
 
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['player_season.player_id', 'player_season.season_id']) }} as id
+    {{ dbt_utils.surrogate_key(['player_season.player_id', 'player_season.season_id']) }} as player_season_id
     /* Foreign Keys */
     , player_season.player_id
     , player_season.season_id
