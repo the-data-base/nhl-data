@@ -9,7 +9,7 @@ Transforming the `raw` nhl data into `analytics-models` with dbt
 * [Resources](#resources)
 * [Developer contact](#developer-contact)
 
-## Introduction
+## :tada: Introduction
 ---
 
 :wave: Welcome to the `dbt-nhl-breakouts` repo
@@ -19,7 +19,7 @@ This repo contains the source code used to transform `raw` nhl data from the NHL
 * Well-documented tables, field definitions, and queries
 * Reliable data that is tested and validated before ever making it into production
 
-## Setup
+## :nut_and_bolt: Setup
 ---
 To get started running, testing, and materializing your own queries with `dbt`, you will need to first install `python` into a virtual environment (such as conda).
 
@@ -66,7 +66,7 @@ dbt_nhl_breakouts:
       threads: 4
 ```
 
-## Running SQLFluff locally
+##  :white_check_mark: Running SQLFluff locally
 ---
 
 [SQLFluff](https://www.sqlfluff.com/) is a SQL linter that helps validate code against pre-determined coding conventions. This is to ensure that multiple developers working on the same project maintain a consistent style, improving readability when others review your code.
@@ -102,7 +102,7 @@ sqlfluff fix path/to/model/file.sql
 ```
 
 
-## Resources
+## :book: Resources
 ---
 - Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
 - Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
@@ -110,7 +110,7 @@ sqlfluff fix path/to/model/file.sql
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
 
-## Developer contact
+## :inbox_tray: Developer contact
 ---
 * @gavh3
 * @dmf95
