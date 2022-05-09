@@ -122,7 +122,7 @@ models:
         description:  Number of shots against at event strength
 
       - name: powerplay_shots_against
-        description: Number of shots against on the powerplay / mad advantage
+        description: Number of shots against on the powerplay / man advantage
 
       - name: decision
         description: Win (W) or Loss (L) for goalies only (NULL if player)
