@@ -1,8 +1,8 @@
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['gamepk']) }} as id
+    {{ dbt_utils.surrogate_key(['schedule.gamepk', 'schedule.season']) }} as stg_nhl__schedule_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , schedule.gamepk as game_id
     , schedule.season as season_id
     , schedule.teams.away.team.id as away_team_id

@@ -1,7 +1,3 @@
-[tox]
-skipsdist = True
-envlist = lint_all
-
 [sqlfluff]
 dialect = bigquery
 templater = dbt
@@ -64,20 +60,3 @@ capitalisation_policy = lower
 
 [sqlfluff:rules:L042]
 forbid_subquery_in = both
-
-[testenv]
-deps =
-    dbt-bigquery~=1.0.0
-    sqlfluff-templater-dbt
-
-[testenv:lint]
-commands = sqlfluff lint {posargs} --ignore parsing
-
-[testenv:lint_all]
-commands = sqlfluff lint models --ignore parsing
-
-[testenv:fix]
-commands = sqlfluff fix {posargs} --ignore parsing
-
-[testenv:fix_all]
-commands = sqlfluff fix models --ignore parsing

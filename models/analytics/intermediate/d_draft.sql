@@ -1,8 +1,8 @@
 select
     /* Primary Key */
-    id
+    stg_nhl__draft_id as draft_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , overall_pick_id
     , draft_prospect_id
     , draft_team_id

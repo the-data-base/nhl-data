@@ -8,7 +8,7 @@ live_plays as (
 -- CTE2 Play-level information (each row is a player's involvement in a play)
 , cte_base_plays as (
     select
-        concat(live_plays.gameid, live_plays.about.eventidx, players.player.id) as id
+        {{ dbt_utils.surrogate_key(['live_plays.gameid', 'live_plays.about.eventidx', 'players.player.id']) }} as stg_nhl__live_plays_id
         , live_plays.gameid as game_id
         , live_plays.about.eventid as event_id
         , players.player.id as player_id
@@ -177,9 +177,9 @@ live_plays as (
 , cte_cumulative as (
     select
         /* Primary Key */
-        bp.id
+        bp.stg_nhl__live_plays_id
 
-        /* Foreign Keys */
+        /* Identifiers */
         , bp.game_id
         , bp.event_idx
         , bp.event_id
@@ -386,6 +386,7 @@ live_plays as (
             else 0
         end as last_goal_game_winning
         -- Either team - last goal game tying?
+        -- #TODO this is not working as intended - goals that tied the games go to OT, and so there is 0 game tying goals with this logic
         , case
             when c.last_goal_scored = 1                       -- last goal
                 and abs(c.goals_away_lag - c.goals_home_lag) = 1  -- game was within 1 goal last play
@@ -401,9 +402,9 @@ live_plays as (
 -- Final return
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['id']) }} as id
+    stg_nhl__live_plays_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , game_id
     , event_idx
     , event_id

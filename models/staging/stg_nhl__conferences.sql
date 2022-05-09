@@ -1,6 +1,9 @@
 select
     /* Primary Key */
-    conferences.id as id
+    {{ dbt_utils.surrogate_key(['conferences.id']) }} as stg_nhl__conferences_id
+
+    /* Identifiers */
+    , conferences.id as conference_id
 
     /* Properties */
     , conferences.name as conference_name

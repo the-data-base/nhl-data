@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: f_games_scratches
+    description: A table containing `game_id` and corresponding `player_id` of players who were scratched either due to injury or a coach's decision
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - game_id
+            - player_id
+    columns:
+      - name: game_id
+        description: |
+          Foreign key that maps to an NHL game
+          {{ doc("game_id_description") }}
+        tests:
+          - not_null
+
+      - name: player_id
+        description: Foreign key that maps to an NHL player
+        tests:
+          - not_null

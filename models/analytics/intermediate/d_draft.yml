@@ -5,21 +5,27 @@ models:
     description: Staged NHL entry draft data from the NHL-API
     columns:
       # Primary Key
-      - name: id
+      - name: draft_id
         description: Unique identifier for an NHL rookie draft (generated via dbt_utils.surrogate_key)
         tests:
           - unique
           - not_null
 
-      # Foreign Keys
+      # Identifiers
       - name: overall_pick_id
         description: Unique identifier for an NHL rookie draft (draft year + overall pick)
+        tests:
+          - not_null
 
       - name: draft_prospect_id
         description: Foreign key that maps to an NHL draft prospect
+        tests:
+          - not_null
 
       - name: draft_team_id
         description: Foreign key that maps to the NHL team that drafted the NHL prospect
+        tests:
+          - not_null
 
       # Properties
       - name: draft_year

@@ -1,8 +1,8 @@
 select
     /* Primary Key */
-    id
+    stg_nhl__live_plays_id as play_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , game_id
     , event_idx
     , event_id

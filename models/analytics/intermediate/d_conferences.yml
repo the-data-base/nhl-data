@@ -5,7 +5,7 @@ models:
     description: Staged NHL conferences data from the NHL-API
     columns:
       # Primary Key
-      - name: id
+      - name: conference_id
         description: Unique identifier for NHL conferences
         tests:
           - unique

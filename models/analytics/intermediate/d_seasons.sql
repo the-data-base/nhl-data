@@ -1,6 +1,6 @@
 select
     /* Primary Key */
-    id
+    season_id
 
     /* Properties */
     , regular_season_start_date

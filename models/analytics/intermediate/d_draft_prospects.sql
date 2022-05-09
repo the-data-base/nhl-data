@@ -1,8 +1,8 @@
 select distinct
     /* Primary Key */
-    id
+    draft_prospect_id
 
-    /* Foreign Keys */
+    /* Identifiers */
     , prospect_player_id
     , prospect_category_id
 
