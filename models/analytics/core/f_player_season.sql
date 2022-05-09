@@ -73,7 +73,7 @@ player_season as (
     where 1 = 1
         and plays.player_role in ("SHOOTER", "SCORER")
         and plays.event_type in ("BLOCKED_SHOT", "MISSED_SHOT", "SHOT", "GOAL")
-        and plays.play_period_type <> 'SHOOTOUT' 
+        and plays.play_period_type <> 'SHOOTOUT'
     group by
         plays.player_id
         , season.season_id
