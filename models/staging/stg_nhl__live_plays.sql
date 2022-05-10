@@ -13,8 +13,8 @@ live_plays as (
         , live_plays.about.eventid as event_id
         , players.player.id as player_id
         , players.player.fullname as player_full_name
-        , offset as player_index        
-        , boxscore_player.team_id as team_id
+        , offset as player_index -- noqa: disable=L027
+        , boxscore_player.team_id as team_id -- noqa: enable=L027
         , upper(players.playertype) as player_role
         -- Was the play/player in question home or away?
         , case
@@ -191,8 +191,8 @@ live_plays as (
         /* Properties */
         , bp.player_full_name
         , bp.player_index
-        , UPPER(bp.player_role) = 'ASSIST' and player_index = 1 as player_primary_assist
-        , UPPER(bp.player_role) = 'ASSIST' and player_index = 2 as player_secondary_assist
+        , upper(bp.player_role) = 'ASSIST' and player_index = 1 as player_primary_assist
+        , upper(bp.player_role) = 'ASSIST' and player_index = 2 as player_secondary_assist
         , bp.player_role
         , bp.player_role_team
         , bp.event_type
