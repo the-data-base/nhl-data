@@ -12,7 +12,9 @@ live_plays as (
         , live_plays.gameid as game_id
         , live_plays.about.eventid as event_id
         , players.player.id as player_id
-        , boxscore_player.team_id as team_id
+        , players.player.fullname as player_full_name
+        , offset as player_index -- noqa: disable=L027
+        , boxscore_player.team_id as team_id -- noqa: enable=L027
         , upper(players.playertype) as player_role
         -- Was the play/player in question home or away?
         , case
@@ -168,7 +170,7 @@ live_plays as (
         , live_plays.about.goals.home as goals_home
 
     from live_plays
-    , unnest(live_plays.players) as players
+    , unnest(live_plays.players) as players with offset
     left join {{ ref('stg_nhl__schedule') }} as schedule on schedule.game_id = live_plays.gameid
     left join {{ ref('stg_nhl__boxscore_player') }} as boxscore_player on boxscore_player.game_id = live_plays.gameid and players.player.id = boxscore_player.player_id
 )
@@ -187,6 +189,10 @@ live_plays as (
         , bp.team_id
 
         /* Properties */
+        , bp.player_full_name
+        , bp.player_index
+        , upper(bp.player_role) = 'ASSIST' and player_index = 1 as player_primary_assist
+        , upper(bp.player_role) = 'ASSIST' and player_index = 2 as player_secondary_assist
         , bp.player_role
         , bp.player_role_team
         , bp.event_type
@@ -412,6 +418,10 @@ select
     , team_id
 
     /* Properties */
+    , player_full_name
+    , player_index
+    , player_primary_assist
+    , player_secondary_assist
     , player_role
     , player_role_team
     , event_type

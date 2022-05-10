@@ -10,6 +10,9 @@ select
     , team_id
 
     /* Properties */
+    , player_full_name
+    , player_primary_assist
+    , player_secondary_assist
     , player_role
     , player_role_team
     , event_type
