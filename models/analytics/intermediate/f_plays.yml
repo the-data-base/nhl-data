@@ -40,6 +40,15 @@ models:
           - not_null
 
       # Properties
+      - name: player_full_name
+        description: The player's full name (first name, last name)
+
+      - name: player_primary_assist
+        description: Boolean flag for whether or not the play resulted in the player making a primary assist
+
+      - name: player_secondary_assist
+        description: Boolean flag for whether or not the play resulted in the player making a secondary assist
+
       - name: player_role
         description: The role of the player in context to the event (e.g. Hitter, Hitee, Shooter, Winner, Loser, etc.)
 
