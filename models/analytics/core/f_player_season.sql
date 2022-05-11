@@ -53,27 +53,33 @@ player_season as (
 )
 
 -- at the player-season level, get the number of missed shots and blocked shots by each shooter
-, player_shots as (
+, player_stats as (
     select
         plays.player_id
         , season.season_id
         , max(plays.event_description) as example_eventdescription
+        -- shot types
         , sum(case when plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_blocked
         , sum(case when plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_missed
         , sum(case when plays.event_type = "SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_saved
         , sum(case when plays.event_type = "GOAL" and plays.player_role = "SCORER" then 1 else 0 end) as shots_scored
+        -- goal types
         , sum(case when plays.last_goal_game_winning = 1 and plays.player_role = "SCORER" then 1 else 0 end) as goals_gamewinning
         , sum(case when (plays.home_result_of_play = 'Chase goal' or plays.away_result_of_play = 'Chase goal') and plays.player_role = "SCORER" then 1 else 0 end) as goals_chasegoal
         , sum(case when (plays.home_result_of_play = 'Tying goal scored' or plays.away_result_of_play = 'Tying goal scored') and plays.player_role = "SCORER" then 1 else 0 end) as goals_gametying
         , sum(case when (plays.home_result_of_play = 'Go-ahead goal scored' or plays.away_result_of_play = 'Go-ahead goal scored') and plays.player_role = "SCORER" then 1 else 0 end) as goals_goahead
         , sum(case when (plays.home_result_of_play = 'Buffer goal' or plays.away_result_of_play = 'Buffer goal') and plays.player_role = "SCORER" then 1 else 0 end) as goals_buffergoal
+        -- assist types
+        , sum(case when plays.player_primary_assist = true and plays.player_role = "ASSIST" and plays.event_type = "GOAL" then 1 else 0 end) as assists_primary
+        , sum(case when plays.player_secondary_assist = true and plays.player_role = "ASSIST" and plays.event_type = "GOAL" then 1 else 0 end) as assists_secondary
     from {{ ref('f_plays') }} as plays
     left join {{ ref('d_schedule') }} as schedule on schedule.game_id = plays.game_id
     left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
     where 1 = 1
-        and plays.player_role in ("SHOOTER", "SCORER")
+        and plays.player_role in ("SHOOTER", "SCORER", "ASSIST")
         and plays.event_type in ("BLOCKED_SHOT", "MISSED_SHOT", "SHOT", "GOAL")
         and plays.play_period_type <> 'SHOOTOUT'
+        and schedule.game_type = 'R'
     group by
         plays.player_id
         , season.season_id
@@ -102,21 +108,23 @@ select
     -- Goal-scoring skater events (Goals, Assists, Points)
     , player_season.goals
     , (player_season.goals / player_season.boxscore_games) as goals_pergame
-    , player_shots.goals_gamewinning
-    , player_shots.goals_chasegoal
-    , player_shots.goals_gametying
-    , player_shots.goals_goahead
-    , player_shots.goals_buffergoal
+    , player_stats.goals_gamewinning
+    , player_stats.goals_chasegoal
+    , player_stats.goals_gametying
+    , player_stats.goals_goahead
+    , player_stats.goals_buffergoal
     , player_season.assists
+    , player_stats.assists_primary
+    , player_stats.assists_secondary
     , player_season.goals + player_season.assists as points
     , ((player_season.goals + player_season.assists) / player_season.boxscore_games) as points_pergame
     -- Shooting skater events
     , player_season.shots
     , case when player_season.shots < 1 then 0 else round((player_season.goals / player_season.shots), 2) end as pcnt_shooting
-    , player_shots.shots_blocked
-    , player_shots.shots_missed
-    , player_shots.shots_saved
-    , player_shots.shots_scored
+    , player_stats.shots_blocked
+    , player_stats.shots_missed
+    , player_stats.shots_saved
+    , player_stats.shots_scored
     -- Other skater events
     , player_season.faceoff_wins
     , player_season.faceoff_taken
@@ -142,6 +150,6 @@ select
 --,player_season.wins
 --,player_season.losses
 from player_season
-left join player_shots on player_season.player_id = player_shots.player_id and player_season.season_id = player_shots.season_id
+left join player_stats on player_season.player_id = player_stats.player_id and player_season.season_id = player_stats.season_id
 order by
     player_season.goals desc

@@ -67,6 +67,12 @@ models:
       - name: goals_buffergoal
         description: The number of goals scored while the team was ahead by at least 1 goal
 
+      - name: assists_primary
+        description: The number of primary assists on goals in the regular season
+
+      - name: assists_secondary
+        description: The number of secondary assists on goals in the regular season
+
       - name: assists
         description: The number of assists on goals made in the regular season
 
