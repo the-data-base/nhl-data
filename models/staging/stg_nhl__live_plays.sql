@@ -297,11 +297,6 @@ live_plays as (
         end as goals_away_lag
 
     from cte_base_plays as bp
-
-    order by
-        bp.game_id
-        , (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)
-        , event_idx
 )
 
 -- CTE to determine the state of the game as a result of the play
