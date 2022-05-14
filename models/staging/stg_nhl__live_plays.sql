@@ -8,7 +8,7 @@ live_plays as (
 -- CTE2 Play-level information (each row is a player's involvement in a play)
 , cte_base_plays as (
     select
-        {{ dbt_utils.surrogate_key(['live_plays.gameid', 'live_plays.about.eventidx', 'players.player.id']) }} as stg_nhl__live_plays_id
+        {{ dbt_utils.surrogate_key(['live_plays.gameid', 'live_plays.about.eventidx', 'players.player.id', 'players.playertype']) }} as stg_nhl__live_plays_id
         , live_plays.gameid as game_id
         , live_plays.about.eventid as event_id
         , players.player.id as player_id
