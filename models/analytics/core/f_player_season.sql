@@ -61,6 +61,7 @@ player_season as (
         , season.season_id
         , max(plays.event_description) as example_eventdescription
         -- shot types
+<<<<<<< HEAD
         , sum(case when plays.event_secondary_type = "BACKHAND" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_backhand_all
         , sum(case when plays.event_secondary_type = "DEFLECTED" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_deflected_all
         , sum(case when plays.event_secondary_type = "SLAP SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_slapshot_all
@@ -69,10 +70,13 @@ player_season as (
         , sum(case when plays.event_secondary_type = "WRAP-AROUND" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_wraparound_all
         , sum(case when plays.event_secondary_type = "WRIST SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_wristshot_all
         -- shot results
+=======
+>>>>>>> f8d41389fe2cc8011112fd641c1fbab6e4537933
         , sum(case when plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_blocked
         , sum(case when plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_missed
         , sum(case when plays.event_type = "SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_saved
         , sum(case when plays.event_type = "GOAL" and plays.player_role = "SCORER" then 1 else 0 end) as shots_scored
+<<<<<<< HEAD
         -- shot types by result
         /**----- shot-blocked
         , sum(case when plays.event_secondary_type = "BACKHAND" and plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_backhand_blocked
@@ -107,6 +111,8 @@ player_season as (
         , sum(case when plays.event_secondary_type = "TIP-IN" and plays.player_role = "SCORER" then 1 else 0 end) as shots_tipin_goal
         , sum(case when plays.event_secondary_type = "WRAP-AROUND" and plays.player_role = "SCORER" then 1 else 0 end) as shots_wraparound_goal
         , sum(case when plays.event_secondary_type = "WRIST SHOT" and plays.player_role = "SCORER" then 1 else 0 end) as shots_wristshot_goal
+=======
+>>>>>>> f8d41389fe2cc8011112fd641c1fbab6e4537933
         -- goal types
         , sum(case when plays.last_goal_game_winning = 1 and plays.player_role = "SCORER" then 1 else 0 end) as goals_gamewinning
         , sum(case when (plays.home_result_of_play = 'Chase goal' or plays.away_result_of_play = 'Chase goal') and plays.player_role = "SCORER" then 1 else 0 end) as goals_chasegoal
@@ -123,7 +129,11 @@ player_season as (
         and plays.player_role in ("SHOOTER", "SCORER", "ASSIST")
         and plays.event_type in ("BLOCKED_SHOT", "MISSED_SHOT", "SHOT", "GOAL")
         and plays.play_period_type <> 'SHOOTOUT'
+<<<<<<< HEAD
         and schedule.game_type = '02'
+=======
+        and schedule.game_type = 'R'
+>>>>>>> f8d41389fe2cc8011112fd641c1fbab6e4537933
     group by
         plays.player_id
         , season.season_id
