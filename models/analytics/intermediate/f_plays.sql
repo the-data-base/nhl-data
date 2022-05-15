@@ -18,6 +18,9 @@ select
     , event_type
     , event_code
     , event_description
+    , event_secondary_type
+    , penalty_severity
+    , penalty_minutes
     , play_x_coordinate
     , play_y_coordinate
     , play_period

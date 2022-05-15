@@ -9,7 +9,7 @@ with test as (
   left join`nhl-breakouts.dbt_dom.d_schedule` as schedule on schedule.game_id = plays.game_id
   left join `nhl-breakouts.dbt_dom.d_seasons` as season on season.season_id = schedule.season_id
   where 1 = 1
-    and schedule.game_type = 'R'
+    and schedule.game_type = '02'
     and plays.event_type = 'GOAL'
     and plays.player_role = 'ASSIST'
     and plays.play_period_type <> 'SHOOTOUT'

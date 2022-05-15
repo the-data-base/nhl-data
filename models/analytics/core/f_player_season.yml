@@ -82,12 +82,12 @@ models:
       - name: points_pergame
         description: The number of points scored in the regular season divided by the number of games played
 
-      ## Shooting skater stats
-      - name: shots
-        description: Number of shots taken
+      ## Skater shot results
+      - name: shots_all
+        description: The total number of shots taken (missed + blocked + on-goal)
 
-      - name: pcnt_shooting
-        description: The percent of shots on goal that were goals (e.g. 10% shooting means 1 out of 10 shots on net were goals)
+      - name: shots_ongoal
+        description: The total number of shots taken on-goal (saved or goals)
 
       - name: shots_blocked
         description: The number of shots taken that were blocked (e.g. shot taken that hits an opposing team defencemen)
@@ -100,6 +100,119 @@ models:
 
       - name: shots_scored
         description: The number of shots taken that converted as goals
+
+      ## Skater shot types
+      - name: shots_backhand_all
+        description: The number of backhand shots that were either saved or were goals (no misses or blocks)
+
+      - name: shots_deflected_all
+        description: The number of deflected shots that were either saved or were goals (no misses or blocks)
+
+      - name: shots_slapshot_all
+        description: The number of slapshot shots that were either saved or were goals (no misses or blocks)
+
+      - name: shots_snapshot_all
+        description: The number of snapshot shots that were either saved or were goals (no misses or blocks)
+
+      - name: shots_tipin_all
+        description: The number of tip-in shots that were either saved or were goals (no misses or blocks)
+
+      - name: shots_wraparound_all
+        description: The number of wraparound shots that were either saved or were goals (no misses or blocks)
+
+      - name: shots_wristshot_all
+        description: The number of wristshot shots that were either saved or were goals (no misses or blocks)
+
+      ## Skater shot results by type (shot-saved)
+      - name: shots_backhand_saved
+        description: The number of backhand shots that were saved
+
+      - name: shots_deflected_saved
+        description: The number of deflected shots that were saved
+
+      - name: shots_slapshot_saved
+        description: The number of slapshot shots that were saved
+
+      - name: shots_snapshot_saved
+        description: The number of snapshot shots that were saved
+
+      - name: shots_tipin_saved
+        description: The number of tip-in shots that were saved
+
+      - name: shots_wraparound_saved
+        description: The number of wrap-around shots that were saved
+
+      - name: shots_wristshot_saved
+        description: The number of wristshot shots that were saved
+
+      ## Skater shot results by type (shot-goal)
+      - name: shots_backhand_goal
+        description: The number of backhand shots that were goals
+
+      - name: shots_deflected_goal
+        description: The number of deflected shots that were goals
+
+      - name: shots_slapshot_goal
+        description: The number of slapshot shots that were goals
+
+      - name: shots_snapshot_goal
+        description: The number of snapshot shots that were goals
+
+      - name: shots_tipin_goal
+        description: The number of tip-in shots that were goals
+
+      - name: shots_wraparound_goal
+        description: The number of wrap-around shots that were goals
+
+      - name: shots_wristshot_goal
+        description: The number of wristshot shots that were goals
+
+      ## Skater shot results by type (shot-conversion)
+      - name: pcnt_shooting_all
+        description: The percent of all shots (blocked + misses + on-goal) that were goals (e.g. 10% shooting means 1 out of 10 shots taken were goals)
+
+      - name: pcnt_shooting_ongoal
+        description: The percent of all shots on goal that were goals (e.g. 10% shooting means 1 out of 10 shots on net were goals)
+
+      - name: pcnt_shooting_backhand
+        description: The percent of all backhand shots on goal that were goals (e.g. 10% shooting means 1 out of 10 backhand shots on net were goals)
+
+      - name: pcnt_shooting_deflected
+        description: The percent of all deflected shots on goal that were goals (e.g. 10% shooting means 1 out of 10 deflected shots on net were goals)
+
+      - name: pcnt_shooting_slapshot
+        description: The percent of all slapshot shots on goal that were goals (e.g. 10% shooting means 1 out of 10 slapshot shots on net were goals)
+
+      - name: pcnt_shooting_snapshot
+        description: The percent of all snapshot shots on goal that were goals (e.g. 10% shooting means 1 out of 10 snapshot shots on net were goals)
+
+      - name: pcnt_shooting_tipin
+        description: The percent of all tip-in shots on goal that were goals (e.g. 10% shooting means 1 out of 10 tip-in shots on net were goals)
+
+      - name: pcnt_shooting_wraparound
+        description: The percent of all wrap-around shots on goal that were goals (e.g. 10% shooting means 1 out of 10 wrap-around shots on net were goals)
+      
+      - name: pcnt_shooting_wristshot
+        description: The percent of all wristshot shots on goal that were goals (e.g. 10% shooting means 1 out of 10 wristshot shots on net were goals)
+
+      ## delete these start ##
+      - name: shots
+        description: Number of shots taken
+
+
+      - name: shots_blocked
+        description: The number of shots taken that were blocked (e.g. shot taken that hits an opposing team defencemen)
+
+      - name: shots_missed
+        description: The number of shots taken that were missed (e.g. shot taken that missees the net)
+
+      - name: shots_saved
+        description: The number of shots taken that were on target but were saved
+
+      - name: shots_scored
+        description: The number of shots taken that converted as goals
+
+      ## delete these end ##
 
       ## Other skater stats
       - name: faceoff_wins

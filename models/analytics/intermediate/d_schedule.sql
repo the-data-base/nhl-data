@@ -11,8 +11,8 @@ select
 
     /* Properties */
     , game_number
-    , url
     , game_type
+    , game_type_description
     , game_date
     , abstract_game_state
     , coded_game_state
@@ -36,6 +36,7 @@ select
     , venue_name
     , venue_url
     , content_url
+    , url
     , extracted_at
     , loaded_at
 from
