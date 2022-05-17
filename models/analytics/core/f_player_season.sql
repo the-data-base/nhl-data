@@ -73,24 +73,6 @@ player_season as (
         , sum(case when plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_missed
         , sum(case when plays.event_type = "SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_saved
         , sum(case when plays.event_type = "GOAL" and plays.player_role = "SCORER" then 1 else 0 end) as shots_scored
-        -- shot types by result
-        /**----- shot-blocked
-        , sum(case when plays.event_secondary_type = "BACKHAND" and plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_backhand_blocked
-        , sum(case when plays.event_secondary_type = "DEFLECTED" and plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER"then 1 else 0 end) as shots_deflected_blocked
-        , sum(case when plays.event_secondary_type = "SLAP SHOT" and plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_slapshot_blocked
-        , sum(case when plays.event_secondary_type = "SNAP SHOT" and plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_snapshot_blocked
-        , sum(case when plays.event_secondary_type = "TIP-IN" and plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_tipin_blocked
-        , sum(case when plays.event_secondary_type = "WRAP-AROUND" and plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_wraparound_blocked
-        , sum(case when plays.event_secondary_type = "WRIST SHOT" and plays.event_type = "BLOCKED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_wristshot_blocked
-        ----- shot-missed
-        , sum(case when plays.event_secondary_type = "BACKHAND" and plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_backhand_missed
-        , sum(case when plays.event_secondary_type = "DEFLECTED" and plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER"then 1 else 0 end) as shots_deflected_missed
-        , sum(case when plays.event_secondary_type = "SLAP SHOT" and plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_slapshot_missed
-        , sum(case when plays.event_secondary_type = "SNAP SHOT" and plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_snapshot_missed
-        , sum(case when plays.event_secondary_type = "TIP-IN" and plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_tipin_missed
-        , sum(case when plays.event_secondary_type = "WRAP-AROUND" and plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_wraparound_missed
-        , sum(case when plays.event_secondary_type = "WRIST SHOT" and plays.event_type = "MISSED_SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_wristshot_missed
-        **/
         ----- shot-saved
         , sum(case when plays.event_secondary_type = "BACKHAND" and plays.event_type = "SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_backhand_saved
         , sum(case when plays.event_secondary_type = "DEFLECTED" and plays.event_type = "SHOT" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_deflected_saved
