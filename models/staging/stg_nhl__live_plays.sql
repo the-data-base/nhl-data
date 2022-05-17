@@ -16,6 +16,9 @@ live_plays as (
         , offset as player_index -- noqa: disable=L027
         , boxscore_player.team_id as team_id -- noqa: enable=L027
         , upper(players.playertype) as player_role
+        , upper(live_plays.result.secondarytype) as event_secondary_type
+        , upper(live_plays.result.penaltyseverity) as penalty_severity
+        , live_plays.result.penaltyminutes as penalty_minutes
         -- Was the play/player in question home or away?
         , case
             when live_plays.team.id = schedule.away_team_id
@@ -198,6 +201,9 @@ live_plays as (
         , bp.event_type
         , bp.event_code
         , bp.event_description
+        , bp.event_secondary_type
+        , bp.penalty_severity
+        , bp.penalty_minutes
         , bp.play_x_coordinate
         , bp.play_y_coordinate
         , bp.play_period
@@ -422,6 +428,9 @@ select
     , event_type
     , event_code
     , event_description
+    , event_secondary_type
+    , penalty_severity
+    , penalty_minutes
     , play_x_coordinate
     , play_y_coordinate
     , play_period

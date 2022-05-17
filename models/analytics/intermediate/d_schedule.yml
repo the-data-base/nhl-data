@@ -42,11 +42,11 @@ models:
       - name: game_number
         description: Four digit number that is unique to a game in the context of a season (e.g. 0002)
 
-      - name: url
-        description: URL endpoint for schedule
-
       - name: game_type
-        description: Code for the type of game (e.g. R = regular season)
+        description: Code for the type of game, which is retrieved by extracting the the 5th and 6th position from the game_id (e.g. 02 = regular season game)
+
+      - name: game_type_description
+        description: Description for the type of game played, enhancing game_type (e.g. Pre-season, Regular, Playoffs, All-star)
 
       - name: game_date
         description: Date that the game takes place (e.g. 2021-01-14)
@@ -116,6 +116,9 @@ models:
 
       - name: content_url
         description: URL endpoint for the content
+
+      - name: url
+        description: URL endpoint for schedule
 
       - name: extracted_at
         description: Timestamp that the data was retrieved

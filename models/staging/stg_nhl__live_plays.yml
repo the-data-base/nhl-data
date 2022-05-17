@@ -57,6 +57,15 @@ models:
       - name: event_description
         description: Long description of the event (repeated for all the player's involved in the event)
 
+      - name: event_secondary_type
+        description: If the event_type can be further broken down, this field provides a sub-type, else null (e.g. TIP-IN, WRIST SHOT (shot-types), ROUGHING (penalty-types), etc.)
+
+      - name: penalty_severity
+        description: If the play in question was a penalty, this column will describe its severity (e.g. MINOR, MAJOR), else null
+
+      - name: penalty_minutes
+        description: If the play in question was a penalty, this column will return the number of minutes the penalty was assessed for, else null
+
       - name: play_x_coordinate
         description: The x-coordinate of where the event took place on the ice
 

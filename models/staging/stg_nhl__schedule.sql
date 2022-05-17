@@ -11,8 +11,14 @@ select
 
     /* Properties */
     , substr(cast(schedule.gamepk as string), 7, 4) as game_number
-    , schedule.link as url
-    , schedule.gametype as game_type
+    , substr(cast(gamepk as string), 5, 2) as game_type
+    , case
+        when substr(cast(gamepk as string), 5, 2) = '01' then 'Preseason'
+        when substr(cast(gamepk as string), 5, 2) = '02' then 'Regular'
+        when substr(cast(gamepk as string), 5, 2) = '03' then 'Playoffs'
+        when substr(cast(gamepk as string), 5, 2) = '04' then 'All-star'
+        else 'Unknown'
+    end as game_type_description
     , date(schedule.gamedate) as game_date
     , schedule.status.abstractgamestate as abstract_game_state
     , schedule.status.codedgamestate as coded_game_state
@@ -36,6 +42,7 @@ select
     , schedule.venue.name as venue_name
     , schedule.venue.link as venue_url
     , schedule.content.link as content_url
+    , schedule.link as url
     , schedule._time_extracted as extracted_at
     , schedule._time_loaded as loaded_at
 from {{ source('meltano', 'schedule') }} as schedule
