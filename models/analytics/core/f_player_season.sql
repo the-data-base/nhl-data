@@ -41,7 +41,7 @@ player_season as (
 
     where 1 = 1
         and schedule.game_type = '02' --regular season only
-        and scratches.player_id is null -- remove scractches, should be same as `and bp.time_on_ice is not null`
+        and scratches.player_id is null -- remove scratches, should be same as `and bp.time_on_ice is not null`
     group by
         bp.player_id
         , player.full_name
