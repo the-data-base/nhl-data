@@ -177,8 +177,8 @@ select
     , player_stats.shots_wraparound_goal
     , player_stats.shots_wristshot_goal
     ---- shot-conversion #TODO filter to a specific number of shots to be in consideration
-    , case when player_season.shots < 1 then 0 else round((player_season.goals / player_season.shots), 2) end as pcnt_shooting_all
-    , case when (player_stats.shots_blocked + player_stats.shots_missed + player_stats.shots_saved + player_stats.shots_scored) < 1 then 0 else round((player_season.goals / (player_stats.shots_blocked + player_stats.shots_missed + player_stats.shots_saved + player_stats.shots_scored)), 2) end as pcnt_shooting_ongoal
+    , case when (player_stats.shots_blocked + player_stats.shots_missed + player_stats.shots_saved + player_stats.shots_scored) < 1 then 0 else round((player_season.goals / (player_stats.shots_blocked + player_stats.shots_missed + player_stats.shots_saved + player_stats.shots_scored)), 2) end as pcnt_shooting_all
+    , case when player_season.shots < 1 then 0 else round((player_season.goals / player_season.shots), 2) end as pcnt_shooting_ongoal
     , case when player_stats.shots_backhand_all < 1 then 0 else round((player_stats.shots_backhand_goal / player_stats.shots_backhand_all), 2) end as pcnt_shooting_backhand
     , case when player_stats.shots_deflected_all < 1 then 0 else round((player_stats.shots_deflected_goal / player_stats.shots_deflected_all), 2) end as pcnt_shooting_deflected
     , case when player_stats.shots_slapshot_all < 1 then 0 else round((player_stats.shots_slapshot_goal / player_stats.shots_slapshot_all), 2) end as pcnt_shooting_slapshot
