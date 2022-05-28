@@ -190,7 +190,7 @@ select
     , player_season.faceoff_wins
     , player_season.faceoff_taken
     , case when player_season.faceoff_taken < 1 then 0 else round((player_season.faceoff_wins / player_season.faceoff_taken), 2) end as pcnt_faceoffwins
-    , player_season.hits
+    , player_season.hitsgi
     , player_season.takeaways
     , player_season.giveaways
     , player_season.blocked

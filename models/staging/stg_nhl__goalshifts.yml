@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: stg_nhl__goalshifts
+    description: Staged NHL goals from the shifts API endpoint
+    columns:
+      # Primary Key
+      - name: stg_nhl__shift_id
+        description:
+        tests:
+          - unique
+          - not_null
+
+      # Identifiers
+      - name: shift_id
+        description: Unique identifier for an NHL shift (e.g. "6143708")
+        tests:
+          - unique
+          - not_null
+
+      # Properties
+      - name: player_id
+        description:
+
+      - name: game_id
+        description:
+
+      - name: team_id
+        description:
+
+      - name: type_code
+        description: 
+
+      - name: detail_code
+        description: 
+
+      - name: period
+        description: 
+
+      - name: start_time
+        description: 
+
+      - name: game_state
+        description: 
+
+      - name: player_full_name
+        description: 
+
+      - name: assist_player_description
+        description: 
+
+      - name: assist_primary_player_full_name
+        description: 
+
+      - name: assist_secondary_player_full_name
+        description: 
+      
+      - name: assist_count
+        description: 
+
+      - name: _time_extracted
+        description: 
+
+      - name: _time_loaded
+        description: 
