@@ -22,6 +22,7 @@ goal_shifts as (
     ,s._time_extracted
     ,s._time_loaded
   from {{ source('meltano', 'shifts') }} as s
+  
   where
     1 = 1
     and s.typeCode = 505 -- goals
@@ -29,7 +30,7 @@ goal_shifts as (
 
  select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['shifts.shift_id']) }} as stg_nhl__shift_id
+    {{ dbt_utils.surrogate_key(['g.shift_id']) }} as stg_nhl__shift_id
     
     /* Identifiers */
     ,g.shift_id
