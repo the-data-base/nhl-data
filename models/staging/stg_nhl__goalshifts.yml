@@ -14,6 +14,3 @@ models:
       # Identifiers
       - name: shift_id
         description: Unique identifier for an NHL shift (e.g. "6143708")
-        tests:
-          - unique
-          - not_null
