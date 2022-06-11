@@ -20,6 +20,7 @@ select
     , sbs.game_id
     , sbs.player_id
     , sbs.team_id
+    , sbs.home_away_team
     , sbs.game_type_description
     , sbs.event_number
     , sbs.type_code

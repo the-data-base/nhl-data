@@ -5,6 +5,7 @@ with shifts_raw as (
         , s.gameid as game_id
         , s.playerid as player_id
         , s.teamid as team_id
+        , case when s.teamid = schedule.home_team_id then 'home' when s.teamid = schedule.away_team_id then 'away' end as home_away_team
         , schedule.game_type
         , schedule.game_type_description
         , s.eventnumber as event_number
@@ -129,6 +130,7 @@ select
     , shifts_time.game_id
     , shifts_time.player_id
     , shifts_time.team_id
+    , shifts_time.home_away_team
     , shifts_time.game_type_description
     , shifts_time.event_number
     , shifts_time.type_code
