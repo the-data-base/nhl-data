@@ -66,6 +66,7 @@ with shifts_raw as (
         and s.playerid is not null
         -- manually removing shift ids of goals that were duplicated with different values (either in time of goal, or eventdetails)
         -- method: cross referenced the gameid with the nhl boxscore, manually removed the incorrect line-item
+        -- TODO: investigate if we can cross validate with boxscore data
         and not (s.gameid = 2020020279 and s.eventnumber = 820 and s.id = 10501471) -- eventdetails were off
         and not (s.gameid = 2020020038 and s.eventnumber = 668 and s.id = 10335336) -- time of goal was off
         and not (s.gameid = 2020020249 and s.eventnumber = 61 and s.id = 10481186) -- time of goal was off
@@ -106,7 +107,7 @@ with shifts_raw as (
             when period = 10
                 then (180 * 60) + ((shifts_raw.start_time_mins * 60) + (shifts_raw.start_time_seconds))
         end as start_seconds_elapsed
-        , ifnull((shifts_raw.duration_mins * 60) + (shifts_raw.duration_seconds), null) as duration_seconds_elapsed
+        , (shifts_raw.duration_mins * 60) + (shifts_raw.duration_seconds) as duration_seconds_elapsed
         , case
             when shifts_raw.goal_assist_count = '2 assisters'
                  then trim(split(shifts_raw.goal_assisters, ',')[offset(0)])
