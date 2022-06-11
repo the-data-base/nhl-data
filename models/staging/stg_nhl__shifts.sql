@@ -48,7 +48,7 @@ with shifts_raw as (
             when s.typecode = 505
                 then true
             else false
-        end as goal_ind
+        end as is_goal
         , s.eventdescription as goal_game_state
         , s.eventdetails as goal_assisters
         , case
@@ -134,7 +134,7 @@ select
     , shifts_time.type_code
     , shifts_time.detail_code
     , shifts_time.player_full_name
-    , shifts_time.goal_ind
+    , shifts_time.is_goal
     , shifts_time.goal_game_state
     , shifts_time.goal_assisters
     , shifts_time.goal_primary_assister_full_name
