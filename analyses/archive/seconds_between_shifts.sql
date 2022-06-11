@@ -44,10 +44,3 @@ from
     seconds_between_shifts as sbs
 order by sbs.game_time_seconds
 limit 100
-
-
-players_on_ice
-{
-    home: [{}],
-    away: [{}]
-}}
