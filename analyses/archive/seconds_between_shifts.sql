@@ -97,12 +97,12 @@ select
         when sbs.home_away_team = 'away' and (apl.defence_on_ice + apl.forward_on_ice) < (hpl.defence_on_ice + hpl.forward_on_ice) then 'skater disadvantage'
         else 'unknown'
         end as game_state_skaters
+    , case when hpl.goalie_on_ice = 0 then true else false end as home_goalie_pulled
+    , case when apl.goalie_on_ice = 0 then true else false end as away_goalie_pulled
     , hpl.player_list as home_player_list
     , apl.player_list as away_player_list
     , (hpl.defence_on_ice + hpl.forward_on_ice) as home_skaters_on_ice
     , (apl.defence_on_ice + apl.forward_on_ice) as away_skaters_on_ice
-    , case when hpl.goalie_on_ice = 0 then true else false end as home_goalie_pulled
-    , case when apl.goalie_on_ice = 0 then true else false end as away_goalie_pulled
     , hpl.goalie_on_ice as home_goalie_on_ice
     , hpl.defence_on_ice as home_defence_on_ice
     , hpl.forward_on_ice as home_forward_on_ice
