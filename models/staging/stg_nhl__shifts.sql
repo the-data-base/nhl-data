@@ -1,6 +1,6 @@
 with shifts_raw as (
     select
-        id as shift_id
+        s.id as shift_id
         , s.shiftnumber as shift_number
         , s.gameid as game_id
         , s.playerid as player_id
