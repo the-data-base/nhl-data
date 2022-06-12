@@ -41,7 +41,7 @@ game_seconds as (
     from {{ ref('stg_nhl__shifts') }} as shifts
     inner join game_seconds as gs on gs.seconds between shifts.start_seconds_elapsed and shifts.end_seconds_elapsed
     left join {{ ref('d_players') }} as players on players.player_id = shifts.player_id
-    -- where shifts.game_id = 2015021169
+    {# where shifts.game_id = 2015021169 #}
 )
 
 , game_second_skaters_on_ice as (
