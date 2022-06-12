@@ -149,7 +149,4 @@ select
     , shifts_time.start_time
     , shifts_time.end_time
     , shifts_time.duration
-from
-    shifts_time
-order by
-    shifts_time.game_id, shifts_time.start_seconds_elapsed, shifts_time.team_id
+from shifts_time
