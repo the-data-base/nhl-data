@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: stg_nhl__shifts_time
+    description: NHL shift-second level dataset, with each row being the a second (s) of a player's shift in an NHL game
+    columns:
+      # Primary Key
+      - name: new_shift_id
+        description: Unique identifier for an NHL shift-second
+        tests:
+          - unique
+          - not_null
+
+      # Identifiers
+
+      # Properties

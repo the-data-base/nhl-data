@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: d_shifts
+    description: NHL shift-level dataset, with each row being a summary of a player's shift in an NHL game
+    columns:
+      # Primary Key
+      - name: shift_id
+        description: Unique identifier for an NHL shift-second
+        tests:
+          - unique
+          - not_null
+
+      # Identifiers
+
+      # Properties
