@@ -108,7 +108,11 @@ with shifts_raw as (
             when period = 10
                 then (180 * 60) + ((shifts_raw.start_time_mins * 60) + (shifts_raw.start_time_seconds))
         end as start_seconds_elapsed
-        , (shifts_raw.duration_mins * 60) + (shifts_raw.duration_seconds) as duration_seconds_elapsed
+        , case
+            when shifts_raw.type_code = 505
+                then 0
+            else (shifts_raw.duration_mins * 60) + (shifts_raw.duration_seconds)
+        end as duration_seconds_elapsed
         , case
             when shifts_raw.goal_assist_count = '2 assisters'
                  then trim(split(shifts_raw.goal_assisters, ',')[offset(0)])
