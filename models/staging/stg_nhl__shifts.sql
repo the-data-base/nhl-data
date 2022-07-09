@@ -50,6 +50,16 @@ with shifts_raw as (
                 then true
             else false
         end as is_goal
+        , case
+            when s.startTime = '00:00'
+                then true
+            else false
+        end as is_period_start
+        , case
+            when s.endTime = '20:00'
+                then true
+            else false
+        end as is_period_end
         , s.eventdescription as goal_game_state
         , s.eventdetails as goal_assisters
         , case
@@ -141,6 +151,8 @@ select
     , shifts_time.detail_code
     , shifts_time.player_full_name
     , shifts_time.is_goal
+    , shifts_time.is_period_start
+    , shifts_time.is_period_end
     , shifts_time.goal_game_state
     , shifts_time.goal_assisters
     , shifts_time.goal_primary_assister_full_name

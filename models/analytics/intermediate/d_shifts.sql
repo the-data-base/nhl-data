@@ -26,6 +26,8 @@ select
     , shifts.detail_code
     , shifts.player_full_name
     , shifts.is_goal
+    , shifts.is_period_start
+    , shifts.is_period_end
     , shifts.goal_game_state
     , shifts.goal_assisters
     , shifts.goal_primary_assister_full_name

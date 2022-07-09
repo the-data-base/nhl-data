@@ -24,6 +24,8 @@ select
     , st.detail_code
     , st.player_full_name
     , st.is_goal
+    , st.is_period_start
+    , st.is_period_end
     , st.goal_game_state
     , st.goal_assisters
     , st.goal_primary_assister_full_name

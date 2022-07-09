@@ -1,3 +1,8 @@
+--select *
+--from `nhl-breakouts.dbt_dom.stg_nhl__shifts_time` as shifts_time
+--where game_id = 2015020001 and game_time_seconds = 1200;
+
+
 with
 
 game_seconds as (
@@ -44,10 +49,10 @@ game_seconds as (
         , case when gs.seconds = shifts.start_seconds_elapsed and is_period_start is false then true else false end as is_shift_start_not_period_start
         , case when gs.seconds = shifts.start_seconds_elapsed and is_period_end is true then true else false end as is_shift_end_period_end
 
-    from {{ ref('stg_nhl__shifts') }} as shifts
+    from `nhl-breakouts`.`dbt_dom`.`stg_nhl__shifts` as shifts
     inner join game_seconds as gs on gs.seconds between shifts.start_seconds_elapsed and shifts.end_seconds_elapsed
-    left join {{ ref('d_players') }} as players on players.player_id = shifts.player_id
-    {# where shifts.game_id = 2015021169 #}
+    left join `nhl-breakouts`.`dbt_dom`.`d_players` as players on players.player_id = shifts.player_id
+
 )
 
 , game_second_skaters_on_ice as (
@@ -68,6 +73,7 @@ game_seconds as (
     group by 1, 2
 )
 
+,test as (
 select
     sbs.new_shift_id
     , sbs.shift_number
@@ -128,3 +134,10 @@ from player_shift_seconds as sbs
 left join game_second_skaters_on_ice as soi
     on sbs.game_id = soi.game_id
         and sbs.game_time_seconds = soi.game_time_seconds
+
+)
+
+select  test.*
+from    test
+where (test.home_defence_on_ice + test.home_forward_on_ice) < 3
+limit 100;
