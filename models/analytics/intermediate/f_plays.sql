@@ -23,7 +23,7 @@ select
     , plays.penalty_minutes
     , plays.play_x_coordinate
     , plays.play_y_coordinate
-    , play_total_seconds_elapsed
+    , plays.play_total_seconds_elapsed
     , plays.play_period
     , plays.play_period_type
     , plays.play_period_time_elapsed

@@ -42,9 +42,9 @@ game_seconds as (
         , players.primary_position_abbreviation
         , case when gs.seconds = shifts.start_seconds_elapsed then true else false end as is_shift_start
         , case when gs.seconds = shifts.end_seconds_elapsed then true else false end as is_shift_end
-        , case when gs.seconds = shifts.start_seconds_elapsed and is_period_start is true then true else false end as is_shift_start_period_start
-        , case when gs.seconds = shifts.start_seconds_elapsed and is_period_start is false then true else false end as is_shift_start_not_period_start
-        , case when gs.seconds = shifts.start_seconds_elapsed and is_period_end is true then true else false end as is_shift_end_period_end
+        , case when gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is true then true else false end as is_shift_start_period_start
+        , case when gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is false then true else false end as is_shift_start_not_period_start
+        , case when gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_end is true then true else false end as is_shift_end_period_end
 
     from {{ ref('stg_nhl__shifts') }} as shifts
     inner join game_seconds as gs on gs.seconds between shifts.start_seconds_elapsed and shifts.end_seconds_elapsed
