@@ -51,12 +51,12 @@ with shifts_raw as (
             else false
         end as is_goal
         , case
-            when s.startTime = '00:00'
+            when s.starttime = '00:00'
                 then true
             else false
         end as is_period_start
         , case
-            when s.endTime = '20:00'
+            when s.endtime = '20:00'
                 then true
             else false
         end as is_period_end
@@ -135,34 +135,108 @@ with shifts_raw as (
         end as goal_secondary_assister_full_name
         , shifts_raw.*
     from shifts_raw
-    where shifts_raw.period_type <> 'shootout'
+    where 1 = 1
+        and shifts_raw.period_type <> 'shootout'
+        and shifts_raw.end_time <> '' -- remove 1129 shifts, dups
+
 )
 
-select
-    shifts_time.shift_id
-    , shifts_time.shift_number
-    , shifts_time.game_id
-    , shifts_time.player_id
-    , shifts_time.team_id
-    , shifts_time.home_away_team
-    , shifts_time.game_type_description
-    , shifts_time.event_number
-    , shifts_time.type_code
-    , shifts_time.detail_code
-    , shifts_time.player_full_name
-    , shifts_time.is_goal
-    , shifts_time.is_period_start
-    , shifts_time.is_period_end
-    , shifts_time.goal_game_state
-    , shifts_time.goal_assisters
-    , shifts_time.goal_primary_assister_full_name
-    , shifts_time.goal_secondary_assister_full_name
-    , shifts_time.period
-    , shifts_time.period_type
-    , shifts_time.start_seconds_elapsed
-    , (shifts_time.start_seconds_elapsed + shifts_time.duration_seconds_elapsed) as end_seconds_elapsed
-    , shifts_time.duration_seconds_elapsed
-    , shifts_time.start_time
-    , shifts_time.end_time
-    , shifts_time.duration
-from shifts_time
+, new_shift_id as (
+    select
+        case
+            when is_goal is true
+                then concat('_gameid_', game_id, '_playerid_', player_id, '_starsecondselapsed_', start_seconds_elapsed, '_isgoal_true')
+            when is_goal is false
+                then concat('_gameid_', game_id, '_playerid_', player_id, '_starsecondselapsed_', start_seconds_elapsed, '_duration_', duration_seconds_elapsed)
+        end as new_shift_id
+        , shifts_time.*
+    from shifts_time
+)
+
+-- as of 7/10/2022, there were 91 shifts that mapped to 13 plays where the shift was duplicated having the same start time but different durations (thus, different end times)
+-- rule: if a player's shift is duplicated, take the shift that was longer since they might have been involved in the play (min takes shorter duration, max takes longer)
+, dedup_shift_starts as (
+    select
+        s.game_id
+        , s.player_id
+        , s.start_seconds_elapsed
+        , s.is_goal
+        , s.period
+        , min(s.new_shift_id) as remove_new_shift_id
+        , max(s.new_shift_id) as keep_new_shift_id
+        , string_agg(s.new_shift_id) as all_new_shift_ids
+        , count(*) as dups
+    from new_shift_id as s
+    group by 1, 2, 3, 4, 5
+    having count(*) > 1 and min(s.duration) <> max(s.duration)
+)
+
+-- create the new_shift_number, excluding any shifts that were duplicated as well as goals
+, dedup_shift_properties as (
+    select
+        s.new_shift_id
+        , s.game_id
+        , s.player_id
+        , s.start_seconds_elapsed
+        , s.period
+        , row_number() over (partition by s.player_id, s.game_id order by s.start_seconds_elapsed) as new_shift_number
+        , string_agg(cast(s.shift_number as string)) as shift_numbers
+        , string_agg(cast(s.event_number as string)) as event_numbers
+        , string_agg(cast(s.shift_id as string)) as shift_ids
+    from new_shift_id as s
+    left join dedup_shift_starts as d on d.remove_new_shift_id = s.new_shift_id
+    where 1 = 1
+          and s.is_goal is not true
+          and d.remove_new_shift_id is null -- excludes the duplicated shifts from the previous cte
+    group by 1, 2, 3, 4, 5
+)
+
+, new_shifts_time as (
+    select
+        s.*
+        , d.shift_numbers
+        , d.shift_ids
+        , d.event_numbers
+        , case
+            when s.is_goal is true
+                then 0
+            else d.new_shift_number
+        end as revised_new_shift_number
+    from new_shift_id as s
+    left join dedup_shift_properties as d on s.new_shift_id = d.new_shift_id
+    left join dedup_shift_starts as dds on dds.remove_new_shift_id = s.new_shift_id
+    where 1 = 1
+          and dds.remove_new_shift_id is null -- excludes the duplicated shifts from the previous cte
+
+)
+
+select distinct
+    concat('newshiftid_', ns.revised_new_shift_number, ns.new_shift_id) as new_shift_id
+    , ns.revised_new_shift_number as new_shift_number
+    , ns.game_id
+    , ns.player_id
+    , ns.team_id
+    , ns.home_away_team
+    , ns.shift_numbers
+    , ns.shift_ids
+    , ns.event_numbers
+    , ns.game_type_description
+    , ns.type_code
+    , ns.detail_code
+    , ns.player_full_name
+    , ns.is_goal
+    , ns.is_period_start
+    , ns.is_period_end
+    , ns.goal_game_state
+    , ns.goal_assisters
+    , ns.goal_primary_assister_full_name
+    , ns.goal_secondary_assister_full_name
+    , ns.period
+    , ns.period_type
+    , ns.start_seconds_elapsed
+    , (ns.start_seconds_elapsed + ns.duration_seconds_elapsed) as end_seconds_elapsed
+    , ns.duration_seconds_elapsed
+    , ns.start_time
+    , ns.end_time
+    , ns.duration
+from new_shifts_time as ns

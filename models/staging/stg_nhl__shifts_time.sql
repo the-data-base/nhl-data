@@ -9,14 +9,16 @@ game_seconds as (
 
 , player_shift_seconds as (
     select
-        concat(shifts.shift_id, '_', gs.seconds) as new_shift_id
-        , shifts.shift_number
+        concat(shifts.new_shift_id, "_", gs.seconds) as new_shift_id
+        , shifts.new_shift_number
         , shifts.game_id
         , shifts.player_id
         , shifts.team_id
         , shifts.home_away_team
+        , shifts.shift_ids
+        , shifts.shift_numbers
+        , shifts.event_numbers
         , shifts.game_type_description
-        , shifts.event_number
         , shifts.type_code
         , shifts.detail_code
         , shifts.player_full_name
@@ -47,6 +49,7 @@ game_seconds as (
     from {{ ref('stg_nhl__shifts') }} as shifts
     inner join game_seconds as gs on gs.seconds between shifts.start_seconds_elapsed and shifts.end_seconds_elapsed
     left join {{ ref('d_players') }} as players on players.player_id = shifts.player_id
+    --where (case when gs.seconds = shifts.start_seconds_elapsed and is_period_end is true then true else false end) is false -- remove the shift that ends the period
     {# where shifts.game_id = 2015021169 #}
 )
 
@@ -54,6 +57,7 @@ game_seconds as (
     -- lists players and count of positions on ice for each game second
     select
         game_id
+        , period
         , game_time_seconds
         , sum(case when home_away_team = 'home' and primary_position_abbreviation = 'G' and is_shift_start_not_period_start is false then 1 else 0 end) as home_goalie_on_ice
         , sum(case when home_away_team = 'away' and primary_position_abbreviation = 'G' and is_shift_start_not_period_start is false then 1 else 0 end) as away_goalie_on_ice
@@ -64,19 +68,39 @@ game_seconds as (
         , array_agg(case when home_away_team = 'home' and is_shift_start_not_period_start is false then player_id end ignore nulls) as home_skaters
         , array_agg(case when home_away_team = 'away' and is_shift_start_not_period_start is false then player_id end ignore nulls) as away_skaters
     from player_shift_seconds
-    where is_period_end is false
-    group by 1, 2
+    group by 1, 2, 3
+)
+
+-- as of 7/10/2022, 14k duplicates were introduced b/c of shifts that start and end back-to-back (yep, shifts data is brutal)
+-- rule: if a player's shift overlaps, choose the shift that started earlier as the one to keep (min takes the first shift, max takes the susbsequent)
+, dedup_game_time_seconds as (
+    select
+        pss.game_id
+        , pss.player_id
+        , pss.game_time_seconds
+        , pss.period
+        , min(new_shift_id) as keep_new_shift_id
+        , max(new_shift_id) as remove_new_shift_id
+        , count(*) as test
+        , string_agg(new_shift_id) as all_new_shift_ids
+    from player_shift_seconds as pss
+    where pss.is_goal is not true
+    group by 1, 2, 3, 4
+    having count(*) > 1
+    order by 1, 2, 3, 4
 )
 
 select
     sbs.new_shift_id
-    , sbs.shift_number
+    , sbs.new_shift_number
     , sbs.game_id
     , sbs.player_id
     , sbs.team_id
     , sbs.home_away_team
     , sbs.game_type_description
-    , sbs.event_number
+    , sbs.shift_ids
+    , sbs.shift_numbers
+    , sbs.event_numbers
     , sbs.type_code
     , sbs.detail_code
     , sbs.player_full_name
@@ -128,3 +152,6 @@ from player_shift_seconds as sbs
 left join game_second_skaters_on_ice as soi
     on sbs.game_id = soi.game_id
         and sbs.game_time_seconds = soi.game_time_seconds
+        and sbs.period = soi.period
+left join dedup_game_time_seconds as d on sbs.new_shift_id = d.remove_new_shift_id
+where d.remove_new_shift_id is null

@@ -54,8 +54,7 @@ where
     and lower(play_period_type) <> 'shootout'
     and plays_game_id = 2016021070
 
---query#3
--- query #2: drill into missing shifts
+--query#3: drill into missing shifts
 with plays_shifts as (
 select
     plays.*

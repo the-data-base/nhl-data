@@ -1,6 +1,6 @@
 select
     /* Primary Key */
-    shifts.shift_id
+    shifts.new_shift_id
 
     /* Identifiers */
     , shifts.game_id
@@ -8,7 +8,10 @@ select
     , shifts.team_id
 
     /* Shift Properties */
-    , shifts.shift_number
+    , shifts.new_shift_number
+    , shifts.shift_ids
+    , shifts.shift_numbers
+    , shifts.event_numbers
     , shifts.start_time
     , shifts.end_time
     , shifts.duration
@@ -21,7 +24,6 @@ select
     , shifts.period_type
     , shifts.home_away_team
     , shifts.game_type_description
-    , shifts.event_number
     , shifts.type_code
     , shifts.detail_code
     , shifts.player_full_name

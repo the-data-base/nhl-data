@@ -91,17 +91,8 @@ models:
       - name: play_period_time_remaining
         description: The time in minutes remaining in the period
 
-      - name: play_period_seconds_elapsed
-        description: The time in seconds elapsed in the period
-
-      - name: play_period_seconds_remaining
-        description: The time in seconds remaining the period
-
       - name: play_total_seconds_elapsed
         description: The time in seconds elapsed in the entire game
-
-      - name: play_total_seconds_remaining
-        description: The time in seconds remaining in the entire game
 
       - name: play_time
         description: A timestamp of the event (e.g. 2021-01-13T22:32:45Z)
@@ -201,3 +192,93 @@ models:
 
       - name: game_state_lag
         description: The previous state of scoreboard prior to the play in question (e.g. "Tie", "Close" (1 goal difference), "Buffer" (2 goal difference), "Comfortable" (3 goal difference), "Blowout" (4 goal difference))
+
+      - name: new_shift_id
+        description: Custom identifier for an NHL shift-second
+
+      - name: new_shift_number
+        description: Custom shift number, counted from the start of the game and excluding dups (e.g. 2 = player's second shift of game, 0 = goal)
+
+      - name: shift_numbers
+        description: Concatenation of all of the shift_numbers matched from the original shifts dataset for that play
+
+      - name: shift_ids
+        description: Concatenation of all of the shift_ids matched from the original shifts dataset for that play
+
+      - name: event_numbers
+        description: Concatenation of all of the event_numbers matched from the original shifts dataset for that play
+
+      - name: shift_start_time
+        description: The start time of the shift, relative to the start of the period (e.g. 14:00)
+
+      - name: shift_end_time
+        description: The end time of the shift, relative to the start of the period (14:00)
+
+      - name: shift_duration
+        description: The duration of the shift, relative to the start of the shift (00:41)
+
+      - name: goal_game_state
+        description: Provides the state of the game for plays that resulted in a goal (e.g. PPG, EVG)
+
+      - name: is_shift_start
+        description: Whether or not the second in which the play occured is also the second in which the player started his shift
+
+      - name: is_shift_end
+        description: Whether or not the second in which the play occured is also the second in which the player finished his shift
+
+      - name: is_shift_start_period_start
+        description: Whether or not the second in which the play occured maps to the second in which the player started his shift and the period begins
+
+      - name: is_shift_start_not_period_start
+        description: Whether or not the second in which the play occured maps to the second in which the player started his shift and the period was not just beginning
+
+      - name: is_shift_end_period_end
+        description: Whether or not the second in which the play occured maps to the second in which the player started his shift and the period finished
+
+      - name: game_state
+        description: Provides the state of the game for all plays, excluding goalies (e.g. 5v5)
+
+      - name: game_state_description
+        description: Descriptor that provides the number of home skaters and away skaters on all plays, excluding goalies (e.g. home:5-away:4)
+
+      - name: game_state_skaters
+        description: Descriptor that summarizes the game state on all plays (e.g. skater advantage, even strength)
+
+      - name: home_goalie_pulled
+        description: Whether or not the home goalie was pulled at the time of the play
+
+      - name: away_goalie_pulled
+        description: Whether or not the away goalie was pulled at the time of the play
+
+      - name: home_skaters
+        description: Array of home player IDs (including goalies) that were on the ice at the time of the play (note that players that began their shift in the same second as the play occured are not counted towards this or any other game state feature from the shifts dataset)
+
+      - name: away_skaters
+        description: Array of away player IDs (including goalies) that were on the ice at the time of the play (note that players that began their shift in the same second as the play occured are not counted towards this or any other game state feature from the shifts dataset)
+
+      - name: home_skaters_on_ice
+        description: The number of home skaters on the ice, excludes goalies
+
+      - name: away_skaters_on_ice
+        description: The number of away skaters on the ice, excludes goalies
+
+      - name: home_defence_on_ice
+        description: The number of home defencemen on the ice
+
+      - name: away_defence_on_ice
+        description: The number of away defencemen on the ice
+
+      - name: home_forward_on_ice
+        description: The number of home forwards on the ice
+
+      - name: away_forward_on_ice
+        description: The number of away forwards on the ice
+
+      - name: home_goalie_on_ice
+        description: The number of home goalies on the ice (1 or 0)
+
+      - name: away_goalie_on_ice
+        description: The number of away goalies on the ice (1 or 0)
+
+
+

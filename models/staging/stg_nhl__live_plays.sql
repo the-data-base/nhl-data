@@ -209,11 +209,8 @@ live_plays as (
         , bp.play_period_type
         , bp.play_period_time_elapsed
         , bp.play_period_time_remaining
-        , bp.play_seconds_elapsed as play_period_seconds_elapsed
-        , 1200 - play_seconds_elapsed as play_period_seconds_remaining
         -- Total seconds elapsed
         , ((bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as play_total_seconds_elapsed
-        , 3600 - ((bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as play_total_seconds_remaining -- #TODO fix this, assumes game is 3600 seconds long but it could go to over time...
         , bp.play_time
         -- Count cumulative shot totals
         , sum(bp.shot_away) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as shots_away
@@ -437,10 +434,7 @@ select
     , play_period_type
     , play_period_time_elapsed
     , play_period_time_remaining
-    , play_period_seconds_elapsed
-    , play_period_seconds_remaining
     , play_total_seconds_elapsed
-    , play_total_seconds_remaining
     , play_time
     , shots_away
     , shots_home
