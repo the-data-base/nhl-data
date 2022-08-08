@@ -193,10 +193,10 @@ models:
       - name: game_state_lag
         description: The previous state of scoreboard prior to the play in question (e.g. "Tie", "Close" (1 goal difference), "Buffer" (2 goal difference), "Comfortable" (3 goal difference), "Blowout" (4 goal difference))
 
-      - name: new_shift_id
+      - name: shift_id
         description: Custom identifier for an NHL shift-second
 
-      - name: new_shift_number
+      - name: shift_number
         description: Custom shift number, counted from the start of the game and excluding dups (e.g. 2 = player's second shift of game, 0 = goal)
 
       - name: shift_numbers

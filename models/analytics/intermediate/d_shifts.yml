@@ -5,7 +5,7 @@ models:
     description: NHL shift-level dataset, with each row being a summary of a player's shift in an NHL game
     columns:
       # Primary Key
-      - name: new_shift_id
+      - name: shift_id
         description: Custom identifier for an NHL shift-second
         tests:
           - unique

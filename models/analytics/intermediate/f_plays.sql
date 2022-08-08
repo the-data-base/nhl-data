@@ -63,8 +63,8 @@ select
     , plays.game_state_lag
 
     /* Shift properties */
-    , shifts.new_shift_id
-    , shifts.new_shift_number
+    , shifts.shift_id
+    , shifts.shift_number
     , shifts.shift_numbers
     , shifts.shift_ids
     , shifts.event_numbers as shift_event_numbers

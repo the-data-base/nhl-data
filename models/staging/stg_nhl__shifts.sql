@@ -211,32 +211,32 @@ with shifts_raw as (
 )
 
 select distinct
-    concat('newshiftid_', ns.revised_new_shift_number, ns.new_shift_id) as new_shift_id
-    , ns.revised_new_shift_number as new_shift_number
-    , ns.game_id
-    , ns.player_id
-    , ns.team_id
-    , ns.home_away_team
-    , ns.shift_numbers
-    , ns.shift_ids
-    , ns.event_numbers
-    , ns.game_type_description
-    , ns.type_code
-    , ns.detail_code
-    , ns.player_full_name
-    , ns.is_goal
-    , ns.is_period_start
-    , ns.is_period_end
-    , ns.goal_game_state
-    , ns.goal_assisters
-    , ns.goal_primary_assister_full_name
-    , ns.goal_secondary_assister_full_name
-    , ns.period
-    , ns.period_type
-    , ns.start_seconds_elapsed
-    , (ns.start_seconds_elapsed + ns.duration_seconds_elapsed) as end_seconds_elapsed
-    , ns.duration_seconds_elapsed
-    , ns.start_time
-    , ns.end_time
-    , ns.duration
-from new_shifts_time as ns
+    concat('newshiftid_', revised_new_shift_number, new_shift_id) as shift_id
+    , revised_new_shift_number as shift_number
+    , game_id
+    , player_id
+    , team_id
+    , home_away_team
+    , shift_numbers
+    , shift_ids
+    , event_numbers
+    , game_type_description
+    , type_code
+    , detail_code
+    , player_full_name
+    , is_goal
+    , is_period_start
+    , is_period_end
+    , goal_game_state
+    , goal_assisters
+    , goal_primary_assister_full_name
+    , goal_secondary_assister_full_name
+    , period
+    , period_type
+    , start_seconds_elapsed
+    , (start_seconds_elapsed + duration_seconds_elapsed) as end_seconds_elapsed
+    , duration_seconds_elapsed
+    , start_time
+    , end_time
+    , duration
+from new_shifts_time

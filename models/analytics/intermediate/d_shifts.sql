@@ -1,6 +1,6 @@
 select
     /* Primary Key */
-    shifts.new_shift_id
+    shifts.shift_id
 
     /* Identifiers */
     , shifts.game_id
@@ -8,7 +8,7 @@ select
     , shifts.team_id
 
     /* Shift Properties */
-    , shifts.new_shift_number
+    , shifts.shift_number
     , shifts.shift_ids
     , shifts.shift_numbers
     , shifts.event_numbers

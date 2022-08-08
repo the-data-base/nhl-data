@@ -9,8 +9,8 @@ game_seconds as (
 
 , player_shift_seconds as (
     select
-        concat(shifts.new_shift_id, "_", gs.seconds) as new_shift_id
-        , shifts.new_shift_number
+        concat(shifts.shift_id, "_", gs.seconds) as shift_id
+        , shifts.shift_number
         , shifts.game_id
         , shifts.player_id
         , shifts.team_id
@@ -79,10 +79,10 @@ game_seconds as (
         , pss.player_id
         , pss.game_time_seconds
         , pss.period
-        , min(new_shift_id) as keep_new_shift_id
-        , max(new_shift_id) as remove_new_shift_id
+        , min(shift_id) as keep_shift_id
+        , max(shift_id) as remove_shift_id
         , count(*) as test
-        , string_agg(new_shift_id) as all_new_shift_ids
+        , string_agg(shift_id) as all_shift_ids
     from player_shift_seconds as pss
     where pss.is_goal is not true
     group by 1, 2, 3, 4
@@ -91,8 +91,8 @@ game_seconds as (
 )
 
 select
-    sbs.new_shift_id
-    , sbs.new_shift_number
+    sbs.shift_id
+    , sbs.shift_number
     , sbs.game_id
     , sbs.player_id
     , sbs.team_id
@@ -153,5 +153,5 @@ left join game_second_skaters_on_ice as soi
     on sbs.game_id = soi.game_id
         and sbs.game_time_seconds = soi.game_time_seconds
         and sbs.period = soi.period
-left join dedup_game_time_seconds as d on sbs.new_shift_id = d.remove_new_shift_id
-where d.remove_new_shift_id is null
+left join dedup_game_time_seconds as d on sbs.shift_id = d.remove_shift_id
+where d.remove_shift_id is null
