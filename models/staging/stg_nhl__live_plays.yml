@@ -84,17 +84,8 @@ models:
       - name: play_period_time_remaining
         description: The time in minutes remaining in the period
 
-      - name: play_period_seconds_elapsed
-        description: The time in seconds elapsed in the period
-
-      - name: play_period_seconds_remaining
-        description: The time in seconds remaining the period
-
       - name: play_total_seconds_elapsed
         description: The time in seconds elapsed in the entire game
-
-      - name: play_total_seconds_remaining
-        description: The time in seconds remaining in the entire game
 
       - name: play_time
         description: A timestamp of the event (e.g. 2021-01-13T22:32:45Z)

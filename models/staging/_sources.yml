@@ -15,4 +15,5 @@ sources:
       - name: people
       - name: schedule
       - name: seasons
+      - name: shifts
       - name: teams
