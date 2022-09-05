@@ -12,10 +12,90 @@ models:
           - not_null
 
       # Identifiers
-      #- name: shift_id
-      #  description: Default identifier for an NHL shift-second
-      #  tests:
-      #    - unique
-      #    - not_null
+      - name: game_id
+        description: |
+          Foreign key that maps to an NHL game
+          {{ doc("game_id_description") }}
+        tests:
+          - not_null
+
+      - name: player_id
+        description: Foreign key that maps to an NHL player ID
+        tests:
+          - not_null
+
+      - name: team_id
+        description: Foreign key that maps to an NHL team ID
 
       # Properties
+      - name: shift_number
+        description: Custom shift number, counted from the start of the game and excluding dups (e.g. 2 = player's second shift of game, 0 = goal)
+
+      - name: shift_ids
+        description: Concatenation of all of the shift_ids matched from the original shifts dataset for that play
+
+      - name: shift_numbers
+        description: Concatenation of all of the shift_numbers matched from the original shifts dataset for that play
+
+      - name: event_numbers
+        description: Concatenation of all of the event_numbers matched from the original shifts dataset for that play
+
+      - name: start_time
+        description: The start time of the shift, relative to the start of the period (e.g. 14:00)
+
+      - name: end_time
+        description: The end time of the shift, relative to the start of the period (14:00)
+
+      - name: duration
+        description: The duration of the shift, relative to the start of the shift (00:41)
+
+      - name: duration_seconds_elapsed
+        description: The time in seconds elapsed from the start of the shift to the end of the shift
+
+      - name: start_seconds_elapsed
+        description: The time in seconds elapsed in the game at the start of the shift
+
+      - name: end_seconds_elapsed
+        description: The time in seconds elapsed in the game at the end of the shift
+
+      - name: period
+        description: The period in which the event occured (e.g. 3)
+
+      - name: period_type
+        description: The type of period in which the event occured (e.g. Regular)
+
+      - name: home_away_team
+        description: Provides player's team visiting status (e.g. 'home', 'away')
+
+      - name: game_type_description
+        description: Description for the type of game played, enhancing game_type (e.g. Pre-season, Regular, Playoffs, All-star)
+
+      - name: type_code
+        description: Provides the type code for a player's shift - these have meaning, but currently no dictionary has been found
+
+      - name: detail_code
+        description: Provides the detail code for a player's shift - these have meaning, but currently no dictionary has been found
+
+      - name: player_full_name
+        description: The player's full name (first name, last name)
+
+      - name: is_goal
+        description: Boolean flag for whether or not the recorded shift was in-fact a goal
+
+      - name: is_period_start
+        description: Whether or not the second in which the play occured maps to the second in which the player started his shift and the period begins
+
+      - name: is_period_end
+        description: Whether or not the second in which the play occured maps to the second in which the player started his shift and the period finished
+
+      - name: goal_game_state
+        description: Provides the state of the game for plays that resulted in a goal (e.g. PPG, EVG)
+
+      - name: goal_assisters
+        description: Provides the full names of the assisters when `is_goal = True` and the goal was assisted. Uses the following syntax - {Primary assister full name}, {Secondary assiter full name}
+
+      - name: goal_primary_assister_full_name
+        description: Full name of the primary assister when `is_goal = True` and the goal was assisted
+
+      - name: goal_secondary_assister_full_name
+        description: Full name of the secondary assister when `is_goal = True` and the goal had a primary and secondary assist

@@ -212,14 +212,22 @@ with shifts_raw as (
 
 select distinct
     concat('newshiftid_', revised_new_shift_number, new_shift_id) as shift_id
-    , revised_new_shift_number as shift_number
     , game_id
     , player_id
     , team_id
-    , home_away_team
+    , revised_new_shift_number as shift_number
     , shift_numbers
     , shift_ids
     , event_numbers
+    , start_time
+    , end_time
+    , duration
+    , duration_seconds_elapsed
+    , start_seconds_elapsed
+    , (start_seconds_elapsed + duration_seconds_elapsed) as end_seconds_elapsed
+    , period
+    , period_type
+    , home_away_team
     , game_type_description
     , type_code
     , detail_code
@@ -231,12 +239,4 @@ select distinct
     , goal_assisters
     , goal_primary_assister_full_name
     , goal_secondary_assister_full_name
-    , period
-    , period_type
-    , start_seconds_elapsed
-    , (start_seconds_elapsed + duration_seconds_elapsed) as end_seconds_elapsed
-    , duration_seconds_elapsed
-    , start_time
-    , end_time
-    , duration
 from new_shifts_time

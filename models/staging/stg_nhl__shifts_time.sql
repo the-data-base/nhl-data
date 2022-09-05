@@ -92,25 +92,33 @@ game_seconds as (
 
 select
     sbs.shift_id
-    , sbs.shift_number
     , sbs.game_id
     , sbs.player_id
     , sbs.team_id
-    , sbs.home_away_team
-    , sbs.game_type_description
+    , sbs.shift_number
     , sbs.shift_ids
     , sbs.shift_numbers
     , sbs.event_numbers
+    , sbs.start_time
+    , sbs.end_time
+    , sbs.duration
+    , sbs.duration_seconds_elapsed
+    , sbs.start_seconds_elapsed
+    , sbs.end_seconds_elapsed
+    , sbs.period
+    , sbs.period_type
+    , sbs.home_away_team
+    , sbs.game_type_description
     , sbs.type_code
     , sbs.detail_code
     , sbs.player_full_name
     , sbs.is_goal
+    , sbs.is_period_start
+    , sbs.is_period_end
     , sbs.goal_game_state
     , sbs.goal_assisters
     , sbs.goal_primary_assister_full_name
     , sbs.goal_secondary_assister_full_name
-    , sbs.period
-    , sbs.period_type
     , sbs.game_time_seconds
     , sbs.shift_time_seconds
     , sbs.is_shift_start
@@ -118,14 +126,6 @@ select
     , sbs.is_shift_start_period_start
     , sbs.is_shift_start_not_period_start
     , sbs.is_shift_end_period_end
-    , sbs.start_seconds_elapsed
-    , sbs.end_seconds_elapsed
-    , sbs.duration_seconds_elapsed
-    , sbs.start_time
-    , sbs.end_time
-    , sbs.duration
-    , sbs.is_period_start
-    , sbs.is_period_end
     , concat((soi.home_defence_on_ice + soi.home_forward_on_ice), 'v', (soi.away_defence_on_ice + soi.away_forward_on_ice)) as game_state
     , concat('home:', (soi.home_defence_on_ice + soi.home_forward_on_ice), '-away:', (soi.away_defence_on_ice + soi.away_forward_on_ice)) as game_state_description
     , case

@@ -2,15 +2,167 @@ version: 2
 
 models:
   - name: stg_nhl__shifts_time
-    description: NHL shift-second level dataset, with each row being the a second (s) of a player's shift in an NHL game
+    description: NHL shift-second level dataset, with each row being a second (s) of a player's shift in an NHL game
     columns:
       # Primary Key
       - name: shift_id
-        description: Unique identifier for an NHL shift-second
+        description: Unique identifier for an NHL shift-second (e.g. {shift_id}_{second})
         tests:
           - unique
           - not_null
 
       # Identifiers
+      - name: game_id
+        description: |
+          Foreign key that maps to an NHL game
+          {{ doc("game_id_description") }}
+        tests:
+          - not_null
+
+      - name: player_id
+        description: Foreign key that maps to an NHL player ID
+        tests:
+          - not_null
+
+      - name: team_id
+        description: Foreign key that maps to an NHL team ID
 
       # Properties
+      - name: shift_number
+        description: Custom shift number, counted from the start of the game and excluding dups (e.g. 2 = player's second shift of game, 0 = goal)
+
+      - name: shift_ids
+        description: Concatenation of all of the shift_ids matched from the original shifts dataset for that play
+
+      - name: shift_numbers
+        description: Concatenation of all of the shift_numbers matched from the original shifts dataset for that play
+
+      - name: event_numbers
+        description: Concatenation of all of the event_numbers matched from the original shifts dataset for that play
+
+      - name: start_time
+        description: The start time of the shift, relative to the start of the period (e.g. 14:00)
+
+      - name: end_time
+        description: The end time of the shift, relative to the start of the period (14:00)
+
+      - name: duration
+        description: The duration of the shift, relative to the start of the shift (00:41)
+
+      - name: duration_seconds_elapsed
+        description: The time in seconds elapsed from the start of the shift to the end of the shift (repeats at the shift-level)
+
+      - name: start_seconds_elapsed
+        description: The time in seconds elapsed in the game at the start of the shift (repeats at the shift-level)
+
+      - name: end_seconds_elapsed
+        description: The time in seconds elapsed in the game at the end of the shift (repeats at the shift-level)
+
+      - name: period
+        description: The period in which the event occured (e.g. 3)
+
+      - name: period_type
+        description: The type of period in which the event occured (e.g. Regular)
+
+      - name: home_away_team
+        description: Provides player's team visiting status (e.g. 'home', 'away')
+
+      - name: game_type_description
+        description: Description for the type of game played, enhancing game_type (e.g. Pre-season, Regular, Playoffs, All-star)
+
+      - name: type_code
+        description: Provides the type code for a player's shift - these have meaning, but currently no dictionary has been found
+
+      - name: detail_code
+        description: Provides the detail code for a player's shift - these have meaning, but currently no dictionary has been found
+
+      - name: player_full_name
+        description: The player's full name (first name, last name)
+
+      - name: is_goal
+        description: Boolean flag for whether or not the recorded shift was in-fact a goal
+
+      - name: is_period_start
+        description: Whether or not the second in which the play occured maps to the second in which the player started his shift and the period begins
+
+      - name: is_period_end
+        description: Whether or not the second in which the play occured maps to the second in which the player started his shift and the period finished
+
+      - name: goal_game_state
+        description: Provides the state of the game for plays that resulted in a goal (e.g. PPG, EVG)
+
+      - name: goal_assisters
+        description: Provides the full names of the assisters when `is_goal = True` and the goal was assisted. Uses the following syntax - {Primary assister full name}, {Secondary assiter full name}
+
+      - name: goal_primary_assister_full_name
+        description: Full name of the primary assister when `is_goal = True` and the goal was assisted
+
+      - name: goal_secondary_assister_full_name
+        description: Full name of the secondary assister when `is_goal = True` and the goal had a primary and secondary assist
+
+      - name: game_time_seconds
+        description: The time in seconds elapsed in the entire game
+
+      - name: shift_time_seconds
+        description: The number of seconds elapsed into the shift for a given player
+
+      - name: is_shift_start
+        description: Boolean flag for whether or not the recorded player-shift-second was at the start of the game
+
+      - name: is_shift_end
+        description: Boolean flag for whether or not the recorded player-shift-second was at the end of the game
+
+      - name: is_shift_start_period_start
+        description: Boolean flag for whether or not the recorded player-shift-second was the start of the shift and also the start of the game
+
+      - name: is_shift_start_not_period_start
+        description: Boolean flag for whether or not the recorded player-shift-second was the start of the shift but not the start of the game
+
+      - name: is_shift_end_period_end
+        description: Boolean flag for whether or not the recorded player-shift-second was the end of the shift and also the end of the game
+
+      - name: game_state
+        description: The game strength state in numbers (e.g. 5v5). Syntax used - {home players on ice}v{away players on ice}, excludes goalies
+
+      - name: game_state_description
+        description: The game strength state described in full (e.g. home:5-away:5). Syntax used - home:{home players on ice}-away:{away players on ice}, excludes goalies
+
+      - name: game_state_skaters
+        description: Grouped description of the game_state strength relative to the player's team (e.g. even strength, skater advantage)
+
+      - name: home_goalie_pulled
+        description: Boolean flag for whether or not the recorded shift-second occured at the same time where the home team's goalie was pulled
+
+      - name: away_goalie_pulled
+        description: Boolean flag for whether or not the recorded shift-second occured at the same time where the away team's goalie was pulled
+
+      - name: home_skaters
+        description: Provides an array of player IDs for the home players that were on the ice at the same second in which the player-shift-second occured (e.g. 8479425,8481433,8477479,8477946,8470657), excludes goalies
+
+      - name: away_skaters
+        description: Provides an array of player IDs for the away players that were on the ice at the same second in which the player-shift-second occured (e.g. 8479425,8481433,8477479,8477946,8470657), excludes goalies
+
+      - name: home_skaters_on_ice
+        description: The number of home skaters on the ice at the same second in which the player-shift-second occured, calculated as `home_defence_on_ice + home_forward_on_ice` (e.g. 5)
+
+      - name: away_skaters_on_ice
+        description: The number of away skaters on the ice at the same second in which the player-shift-second occured, calculated as `away_defence_on_ice + away_forward_on_ice` (e.g. 5)
+
+      - name: home_goalie_on_ice
+        description: The number of home goalies on the ice at the same second in which the player-shift-second occured
+
+      - name: home_defence_on_ice
+        description: The number of home defencemen on the ice at the same second in which the player-shift-second occured
+
+      - name: home_forward_on_ice
+        description: The number of home forwards on the ice at the same second in which the player-shift-second occured
+
+      - name: away_goalie_on_ice
+        description: The number of away goalies on the ice at the same second in which the player-shift-second occured
+
+      - name: away_defence_on_ice
+        description: The number of away defencemen on the ice at the same second in which the player-shift-second occured
+
+      - name: away_forward_on_ice
+        description: The number of away forwards on the ice at the same second in which the player-shift-second occured
+
