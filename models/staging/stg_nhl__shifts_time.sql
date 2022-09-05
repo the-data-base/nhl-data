@@ -53,8 +53,8 @@ game_seconds as (
     {# where shifts.game_id = 2015021169 #}
 )
 
+-- lists players and count of positions on ice for each game second
 , game_second_skaters_on_ice as (
-    -- lists players and count of positions on ice for each game second
     select
         game_id
         , period
