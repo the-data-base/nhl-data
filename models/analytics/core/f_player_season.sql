@@ -3,6 +3,8 @@ player_season as (
     select
         bp.player_id
         , player.full_name as player_full_name
+        , schedule.game_type
+        , schedule.game_type_description
         , season.season_id
         , season.regular_season_start_date
         , season.regular_season_end_date
@@ -40,7 +42,7 @@ player_season as (
     left join {{ ref('f_games_scratches') }} as scratches on scratches.player_id = bp.player_id and scratches.game_id = bp.game_id
 
     where 1 = 1
-        and schedule.game_type = '02' --regular season only
+        and schedule.game_type in ('02', '03') --regular season & playoff only
         and scratches.player_id is null -- remove scratches, should be same as `and bp.time_on_ice is not null`
     group by
         bp.player_id
@@ -49,12 +51,14 @@ player_season as (
         , season.number_of_games
         , season.regular_season_start_date
         , season.regular_season_end_date
+        , schedule.game_type
+        , schedule.game_type_description
     order by
         count(distinct bp.game_id) desc
         , sum(bp.goals) desc
 )
 
--- at the player-season level, get the number of missed shots and blocked shots by each shooter
+-- At the player-season-game_type level, get the number of missed shots and blocked shots by each shooter
 , player_stats as (
     select
         plays.player_id
@@ -105,21 +109,24 @@ player_season as (
         and plays.player_role in ("SHOOTER", "SCORER", "ASSIST")
         and plays.event_type in ("BLOCKED_SHOT", "MISSED_SHOT", "SHOT", "GOAL")
         and plays.play_period_type <> 'SHOOTOUT'
-        and schedule.game_type = '02'
+        and schedule.game_type in ('02', '03') --regular season & playoff only
     group by
         plays.player_id
         , season.season_id
+        , schedule.game_type
     order by
         sum(case when plays.event_type = "GOAL" and plays.player_role = "SCORER" then 1 else 0 end) desc
 )
 
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['player_season.player_id', 'player_season.season_id']) }} as player_season_id
+    {{ dbt_utils.surrogate_key(['player_season.player_id', 'player_season.season_id', 'player_season.game_type']) }} as player_season_gametype_id
     /* Foreign Keys */
     , player_season.player_id
     , player_season.season_id
+    , player_season.game_type
     /* Season Properties */
+    , player_season.game_type_description
     , player_season.regular_season_start_date
     , player_season.regular_season_end_date
     , player_season.full_season_games
@@ -211,6 +218,9 @@ select
 --,player_season.wins
 --,player_season.losses
 from player_season
-left join player_stats on player_season.player_id = player_stats.player_id and player_season.season_id = player_stats.season_id
+left join player_stats
+    on player_season.player_id = player_stats.player_id
+    and player_season.season_id = player_stats.season_id
+    and player_season.game_type = player_stats.game_type
 order by
     player_season.goals desc

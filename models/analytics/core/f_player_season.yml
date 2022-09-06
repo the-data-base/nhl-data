@@ -2,11 +2,11 @@ version: 2
 
 models:
   - name: f_player_season
-    description: Model-ready, feature rich dataset at the player-season level of granularity
+    description: Model-ready, feature rich dataset at the player-season-game_type level of granularity for regular season + playoffs
     columns:
       # Primary Key
-      - name: player_season_id
-        description: Unique identifier for a player's summarized activity in an NHL season (player_id + season_id)
+      - name: player_season_gametype_id
+        description: Unique identifier for a player's summarized activity in an NHL season (player_id + season_id + game_type)
         tests:
           - unique
           - not_null
@@ -17,6 +17,12 @@ models:
 
       - name: season_id
         description: Foreign key that maps to an NHL season (e.g. "20172018")
+
+      - name: game_type
+        description: Code for the type of game, which is retrieved by extracting the the 5th and 6th position from the game_id (e.g. 02 = regular season game)
+
+      - name: game_type_description
+        description: Description for the type of game played, enhancing game_type (e.g. Pre-season, Regular, Playoffs, All-star)
 
       # Season Properties
       - name: regular_season_start_date
@@ -57,7 +63,7 @@ models:
 
       - name: goals_chasegoal
         description: The number of goals scored while behind by more than 1 goal
-      
+
       - name: goals_gametying
         description: The number of goals scored from behind that tied the game up
 
@@ -191,7 +197,7 @@ models:
 
       - name: pcnt_shooting_wraparound
         description: The percent of all wrap-around shots on goal that were goals (e.g. 10% shooting means 1 out of 10 wrap-around shots on net were goals)
-      
+
       - name: pcnt_shooting_wristshot
         description: The percent of all wristshot shots on goal that were goals (e.g. 10% shooting means 1 out of 10 wristshot shots on net were goals)
 
