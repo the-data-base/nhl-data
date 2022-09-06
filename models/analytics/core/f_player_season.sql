@@ -63,6 +63,7 @@ player_season as (
     select
         plays.player_id
         , season.season_id
+        , schedule.game_type
         , max(plays.event_description) as example_eventdescription
         -- shot types
         , sum(case when plays.event_secondary_type = "BACKHAND" and plays.player_role = "SHOOTER" then 1 else 0 end) as shots_backhand_all
@@ -220,7 +221,7 @@ select
 from player_season
 left join player_stats
     on player_season.player_id = player_stats.player_id
-    and player_season.season_id = player_stats.season_id
-    and player_season.game_type = player_stats.game_type
+        and player_season.season_id = player_stats.season_id
+        and player_season.game_type = player_stats.game_type
 order by
     player_season.goals desc
