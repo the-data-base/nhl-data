@@ -36,7 +36,7 @@ models:
           - not_null
 
       - name: venue_id
-        description: Foreign key tha tmaps to a team's venue (home team)
+        description: Foreign key that maps to a team's venue (home team)
 
       # Properties
       - name: game_number

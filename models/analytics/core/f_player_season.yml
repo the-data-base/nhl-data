@@ -14,12 +14,18 @@ models:
       # Foreign Keys
       - name: player_id
         description: Foreign key that maps to an NHL player ID
+        tests:
+          - not_null
 
       - name: season_id
         description: Foreign key that maps to an NHL season (e.g. "20172018")
+        tests:
+          - not_null
 
       - name: game_type
         description: Code for the type of game, which is retrieved by extracting the the 5th and 6th position from the game_id (e.g. 02 = regular season game)
+        tests:
+          - not_null
 
       - name: game_type_description
         description: Description for the type of game played, enhancing game_type (e.g. Pre-season, Regular, Playoffs, All-star)
@@ -88,24 +94,50 @@ models:
       - name: points_pergame
         description: The number of points scored in the regular season divided by the number of games played
 
-      ## Skater shot results
-      - name: shots_all
-        description: The total number of shots taken (missed + blocked + on-goal)
+      - name: shots_ff
+        description: Fenwick shots for while on the ice (goals, saved shots, missed shots)
 
-      - name: shots_ongoal
-        description: The total number of shots taken on-goal (saved or goals)
+      - name: shots_fa
+        description: Fenwick shots against while on the ice (goals, saved shots, missed shots)
 
-      - name: shots_blocked
-        description: The number of shots taken that were blocked (e.g. shot taken that hits an opposing team defencemen)
+      - name: shots_cf
+        description: Corsi shots for while on the ice (goals, saved shots, missed shots, blocked shots)
 
-      - name: shots_missed
-        description: The number of shots taken that were missed (e.g. shot taken that missees the net)
+      - name: shots_ca
+        description: Corsi shots against while on the ice (goals, saved shots, missed shots, blocked shots)
 
-      - name: shots_saved
-        description: The number of shots taken that were on target but were saved
+      - name: shots_sf
+        description: Shots for while on the ice (goals, saved shots)
 
-      - name: shots_scored
-        description: The number of shots taken that converted as goals
+      - name: shots_sa
+        description: Shots against while on the ice (goals, saved shots)
+
+      - name: shots_gf
+        description: Goals for while on the ice (goals)
+
+      - name: shots_ga
+        description: Goals against while on the ice (goals)
+
+      - name: shots_isog
+        description: Total individual shots on goal (goals, saved shots)
+
+      - name: shots_iff
+        description: Total individual Fenwick shots for (goals, saved shots, missed shots)
+
+      - name: shots_icf
+        description: Total individual Corsi shots for (goals, saved shots, missed shots, blocked shots)
+
+      - name: shots_iblocked
+        description: Total individual shots that were blocked (blocked shots)
+
+      - name: shots_imissed
+        description: Total individual shots that were missed (missed shots)
+
+      - name: shots_isaved
+        description: Total individual shots that were saved (saved shots)
+
+      - name: shots_iscored
+        description: Total individual shots that were goals (goals)
 
       ## Skater shot types
       - name: shots_backhand_all
@@ -173,6 +205,18 @@ models:
       - name: shots_wristshot_goal
         description: The number of wristshot shots that were goals
 
+      - name: pcnt_ff
+        description: Fenwick for percentage (while on the ice) = Fenwick shots for / (Fenwick shots for + Fenwick shots against)
+
+      - name: pcnt_cf
+        description: Corsi for percentage (while on the ice) = Corsi shots for / (Corsi shots for + Corsi shots against)
+
+      - name: pcnt_sf
+        description: Shots for percentage (while on the ice) = Shots for / (Shots for + Shots against)
+
+      - name: pcnt_gf
+        description: Goals for percentage (while on the ice) = Goals for / (Goals  for + Goals against)
+
       ## Skater shot results by type (shot-conversion)
       - name: pcnt_shooting_all
         description: The percent of all shots (blocked + misses + on-goal) that were goals (e.g. 10% shooting means 1 out of 10 shots taken were goals)
@@ -200,25 +244,6 @@ models:
 
       - name: pcnt_shooting_wristshot
         description: The percent of all wristshot shots on goal that were goals (e.g. 10% shooting means 1 out of 10 wristshot shots on net were goals)
-
-      ## delete these start ##
-      - name: shots
-        description: Number of shots taken
-
-
-      - name: shots_blocked
-        description: The number of shots taken that were blocked (e.g. shot taken that hits an opposing team defencemen)
-
-      - name: shots_missed
-        description: The number of shots taken that were missed (e.g. shot taken that missees the net)
-
-      - name: shots_saved
-        description: The number of shots taken that were on target but were saved
-
-      - name: shots_scored
-        description: The number of shots taken that converted as goals
-
-      ## delete these end ##
 
       ## Other skater stats
       - name: faceoff_wins
