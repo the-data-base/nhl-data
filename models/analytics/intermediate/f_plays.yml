@@ -280,5 +280,36 @@ models:
       - name: away_goalie_on_ice
         description: The number of away goalies on the ice (1 or 0)
 
+      - name: last_shot_event_idx
+        description: Looks back to the last (previous) shot, returns the event sequence (e.g. 1 = first event, 2 = second event)
 
+      - name: last_shot_team_id
+        description: Looks back to the last (previous) shot, returns the team_id for the shoot
+
+      - name: last_shot_period
+        description: Looks back to the last (previous) shot, returns the period
+
+      - name: last_shot_total_seconds_elapsed
+        description: Looks back to the last (previous) shot, returns the total seconds elapsed
+
+      - name: last_shot_event_type
+        description: Looks back to the last (previous) shot, returns the event type (e.g. 'GOAL', 'MISSED_SHOT', 'SHOT', 'GOAL')
+
+      - name: last_shot_event_secondary_type
+        description: Looks back to the last (previous) shot, returns the event_secondary_type (e.g. basically, shot type)
+
+      - name: last_shot_x_coordinate
+        description: Looks back to the last (previous) shot, returns the x_coordinate
+
+      - name: last_shot_y_coordinate
+        description: Looks back to the last (previous) shot, returns the y_coordinate
+
+      - name: last_shot_saved_shot_ind
+        description: Looks back to the last (previous) shot, returns a '1' if the shot was taken by same team, in the same period, and was on target but did not result in a goal
+
+      - name: last_shot_seconds
+        description: Seconds since last shot - returns the time elapsed between shots if the shot was taken by same team, in the same period, and was on target but did not result in a goal
+
+      - name: last_shot_rebound_ind
+        description: Rebounds indicator - returns a '1' if the shot was taken by same team, in the same period, was on target but did not result in a goal, and the time elapsed between shots was between 0 - 2 seconds
 

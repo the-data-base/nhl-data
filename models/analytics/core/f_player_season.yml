@@ -161,6 +161,9 @@ models:
       - name: shots_wristshot_all
         description: The number of wristshot shots that were either saved or were goals (no misses or blocks)
 
+      - name: shots_rebound_all
+        description: The number of rebounds (shot taken within 2 seconds of previous if taken by same team and same period) that were either saved or were goals (no misses or blocks)
+
       ## Skater shot results by type (shot-saved)
       - name: shots_backhand_saved
         description: The number of backhand shots that were saved
@@ -183,6 +186,9 @@ models:
       - name: shots_wristshot_saved
         description: The number of wristshot shots that were saved
 
+      - name: shots_rebound_saved
+        description: The number of rebounds (shot taken within 2 seconds of previous if taken by same team and same period) that were saved
+
       ## Skater shot results by type (shot-goal)
       - name: shots_backhand_goal
         description: The number of backhand shots that were goals
@@ -204,6 +210,10 @@ models:
 
       - name: shots_wristshot_goal
         description: The number of wristshot shots that were goals
+
+      - name: shots_rebound_goal
+        description: The number of rebounds (shot taken within 2 seconds of previous if taken by same team and same period) that were goals
+
 
       - name: pcnt_ff
         description: Fenwick for percentage (while on the ice) = Fenwick shots for / (Fenwick shots for + Fenwick shots against)
@@ -244,6 +254,9 @@ models:
 
       - name: pcnt_shooting_wristshot
         description: The percent of all wristshot shots on goal that were goals (e.g. 10% shooting means 1 out of 10 wristshot shots on net were goals)
+
+      - name: pcnt_shooting_rebound
+        description: The percent of all rebound shots on goal that were goals (e.g. 10% shooting means 1 out of 10 rebound shots on net were goals)
 
       ## Other skater stats
       - name: faceoff_wins

@@ -1,12 +1,12 @@
 with
 
--- CTE1
+-- #cte1: load in live_plays
 live_plays as (
     select * from {{ source('meltano', 'live_plays') }}
 )
 
--- CTE2 Play-level information (each row is a player's involvement in a play)
-, cte_base_plays as (
+-- #cte2: Play-level information (each row is a player's involvement in a play)
+, base_plays as (
     select
         {{ dbt_utils.surrogate_key(['live_plays.gameid', 'live_plays.about.eventidx', 'players.player.id', 'players.playertype']) }} as stg_nhl__live_plays_id
         , live_plays.gameid as game_id
@@ -177,8 +177,8 @@ live_plays as (
     left join {{ ref('stg_nhl__boxscore_player') }} as boxscore_player on boxscore_player.game_id = live_plays.gameid and players.player.id = boxscore_player.player_id
 )
 
--- Add in cumulative metrics
-, cte_cumulative as (
+-- #cte3: Add in cumulative metrics
+, base_plays_cumulative as (
     select
         /* Primary Key */
         bp.stg_nhl__live_plays_id
@@ -299,11 +299,11 @@ live_plays as (
                 then lag(bp.goals_away, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
         end as goals_away_lag
 
-    from cte_base_plays as bp
+    from base_plays as bp
 )
 
--- CTE to determine the state of the game as a result of the play
-, cte_game_state as (
+-- #cte4: gets the state of the game as a result of the play
+, game_state as (
     select
         c.*
         -- Previous winning team
@@ -399,74 +399,123 @@ live_plays as (
             else 0
         end as last_goal_game_tying
 
-    from cte_cumulative as c
+    from base_plays_cumulative as c
 
 )
 
--- Final return
+-- #cte5: gets information about the last (previous) shot
+, last_shot as (
+    select
+        stg_nhl__live_plays_id
+        , game_id
+        , event_idx
+        , event_id
+        , player_id
+        , team_id
+        , event_type
+        , event_secondary_type
+        , play_total_seconds_elapsed
+        , play_period
+        -- last_shot properites & metrics
+        , lag(event_type) over (partition by game_id order by event_idx) as last_shot_event_type
+        , lag(event_secondary_type) over (partition by game_id order by event_idx) as last_shot_event_secondary_type
+        , lag(event_idx) over (partition by game_id order by event_idx) as last_shot_event_idx
+        , lag(team_id) over (partition by game_id order by event_idx) as last_shot_team_id
+        , lag(play_total_seconds_elapsed) over (partition by game_id order by event_idx) as last_shot_total_seconds_elapsed
+        , lag(play_period) over (partition by game_id order by event_idx) as last_shot_period
+        , lag(play_x_coordinate) over (partition by game_id order by event_idx) as last_shot_x_coordinate
+        , lag(play_y_coordinate) over (partition by game_id order by event_idx) as last_shot_y_coordinate
+        -- last_shot_saved_shot_ind = shot taken by same team in the same period
+        , case
+            when play_period <> lag(play_period) over (partition by game_id order by event_idx)
+                                                                                     then 0
+            when team_id <> lag(team_id) over (partition by game_id order by event_idx)
+                                                                             then 0
+            when lower(lag(event_type) over (partition by game_id order by event_idx)) = 'shot'
+                                                                           then 1
+        end as last_shot_saved_shot_ind
+    from game_state as gs
+    where 1 = 1
+        --keep blocked shots, missed shots, shots on target and goals
+        and lower(gs.event_type) in ('blocked_shot', 'missed_shot', 'shot', 'goal')
+        -- keep roles involving the shooter & scorer
+        and lower(gs.player_role) in ('shooter', 'scorer')
+)
+
+-- #return: game_state joined with last_shot features
 select
     /* Primary Key */
-    stg_nhl__live_plays_id
+    gs.stg_nhl__live_plays_id
 
     /* Identifiers */
-    , game_id
-    , event_idx
-    , event_id
-    , player_id
-    , team_id
+    , gs.game_id
+    , gs.event_idx
+    , gs.event_id
+    , gs.player_id
+    , gs.team_id
 
     /* Properties */
-    , player_full_name
-    , player_index
-    , player_primary_assist
-    , player_secondary_assist
-    , player_role
-    , player_role_team
-    , event_type
-    , event_code
-    , event_description
-    , event_secondary_type
-    , penalty_severity
-    , penalty_minutes
-    , play_x_coordinate
-    , play_y_coordinate
-    , play_period
-    , play_period_type
-    , play_period_time_elapsed
-    , play_period_time_remaining
-    , play_total_seconds_elapsed
-    , play_time
-    , shots_away
-    , shots_home
-    , hits_away
-    , hits_home
-    , faceoffs_away
-    , faceoffs_home
-    , takeaways_away
-    , takeaways_home
-    , giveaways_away
-    , giveaways_home
-    , missedshots_away
-    , missedshots_home
-    , blockedshots_away
-    , blockedshots_home
-    , penalties_away
-    , penalties_home
-    , first_goal_scored
-    , last_goal_scored
-    , goals_away
-    , goals_home
-    , goal_difference_current
-    , winning_team_current
-    , game_state_current
-    , home_result_of_play
-    , away_result_of_play
-    , last_goal_game_winning
-    , last_goal_game_tying
-    , goals_home_lag
-    , goals_away_lag
-    , goal_difference_lag
-    , winning_team_lag
-    , game_state_lag
+    , gs.player_full_name
+    , gs.player_index
+    , gs.player_primary_assist
+    , gs.player_secondary_assist
+    , gs.player_role
+    , gs.player_role_team
+    , gs.event_type
+    , gs.event_code
+    , gs.event_description
+    , gs.event_secondary_type
+    , gs.penalty_severity
+    , gs.penalty_minutes
+    , gs.play_x_coordinate
+    , gs.play_y_coordinate
+    , gs.play_period
+    , gs.play_period_type
+    , gs.play_period_time_elapsed
+    , gs.play_period_time_remaining
+    , gs.play_total_seconds_elapsed
+    , gs.play_time
+    , gs.shots_away
+    , gs.shots_home
+    , gs.hits_away
+    , gs.hits_home
+    , gs.faceoffs_away
+    , gs.faceoffs_home
+    , gs.takeaways_away
+    , gs.takeaways_home
+    , gs.giveaways_away
+    , gs.giveaways_home
+    , gs.missedshots_away
+    , gs.missedshots_home
+    , gs.blockedshots_away
+    , gs.blockedshots_home
+    , gs.penalties_away
+    , gs.penalties_home
+    , gs.first_goal_scored
+    , gs.last_goal_scored
+    , gs.goals_away
+    , gs.goals_home
+    , gs.goal_difference_current
+    , gs.winning_team_current
+    , gs.game_state_current
+    , gs.home_result_of_play
+    , gs.away_result_of_play
+    , gs.last_goal_game_winning
+    , gs.last_goal_game_tying
+    , gs.goals_home_lag
+    , gs.goals_away_lag
+    , gs.goal_difference_lag
+    , gs.winning_team_lag
+    , gs.game_state_lag
+    , ls.last_shot_event_idx
+    , ls.last_shot_team_id
+    , ls.last_shot_period
+    , ls.last_shot_total_seconds_elapsed
+    , ls.last_shot_event_type
+    , ls.last_shot_event_secondary_type
+    , ls.last_shot_x_coordinate
+    , ls.last_shot_y_coordinate
+    , ls.last_shot_saved_shot_ind
 
-from cte_game_state
+from game_state as gs
+left join last_shot as ls on ls.stg_nhl__live_plays_id = gs.stg_nhl__live_plays_id
