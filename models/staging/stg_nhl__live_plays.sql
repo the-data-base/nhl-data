@@ -27,12 +27,12 @@ live_plays as (
         end as player_role_team
         -- Get mins elapsed, carrying over the period
         , case
-            when live_plays.about.periodtype = 'REGULAR'
+            when lower(live_plays.about.periodtype) <> 'shootout'
                 then cast((substr(live_plays.about.periodtime, 0, 2)) as int64) + (20 * (cast(live_plays.about.period as int64) - 1))
         end as play_minutes_elapsed
         -- Get seconds elapsed,do not carry over the period
         , case
-            when live_plays.about.periodtype = 'REGULAR'
+            when lower(live_plays.about.periodtype) <> 'shootout'
                 then cast((substr(live_plays.about.periodtime, 4, 2)) as int64)
         end as play_seconds_elapsed
         , live_plays.about.eventidx as event_idx
@@ -45,7 +45,6 @@ live_plays as (
         , live_plays.about.periodtype as play_period_type
         , live_plays.about.periodtime as play_period_time_elapsed
         , live_plays.about.periodtimeremaining as play_period_time_remaining
-        --,DATETIME(live_plays.about.dateTime) as play_time
         , live_plays.about.datetime as play_time
         -- BEGIN CUMULATIVE COUNTERS BY HOME/AWAY
         -- SHOTS
@@ -210,10 +209,8 @@ live_plays as (
         , bp.play_period_type
         , bp.play_period_time_elapsed
         , bp.play_period_time_remaining
-        , bp.play_seconds_elapsed as play_period_seconds_elapsed
-        , 1200 - play_seconds_elapsed as play_period_seconds_remaining
+        -- Total seconds elapsed
         , ((bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as play_total_seconds_elapsed
-        , 3600 - ((bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as play_total_seconds_remaining
         , bp.play_time
         -- Count cumulative shot totals
         , sum(bp.shot_away) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as shots_away
@@ -437,10 +434,7 @@ select
     , play_period_type
     , play_period_time_elapsed
     , play_period_time_remaining
-    , play_period_seconds_elapsed
-    , play_period_seconds_remaining
     , play_total_seconds_elapsed
-    , play_total_seconds_remaining
     , play_time
     , shots_away
     , shots_home
