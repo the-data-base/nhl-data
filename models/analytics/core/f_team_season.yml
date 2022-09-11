@@ -18,10 +18,16 @@ models:
       - name: season_id
         description: Foreign key that maps to an NHL season (e.g. "20172018")
 
+      # Team & Season Properties
+      - name: team_name
+        description: Full name of the NHL team (e.g. Vancouver Canucks)
+
+      - name: game_type
+        description: Code for the type of game, which is retrieved by extracting the the 5th and 6th position from the game_id (e.g. 02 = regular season game)
+
       - name: game_type_description
         description: Foreign key that maps to an NHL season stage (e.g. "Playoffs")
 
-      # Season Properties
       - name: games_played
         description: The number of games played in season and stage by the team
 
@@ -49,7 +55,7 @@ models:
 
       - name: team_blocked
         description: The number of shot attempts blocked by the team
-      
+
       - name: team_giveaways
         description: The number of giveaways by the team
 
