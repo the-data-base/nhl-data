@@ -22,7 +22,7 @@ with t1 as (
         , sum(ifnull(team_goal_differential, 0)) as team_goal_differential
         , sum(ifnull(team_pim, 0)) as team_pim
         , sum(ifnull(team_shots, 0)) as team_shots
-        , round(sum(ifnull(team_powerplay_goals, 0)),0) as team_powerplay_goals
+        , round(sum(ifnull(team_powerplay_goals, 0)), 0) as team_powerplay_goals
         , sum(ifnull(team_hits, 0)) as team_hits
         , sum(ifnull(team_blocked, 0)) as team_blocked
         , sum(ifnull(team_takeaways, 0)) as team_takeaways
