@@ -6,17 +6,17 @@
 with p1p3_plays_shots_home as (
     select
         plays.stg_nhl__live_plays_id as play_id
-    , plays.game_id
-    , schedule.game_type
-    , schedule.game_type_description
-    , plays.play_period
-    , plays.team_id
-    , plays.event_id
-    , plays.event_type
-    , teams.full_name as team_full_name
-    , plays.event_description
-    , plays.play_x_coordinate
-    , plays.play_y_coordinate
+        , plays.game_id
+        , schedule.game_type
+        , schedule.game_type_description
+        , plays.play_period
+        , plays.team_id
+        , plays.event_id
+        , plays.event_type
+        , teams.full_name as team_full_name
+        , plays.event_description
+        , plays.play_x_coordinate
+        , plays.play_y_coordinate
     from
         {{ ref('stg_nhl__live_plays') }} as plays
     inner join {{ref('stg_nhl__teams') }} as teams on teams.team_id = plays.team_id
@@ -34,14 +34,14 @@ with p1p3_plays_shots_home as (
 , p1_team_game_shots_home as (
     select
         ps.game_id
-    , ps.game_type
-    , ps.game_type_description
-    , ps.team_id
-    , ps.team_full_name
-    , ps.play_period
-    , count(1) as p1_shots
-    , sum(case when cast(ps.play_x_coordinate as float64) > 0 then 1 else 0 end) as p1_shots_right
-    , sum(case when cast(ps.play_x_coordinate as float64) < 0 then 1 else 0 end) as p1_shots_left
+        , ps.game_type
+        , ps.game_type_description
+        , ps.team_id
+        , ps.team_full_name
+        , ps.play_period
+        , count(1) as p1_shots
+        , sum(case when cast(ps.play_x_coordinate as float64) > 0 then 1 else 0 end) as p1_shots_right
+        , sum(case when cast(ps.play_x_coordinate as float64) < 0 then 1 else 0 end) as p1_shots_left
     from
         p1p3_plays_shots_home as ps
     where 1 = 1
@@ -53,14 +53,14 @@ with p1p3_plays_shots_home as (
 , p3_team_game_shots_home as (
     select
         ps.game_id
-    , ps.game_type
-    , ps.game_type_description
-    , ps.team_id
-    , ps.team_full_name
-    , ps.play_period
-    , count(1) as p3_shots
-    , sum(case when cast(ps.play_x_coordinate as float64) > 0 then 1 else 0 end) as p3_shots_right
-    , sum(case when cast(ps.play_x_coordinate as float64) < 0 then 1 else 0 end) as p3_shots_left
+        , ps.game_type
+        , ps.game_type_description
+        , ps.team_id
+        , ps.team_full_name
+        , ps.play_period
+        , count(1) as p3_shots
+        , sum(case when cast(ps.play_x_coordinate as float64) > 0 then 1 else 0 end) as p3_shots_right
+        , sum(case when cast(ps.play_x_coordinate as float64) < 0 then 1 else 0 end) as p3_shots_left
     from
         p1p3_plays_shots_home as ps
     where 1 = 1
