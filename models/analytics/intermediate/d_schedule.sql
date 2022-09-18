@@ -3,41 +3,69 @@ select
     stg_nhl__schedule_id as schedule_id
 
     /* Identifiers */
-    , game_id
-    , season_id
-    , away_team_id
-    , home_team_id
-    , venue_id
+    , schedule.game_id
+    , schedule.season_id
+    , schedule.away_team_id
+    , schedule.home_team_id
+    , schedule.venue_id
 
-    /* Properties */
-    , game_number
-    , game_type
-    , game_type_description
-    , game_date
-    , abstract_game_state
-    , coded_game_state
-    , detailed_state
-    , status_code
-    , is_start_time_tbd
-    , away_team_wins
-    , away_team_losses
-    , away_team_ot
-    , away_team_type
-    , away_team_score
-    , away_team_name
-    , away_team_url
-    , home_team_wins
-    , home_team_losses
-    , home_team_ot
-    , home_team_type
-    , home_team_score
-    , home_team_name
-    , home_team_url
-    , venue_name
-    , venue_url
-    , content_url
-    , url
-    , extracted_at
-    , loaded_at
+    /* Schedule Properties */
+    , schedule.game_number
+    , schedule.game_type
+    , schedule.game_type_description
+    , schedule.game_date
+    , schedule.abstract_game_state
+    , schedule.coded_game_state
+    , schedule.detailed_state
+    , schedule.status_code
+    , schedule.is_start_time_tbd
+    , schedule.away_team_wins
+    , schedule.away_team_losses
+    , schedule.away_team_ot
+    , schedule.away_team_type
+    , schedule.away_team_score
+    , schedule.away_team_name
+    , schedule.home_team_wins
+    , schedule.home_team_losses
+    , schedule.home_team_ot
+    , schedule.home_team_type
+    , schedule.home_team_score
+    , schedule.home_team_name
+    , schedule.venue_name
+
+    /* Rink Shooting Properties */
+    -- ...this dataset brings in p1_shooting_location, which is the location where shots were going in period 1 for the home team
+
+    -- ... now, classify for the home team with the assumption that each period switches sides
+    , rs.p1_shooting_location as home_period1_shooting
+    , case
+        when rs.p1_shooting_location = 'right' then 'left'
+        when rs.p1_shooting_location = 'left' then 'right'
+        else rs.p1_shooting_location
+    end as home_period2_shooting
+    , rs.p1_shooting_location as home_period3_shooting
+    -- ... now, classify for the away team with the assumption that each period switches sides
+    , case
+        when rs.p1_shooting_location = 'right' then 'left'
+        when rs.p1_shooting_location = 'left' then 'right'
+        else rs.p1_shooting_location
+    end as away_period1_shooting
+    , rs.p1_shooting_location as away_period2_shooting
+    , case
+        when rs.p1_shooting_location = 'right' then 'left'
+        when rs.p1_shooting_location = 'left' then 'right'
+        else rs.p1_shooting_location
+    end as away_period3_shooting
+
+    /* Additioanl properties */
+    , schedule.home_team_url
+    , schedule.away_team_url
+    , schedule.venue_url
+    , schedule.content_url
+    , schedule.url
+    , schedule.extracted_at
+    , schedule.loaded_at
 from
-    {{ ref('stg_nhl__schedule') }}
+    {{ ref('stg_nhl__schedule') }} as schedule
+left join {{ ref('stg_nhl__rink_shooting') }} as rs on rs.game_id = schedule.game_id
+

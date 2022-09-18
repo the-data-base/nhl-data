@@ -84,9 +84,6 @@ models:
       - name: away_team_name
         description: Away team name
 
-      - name: away_team_url
-        description: Away team URL endpoint
-
       - name: home_team_wins
         description: Cumulative number of wins for the home team for the given season (wins for the team at that point in time)
 
@@ -105,11 +102,32 @@ models:
       - name: home_team_name
         description: Home team name
 
-      - name: home_team_url
-        description: Home team URL endpoint
+      - name: home_period1_shooting
+        description: The direction that the home team is shooting towards in period 1 ('left', 'right', 'missing')
+
+      - name: home_period2_shooting
+        description: The direction that the home team is shooting towards in period 2 ('left', 'right', 'missing')
+
+      - name: home_period3_shooting
+        description: The direction that the home team is shooting towards in period 3 ('left', 'right', 'missing')
+
+      - name: away_period1_shooting
+        description: The direction that the away team is shooting towards in period 1 ('left', 'right', 'missing')
+
+      - name: away_period2_shooting
+        description: The direction that the away team is shooting towards in period 2 ('left', 'right', 'missing')
+
+      - name: away_period3_shooting
+        description: The direction that the away team is shooting towards in period 3 ('left', 'right', 'missing')
 
       - name: venue_name
         description: Home team's venue / arena that the teams played in
+
+      - name: home_team_url
+        description: Home team URL endpoint
+
+      - name: away_team_url
+        description: Away team URL endpoint
 
       - name: venue_url
         description: URL endpoint for the venue
