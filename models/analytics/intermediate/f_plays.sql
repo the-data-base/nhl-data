@@ -15,10 +15,14 @@ select
     , plays.player_secondary_assist
     , plays.player_role
     , plays.player_role_team
-    , plays.event_type
     , plays.event_code
-    , plays.event_description
+    , plays.event_type
     , plays.event_secondary_type
+    , plays.event_description
+    , plays.last_play_event_type
+    , plays.last_play_event_secondary_type
+    , plays.last_play_event_description
+    , plays.last_play_period
     , plays.penalty_severity
     , plays.penalty_minutes
     , plays.play_x_coordinate
@@ -79,6 +83,8 @@ select
     -- rebounds: if the last shot was take by the same team in the same period, and the time elapsed between shots was between 0 - 2 seconds, then 1 else 0
     , case
         when plays.last_shot_saved_shot_ind = 1
+            and last_play_period = play_period
+            and lower(plays.last_play_event_type) in ('blocked_shot', 'missed_shot', 'shot', 'goal')
             and (plays.play_total_seconds_elapsed - plays.last_shot_total_seconds_elapsed) <= 2
             then 1
         else 0
