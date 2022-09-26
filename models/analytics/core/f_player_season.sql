@@ -85,8 +85,8 @@ boxscore_stats as (
         , lower(away_result_of_play) as away_result_of_play
         , home_skaters
         , away_skaters
-        , last_shot_seconds
-        , last_shot_rebound_ind
+        , seconds_since_last_shot
+        , shot_rebound_ind
     from {{ ref('f_plays') }} as plays
     left join {{ ref('d_schedule') }} as schedule on schedule.game_id = plays.game_id
     left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
@@ -143,7 +143,7 @@ boxscore_stats as (
         , skater_type
         , event_type
         , event_secondary_type
-        , last_shot_rebound_ind as shots_rebound
+        , shot_rebound_ind as shots_rebound
         -- shot calculations
         , case when s.event_type in ('goal', 'shot') then 1 else 0 end as shots_ongoal
         , case when s.event_type = 'blocked_shot' then 1 else 0 end as shots_blocked

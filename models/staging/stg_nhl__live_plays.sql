@@ -201,6 +201,10 @@ live_plays as (
         , bp.event_code
         , bp.event_description
         , bp.event_secondary_type
+        , lag(bp.event_type) over (partition by game_id order by event_idx) as last_play_event_type
+        , lag(bp.event_secondary_type) over (partition by game_id order by event_idx) as last_play_event_secondary_type
+        , lag(bp.event_description) over (partition by game_id order by event_idx) as last_play_event_description
+        , ifnull(lag(bp.play_period) over (partition by game_id order by event_idx), play_period) as last_play_period
         , bp.penalty_severity
         , bp.penalty_minutes
         , bp.play_x_coordinate
@@ -461,10 +465,14 @@ select
     , gs.player_secondary_assist
     , gs.player_role
     , gs.player_role_team
-    , gs.event_type
     , gs.event_code
-    , gs.event_description
+    , gs.event_type
     , gs.event_secondary_type
+    , gs.event_description
+    , gs.last_play_event_type
+    , gs.last_play_event_secondary_type
+    , gs.last_play_event_description
+    , gs.last_play_period
     , gs.penalty_severity
     , gs.penalty_minutes
     , gs.play_x_coordinate
