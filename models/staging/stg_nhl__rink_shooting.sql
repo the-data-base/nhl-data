@@ -19,8 +19,8 @@ with p1p3_plays_shots_home as (
         , plays.play_y_coordinate
     from
         {{ ref('stg_nhl__live_plays') }} as plays
-    inner join {{ref('stg_nhl__teams') }} as teams on teams.team_id = plays.team_id
-    inner join {{ref('stg_nhl__schedule') }} as schedule on schedule.game_id = plays.game_id
+    inner join {{ ref('stg_nhl__teams') }} as teams on teams.team_id = plays.team_id
+    inner join {{ ref('stg_nhl__schedule') }} as schedule on schedule.game_id = plays.game_id
     where 1 = 1
         and (plays.play_period = 1 or plays.play_period = 3)
         and lower(plays.event_type) in ('goal', 'missed_shot', 'shot')

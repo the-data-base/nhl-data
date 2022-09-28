@@ -1,8 +1,7 @@
 with
 -- CTE1
 live_boxscore as (
-    select
-        *
+    select *
     from
         {{ source('meltano', 'live_boxscore') }}
 )
