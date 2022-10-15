@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: stg_nhl__rink_shooting
+    description: Staged NHL game-team level data to determine which net the home team is shooting towards in period 1
+    columns:
+      # Primary Key
+      - name: game_id
+        description: Unique surrogate key from a combination of the NHL player ID, team ID and the season ID
+        tests:
+          - unique
+          - not_null
+
+      - name: team_id
+        description: Foreign key that maps to the NHL team ID that the NHL player played for in a given season
+
+      # Properties
+      - name: game_type_description
+        description: Description for the type of game played, enhancing game_type (e.g. Pre-season, Regular, Playoffs, All-star)
+
+      - name: team_full_name
+        description: Full name of the NHL team (e.g. Vancouver Canucks)
+
+      - name: p1_shots
+        description: Number of shots taken by the home team in period 1
+
+      - name: p1_shots_left
+        description: Number of shots taken by the home team in period 1 that were to the left of the rink based on the x_coordinate being negative
+
+      - name: p1_shots_right
+        description: Number of shots taken by the home team in period 1 that were to the right of the rink based on the x_coordinate neing positive
+
+      - name: p3_shots
+        description: Number of shots taken by the home team in period 3
+
+      - name: p3_shots_left
+        description: Number of shots taken by the home team in period 3 that were to the left of the rink based on the x_coordinate being negative
+
+      - name: p3_shots_right
+        description: Number of shots taken by the home team in period 3 that were to the right of the rink based on the x_coordinate neing positive
+
+      - name: p1_shooting_location
+        description: The direction that the home team is shooting towards in period 1 ('left', 'right', 'missing')

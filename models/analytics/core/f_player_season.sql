@@ -85,6 +85,8 @@ boxscore_stats as (
         , lower(away_result_of_play) as away_result_of_play
         , home_skaters
         , away_skaters
+        , seconds_since_last_shot
+        , shot_rebound_ind
         , last_shot_seconds
         , last_shot_rebound_ind
     from {{ ref('f_plays') }} as plays
@@ -143,6 +145,7 @@ boxscore_stats as (
         , skater_type
         , event_type
         , event_secondary_type
+        , shot_rebound_ind as shots_rebound
         , last_shot_rebound_ind as shots_rebound
         -- shot calculations
         , case when s.event_type in ('goal', 'shot') then 1 else 0 end as shots_ongoal

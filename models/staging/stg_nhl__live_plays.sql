@@ -201,6 +201,7 @@ live_plays as (
         , bp.event_code
         , bp.event_description
         , bp.event_secondary_type
+        , lag(bp.player_role_team) over (partition by game_id order by event_idx) as last_player_role_team
         , lag(bp.event_type) over (partition by game_id order by event_idx) as last_play_event_type
         , lag(bp.event_secondary_type) over (partition by game_id order by event_idx) as last_play_event_secondary_type
         , lag(bp.event_description) over (partition by game_id order by event_idx) as last_play_event_description
@@ -469,6 +470,7 @@ select
     , gs.event_type
     , gs.event_secondary_type
     , gs.event_description
+    , gs.last_player_role_team
     , gs.last_play_event_type
     , gs.last_play_event_secondary_type
     , gs.last_play_event_description

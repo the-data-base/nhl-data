@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: stg_nhl__live_plays_location
+    description: Enahancing Staged NHL event level data from the NHL-API (player-play level) with x & y coordinate (location) mappings relative to the opposing goal
+    columns:
+      # Primary Key
+      - name: play_id
+        description: Unique surrogate key for a player's event-level activity in an NHL game (game_id + team_id + player_id + event_id)
+        tests:
+          - unique
+          - not_null
+
+      # Identifiers
+      - name: game_id
+        description: |
+          Foreign key that maps to an NHL game ID
+          {{ doc("game_id_description") }}
+
+      - name: event_id
+        description: Foreign key that maps to a distinct event ID
+
+      - name: player_id
+        description: Foreign key that maps to an NHL player ID
+
+      - name: team_id
+        description: Foreign key that maps to an NHL team ID
+
+      # Properties
+      - name: event_type
+        description: Short description of the event type
+
+      - name: event_idx
+        description: Foreign key that maps to the sequence of the event relative to that game, in ascending order (e.g. 1 = first event, 2 - second event)
+
+      - name: player_role_team
+        description: The role of the player in context to the event (e.g. Hitter, Hitee, Shooter, Winner, Loser, etc.)
+
+      - name: home_period1_shooting
+        description: The direction that the home team is shooting towards in period 1 ('left', 'right', 'missing')
+
+      - name: play_x_coordinate
+        description: The x-coordinate of where the event took place on the ice (converted to type float64)
+
+      - name: play_y_coordinate
+        description: The y-coordinate of where the event took place on the ice (converted to type float64)
+
+      - name: adj_play_x_coordinate
+        description: Adjusting the axis of plane of the play's x-coordinate based on where the oppsosing team's goalie net is as this is where they will be shooting towards
+
+      - name: adj_play_y_coordinate
+        description: Adjusting the axis of plane of the play's y-coordinate based on where the oppsosing team's goalie net is as this is where they will be shooting towards
+
+      - name: play_distance
+        description: Distance from the opposing goal, calculated by making a right angle with the play's [x,y] and the net [89,0], and finding the hypotenuse with the formula c = sqrt(a^2 + b^2)
+
+      - name: play_angle
+        description: Angle from the play's [x,y] coordinates to the opposing team's net [89,0]
+
+      - name: rink_side
+        description: The side of the rink based on the y-coordinate (e.g. "left" means that the team is on the left side of the rink)
+
+      - name: zone_type
+        description: Classifying each of the zones by its type, based on the x-coordinate (e.g. "offensive_zone")
+
+      - name: zone
+        description: The the area of the ice, determined by combining the x & y coordinates (e.g. "r_1_high")
+

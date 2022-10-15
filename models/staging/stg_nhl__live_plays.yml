@@ -60,6 +60,9 @@ models:
       - name: event_description
         description: Long description of the event (repeated for all the player's involved in the event)
 
+      - name: last_player_role_team
+        description: The home / away status of the player's team from the previous (most recent) play
+
       - name: last_play_event_type
         description: Short description of the previous play's event type
 
@@ -79,10 +82,10 @@ models:
         description: If the play in question was a penalty, this column will return the number of minutes the penalty was assessed for, else null
 
       - name: play_x_coordinate
-        description: The x-coordinate of where the event took place on the ice
+        description: The x-coordinate of where the event took place on the ice, between -100 and 100
 
       - name: play_y_coordinate
-        description: The y-coordinate of where the event took place on the ice
+        description: The y-coordinate of where the event took place on the ice, between -42.5 and 42.5
 
       - name: play_period
         description: The period in which the event occured (e.g. 3)

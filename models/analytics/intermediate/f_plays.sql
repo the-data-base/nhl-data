@@ -19,6 +19,7 @@ select
     , plays.event_type
     , plays.event_secondary_type
     , plays.event_description
+    , plays.last_player_role_team
     , plays.last_play_event_type
     , plays.last_play_event_secondary_type
     , plays.last_play_event_description
@@ -47,6 +48,19 @@ select
     , plays.missedshots_home
     , plays.blockedshots_away
     , plays.blockedshots_home
+    -- seconds since last shot: if the last shot was taken by the same team in the same period, get the time elapsed between shots
+    , case
+        when plays.last_shot_saved_shot_ind = 1
+            then (plays.play_total_seconds_elapsed - plays.last_shot_total_seconds_elapsed)
+        else 0
+    end as seconds_since_last_shot
+    -- rebounds: if the last shot was take by the same team in the same period, and the time elapsed between shots was between 0 - 2 seconds, then 1 else 0
+    , case
+        when plays.last_shot_saved_shot_ind = 1
+            and (plays.play_total_seconds_elapsed - plays.last_shot_total_seconds_elapsed) <= 2
+            then 1
+        else 0
+    end as shot_rebound_ind
     , plays.penalties_away
     , plays.penalties_home
     , plays.first_goal_scored
@@ -90,6 +104,35 @@ select
         else 0
     end as last_shot_rebound_ind
 
+    /* Location properties */
+    , loc.adj_play_x_coordinate as adj_x_coordinate
+    , loc.adj_play_y_coordinate as adj_y_coordinate
+    , loc.play_distance
+    , loc.play_angle
+    , loc.rink_side
+    , loc.zone_type
+    , loc.zone
+
+    /* Last shot location properties */
+    , plays.last_shot_event_idx
+    , plays.last_shot_team_id
+    , plays.last_shot_period
+    , plays.last_shot_total_seconds_elapsed
+    , plays.last_shot_event_type
+    , plays.last_shot_event_secondary_type
+    , plays.last_shot_x_coordinate
+    , plays.last_shot_y_coordinate
+    , plays.last_shot_saved_shot_ind
+
+    /* Last play location properties */
+    , lag(loc.adj_play_x_coordinate) over (partition by plays.game_id order by plays.event_idx) as last_play_adj_x_coordinate
+    , lag(loc.adj_play_y_coordinate) over (partition by plays.game_id order by plays.event_idx) as last_play_adj_y_coordinate
+    , lag(loc.play_distance) over (partition by plays.game_id order by plays.event_idx) as last_play_distance
+    , lag(loc.play_angle) over (partition by plays.game_id order by plays.event_idx) as last_play_angle
+    , lag(loc.rink_side) over (partition by plays.game_id order by plays.event_idx) as last_play_rink_side
+    , lag(loc.zone_type) over (partition by plays.game_id order by plays.event_idx) as last_play_zone_type
+    , lag(loc.zone) over (partition by plays.game_id order by plays.event_idx) as last_play_zone
+
     /* Shift properties */
     , shifts.shift_id
     , shifts.shift_number
@@ -128,3 +171,8 @@ left join {{ ref('stg_nhl__shifts_time') }} as shifts
         and shifts.player_id = plays.player_id
         and shifts.period = plays.play_period
         and shifts.is_goal is false
+left join {{ ref('stg_nhl__live_plays_location') }} as loc
+    on loc.play_id = plays.stg_nhl__live_plays_id
+        and loc.game_id = plays.game_id
+        and loc.play_x_coordinate = cast(plays.play_x_coordinate as float64)
+        and loc.play_y_coordinate = cast(plays.play_y_coordinate as float64)
