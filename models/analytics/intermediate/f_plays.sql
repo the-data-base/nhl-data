@@ -19,6 +19,7 @@ select
     , plays.event_type
     , plays.event_secondary_type
     , plays.event_description
+    , plays.last_player_role_team
     , plays.last_play_event_type
     , plays.last_play_event_secondary_type
     , plays.last_play_event_description

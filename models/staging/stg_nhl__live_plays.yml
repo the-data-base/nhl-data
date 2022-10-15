@@ -60,6 +60,9 @@ models:
       - name: event_description
         description: Long description of the event (repeated for all the player's involved in the event)
 
+      - name: last_player_role_team
+        description: The home / away status of the player's team from the previous (most recent) play
+
       - name: last_play_event_type
         description: Short description of the previous play's event type
 
