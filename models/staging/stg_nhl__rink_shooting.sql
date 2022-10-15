@@ -74,21 +74,21 @@ select
     , p1.team_id
     , p1.game_type_description
     , p1.team_full_name
-    , p1_shots
-    , p1_shots_left
-    , p1_shots_right
-    , p3_shots
-    , p3_shots_left
-    , p3_shots_right
+    , p1.p1_shots
+    , p1.p1_shots_left
+    , p1.p1_shots_right
+    , p3.p3_shots
+    , p3.p3_shots_left
+    , p3.p3_shots_right
     -- in case period 1 is not enough to determine a shooting side, then bring in period 3 as well
     , case
-        when (p1_shots_right) + (p1_shots_left) = 0 then 'missing'
-        when p1_shots_right > p1_shots_left then 'right'
-        when p1_shots_right < p1_shots_left then 'left'
-        when (p1_shots_right + p3_shots_right) > (p1_shots_left + p3_shots_left) then 'right'
-        when (p1_shots_right + p3_shots_right) < (p1_shots_left + p3_shots_left) then 'left'
+        when (p1.p1_shots_right) + (p1.p1_shots_left) = 0 then 'missing'
+        when p1.p1_shots_right > p1.p1_shots_left then 'right'
+        when p1.p1_shots_right < p1.p1_shots_left then 'left'
+        when (p1.p1_shots_right + p3.p3_shots_right) > (p1.p1_shots_left + p3.p3_shots_left) then 'right'
+        when (p1.p1_shots_right + p3.p3_shots_right) < (p1.p1_shots_left + p3.p3_shots_left) then 'left'
     end as p1_shooting_location
 from
     p1_team_game_shots_home as p1
 left join p3_team_game_shots_home as p3 on p3.game_id = p1.game_id and p3.team_id = p1.team_id
-order by game_id
+order by p1.game_id

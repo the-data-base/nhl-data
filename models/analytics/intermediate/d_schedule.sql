@@ -1,6 +1,6 @@
 select
     /* Primary Key */
-    stg_nhl__schedule_id as schedule_id
+    schedule.stg_nhl__schedule_id as schedule_id
 
     /* Identifiers */
     , schedule.game_id
