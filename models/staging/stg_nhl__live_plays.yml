@@ -48,17 +48,29 @@ models:
       - name: player_role_team
         description: The home / away status of the player's team
 
+      - name: event_code
+        description: Event code that is unique at the game-event level (e.g. PHI8, PHI10)
+
       - name: event_type
         description: Short description of the event type
 
-      - name: event_code
-        description: Event code that is unique at the game-event level (e.g. PHI8, PHI10)
+      - name: event_secondary_type
+        description: If the event_type can be further broken down, this field provides a sub-type, else null (e.g. TIP-IN, WRIST SHOT (shot-types), ROUGHING (penalty-types), etc.)
 
       - name: event_description
         description: Long description of the event (repeated for all the player's involved in the event)
 
-      - name: event_secondary_type
-        description: If the event_type can be further broken down, this field provides a sub-type, else null (e.g. TIP-IN, WRIST SHOT (shot-types), ROUGHING (penalty-types), etc.)
+      - name: last_play_event_type
+        description: Short description of the previous play's event type
+
+      - name: last_play_event_secondary_type
+        description: If the previous play's event_type can be further broken down, this field provides a sub-type, else null (e.g. TIP-IN, WRIST SHOT (shot-types), ROUGHING (penalty-types), etc.)
+
+      - name: last_play_event_description
+        description: Long description of the previous play's event (repeated for all the player's involved in the event)
+
+      - name: last_play_period
+        description: The period in which the previous play's event occured (e.g. 3)
 
       - name: penalty_severity
         description: If the play in question was a penalty, this column will describe its severity (e.g. MINOR, MAJOR), else null
@@ -185,3 +197,30 @@ models:
 
       - name: game_state_lag
         description: The previous state of scoreboard prior to the play in question (e.g. "Tie", "Close" (1 goal difference), "Buffer" (2 goal difference), "Comfortable" (3 goal difference), "Blowout" (4 goal difference))
+
+      - name: last_shot_event_idx
+        description: Looks back to the last (previous) shot, returns the event sequence (e.g. 1 = first event, 2 = second event)
+
+      - name: last_shot_team_id
+        description: Looks back to the last (previous) shot, returns the team_id for the shoot
+
+      - name: last_shot_period
+        description: Looks back to the last (previous) shot, returns the period
+
+      - name: last_shot_total_seconds_elapsed
+        description: Looks back to the last (previous) shot, returns the total seconds elapsed
+
+      - name: last_shot_event_type
+        description: Looks back to the last (previous) shot, returns the event type (e.g. 'GOAL', 'MISSED_SHOT', 'SHOT', 'GOAL')
+
+      - name: last_shot_event_secondary_type
+        description: Looks back to the last (previous) shot, returns the event_secondary_type (e.g. basically, shot type)
+
+      - name: last_shot_x_coordinate
+        description: Looks back to the last (previous) shot, returns the x_coordinate
+
+      - name: last_shot_y_coordinate
+        description: Looks back to the last (previous) shot, returns the y_coordinate
+
+      - name: last_shot_saved_shot_ind
+        description: Looks back to the last (previous) shot, returns a '1' if the shot was taken by same team, in the same period, and was on target but did not result in a goal

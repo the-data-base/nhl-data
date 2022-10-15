@@ -85,6 +85,8 @@ boxscore_stats as (
         , lower(away_result_of_play) as away_result_of_play
         , home_skaters
         , away_skaters
+        , last_shot_seconds
+        , last_shot_rebound_ind
     from {{ ref('f_plays') }} as plays
     left join {{ ref('d_schedule') }} as schedule on schedule.game_id = plays.game_id
     left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
@@ -141,6 +143,7 @@ boxscore_stats as (
         , skater_type
         , event_type
         , event_secondary_type
+        , last_shot_rebound_ind as shots_rebound
         -- shot calculations
         , case when s.event_type in ('goal', 'shot') then 1 else 0 end as shots_ongoal
         , case when s.event_type = 'blocked_shot' then 1 else 0 end as shots_blocked
@@ -190,6 +193,7 @@ boxscore_stats as (
         , sum(case when event_secondary_type = 'tip-in' and shooter_description = 'shooter' then corsi_shot else 0 end) as shots_tipin_all
         , sum(case when event_secondary_type = 'wrap-around' and shooter_description = 'shooter' then corsi_shot else 0 end) as shots_wraparound_all
         , sum(case when event_secondary_type = 'wrist shot' and shooter_description = 'shooter' then corsi_shot else 0 end) as shots_wristshot_all
+        , sum(case when shots_rebound = 1 and shooter_description = 'shooter' then corsi_shot else 0 end) as shots_rebound_all
         ----- shot-saved (shots on-goal that were saved)
         , sum(case when event_secondary_type = 'backhand' and shooter_description = 'shooter' then shots_saved else 0 end) as shots_backhand_saved
         , sum(case when event_secondary_type = 'deflected' and shooter_description = 'shooter' then shots_saved else 0 end) as shots_deflected_saved
@@ -198,6 +202,7 @@ boxscore_stats as (
         , sum(case when event_secondary_type = 'tip-in' and shooter_description = 'shooter' then shots_saved else 0 end) as shots_tipin_saved
         , sum(case when event_secondary_type = 'wrap-around' and shooter_description = 'shooter' then shots_saved else 0 end) as shots_wraparound_saved
         , sum(case when event_secondary_type = 'wrist shot' and shooter_description = 'shooter' then shots_saved else 0 end) as shots_wristshot_saved
+        , sum(case when shots_rebound = 1 and shooter_description = 'shooter' then shots_saved else 0 end) as shots_rebound_saved
         ----- shot-goal (shots on-goal that were goals)
         , sum(case when event_secondary_type = 'backhand' and shooter_description = 'shooter' then shots_scored else 0 end) as shots_backhand_goal
         , sum(case when event_secondary_type = 'deflected' and shooter_description = 'shooter' then shots_scored else 0 end) as shots_deflected_goal
@@ -206,6 +211,7 @@ boxscore_stats as (
         , sum(case when event_secondary_type = 'tip-in' and shooter_description = 'shooter' then shots_scored else 0 end) as shots_tipin_goal
         , sum(case when event_secondary_type = 'wrap-around' and shooter_description = 'shooter' then shots_scored else 0 end) as shots_wraparound_goal
         , sum(case when event_secondary_type = 'wrist shot' and shooter_description = 'shooter' then shots_scored else 0 end) as shots_wristshot_goal
+        , sum(case when shots_rebound = 1 and shooter_description = 'shooter' then shots_scored else 0 end) as shots_rebound_goal
     from shots_involvement
     group by 1, 2, 3, 4
 )
@@ -282,7 +288,7 @@ select
     , oss.shots_imissed
     , oss.shots_isaved
     , oss.shots_iscored
-    -- individual shot calculations: (for shots on net) broken down by shot type, & shot results
+    -- individual shot calculations: (for shots on net) broken down by shot type, & shot results ... exclude rebounds from agg. calculations
     ----- all individual shot types (corsi)
     , oss.shots_backhand_all
     , oss.shots_deflected_all
@@ -291,6 +297,7 @@ select
     , oss.shots_tipin_all
     , oss.shots_wraparound_all
     , oss.shots_wristshot_all
+    , oss.shots_rebound_all
     ----- shot-saved (shots on-goal that were saved)
     , oss.shots_backhand_saved
     , oss.shots_deflected_saved
@@ -299,6 +306,7 @@ select
     , oss.shots_tipin_saved
     , oss.shots_wraparound_saved
     , oss.shots_wristshot_saved
+    , oss.shots_rebound_saved
     ----- shot-goal (shots on-goal that were goals)
     , oss.shots_backhand_goal
     , oss.shots_deflected_goal
@@ -307,6 +315,7 @@ select
     , oss.shots_tipin_goal
     , oss.shots_wraparound_goal
     , oss.shots_wristshot_goal
+    , oss.shots_rebound_goal
     ---- on-ice pcnt (%) shooting
     , case when (oss.shots_ff + oss.shots_fa) < 1 then 0 else round(100 * (oss.shots_ff / (oss.shots_ff + oss.shots_fa)), 2) end as pcnt_ff
     , case when (oss.shots_cf + oss.shots_ca) < 1 then 0 else round(100 * (oss.shots_cf / (oss.shots_cf + oss.shots_ca)), 2) end as pcnt_cf
@@ -324,6 +333,7 @@ select
     , case when oss.shots_tipin_all < 1 then 0 else round(100 * (oss.shots_tipin_goal / oss.shots_tipin_all), 2) end as pcnt_shooting_tipin
     , case when oss.shots_wraparound_all < 1 then 0 else round(100 * (oss.shots_wraparound_goal / oss.shots_wraparound_all), 2) end as pcnt_shooting_wraparound
     , case when oss.shots_wristshot_all < 1 then 0 else round(100 * (oss.shots_wristshot_goal / oss.shots_wristshot_all), 2) end as pcnt_shooting_wristshot
+    , case when oss.shots_rebound_all < 1 then 0 else round(100 * (oss.shots_rebound_goal / oss.shots_rebound_all), 2) end as pcnt_shooting_rebound
     -- other skater events
     , boxscore_stats.faceoff_wins
     , boxscore_stats.faceoff_taken

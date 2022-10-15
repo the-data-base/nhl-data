@@ -15,10 +15,14 @@ select
     , plays.player_secondary_assist
     , plays.player_role
     , plays.player_role_team
-    , plays.event_type
     , plays.event_code
-    , plays.event_description
+    , plays.event_type
     , plays.event_secondary_type
+    , plays.event_description
+    , plays.last_play_event_type
+    , plays.last_play_event_secondary_type
+    , plays.last_play_event_description
+    , plays.last_play_period
     , plays.penalty_severity
     , plays.penalty_minutes
     , plays.play_x_coordinate
@@ -61,6 +65,30 @@ select
     , plays.goal_difference_lag
     , plays.winning_team_lag
     , plays.game_state_lag
+    , plays.last_shot_event_idx
+    , plays.last_shot_team_id
+    , plays.last_shot_period
+    , plays.last_shot_total_seconds_elapsed
+    , plays.last_shot_event_type
+    , plays.last_shot_event_secondary_type
+    , plays.last_shot_x_coordinate
+    , plays.last_shot_y_coordinate
+    , plays.last_shot_saved_shot_ind
+    -- seconds since last shot: if the last shot was take by the same team in the same period, get the time elapsed between shots
+    , case
+        when plays.last_shot_saved_shot_ind = 1
+            then (plays.play_total_seconds_elapsed - plays.last_shot_total_seconds_elapsed)
+        else 0
+    end as last_shot_seconds
+    -- rebounds: if the last shot was take by the same team in the same period, and the time elapsed between shots was between 0 - 2 seconds, then 1 else 0
+    , case
+        when plays.last_shot_saved_shot_ind = 1
+            and plays.last_play_period = plays.play_period
+            and lower(plays.last_play_event_type) in ('blocked_shot', 'missed_shot', 'shot', 'goal')
+            and (plays.play_total_seconds_elapsed - plays.last_shot_total_seconds_elapsed) <= 2
+            then 1
+        else 0
+    end as last_shot_rebound_ind
 
     /* Shift properties */
     , shifts.shift_id
