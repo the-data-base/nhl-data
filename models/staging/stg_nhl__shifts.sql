@@ -19,19 +19,19 @@ shifts_raw as (
         , s.duration
         , case
             when s.starttime is not null
-                 then cast( split(s.starttime, ':')[offset(0)] as int64)
+                 then cast(split(s.starttime, ':')[offset(0)] as int64)
         end as start_time_mins
         , case
             when s.starttime is not null
-                 then cast( split(s.starttime, ':')[offset(1)] as int64)
+                 then cast(split(s.starttime, ':')[offset(1)] as int64)
         end as start_time_seconds
         , case
             when s.duration is not null
-                 then cast( split(s.duration, ':')[offset(0)] as int64)
+                 then cast(split(s.duration, ':')[offset(0)] as int64)
         end as duration_mins
         , case
             when s.duration is not null
-                 then cast( split(s.duration, ':')[offset(1)] as int64)
+                 then cast(split(s.duration, ':')[offset(1)] as int64)
         end as duration_seconds
         , concat(s.firstname, " ", s.lastname) as player_full_name
         , case
