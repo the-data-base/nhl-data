@@ -1,6 +1,10 @@
 with
 live_boxscore as (
     select * from {{ source('meltano', 'live_boxscore') }}
+    qualify row_number() over( -- deduplicate gameids that were ingested more than once
+        partition by
+            gameid
+    ) = 1
 )
 
 , final as (

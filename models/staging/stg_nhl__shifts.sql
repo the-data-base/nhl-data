@@ -1,4 +1,6 @@
-with shifts_raw as (
+with
+
+shifts_raw as (
     select
         s.id as shift_id
         , s.shiftnumber as shift_number
@@ -210,7 +212,7 @@ with shifts_raw as (
 
 )
 
-select distinct
+select
     concat('newshiftid_', revised_new_shift_number, new_shift_id) as shift_id
     , game_id
     , player_id
@@ -240,3 +242,8 @@ select distinct
     , goal_primary_assister_full_name
     , goal_secondary_assister_full_name
 from new_shifts_time
+qualify row_number() over(
+    partition by
+        revised_new_shift_number
+        , new_shift_id
+) = 1

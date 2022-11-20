@@ -175,6 +175,13 @@ live_plays as (
     , unnest(live_plays.players) as players with offset
     left join {{ ref('stg_nhl__schedule') }} as schedule on schedule.game_id = live_plays.gameid
     left join {{ ref('stg_nhl__boxscore_player') }} as boxscore_player on boxscore_player.game_id = live_plays.gameid and players.player.id = boxscore_player.player_id
+    qualify row_number() over(
+        partition by
+            live_plays.gameid
+            , live_plays.about.eventidx
+            , players.player.id
+            , players.playertype
+    ) = 1
 )
 
 -- #cte3: Add in cumulative metrics
