@@ -156,7 +156,7 @@ select
     , shifts.away_goalie_on_ice
 
 from {{ ref('stg_nhl__live_plays') }} as plays
-left join {{ ref('stg_nhl__shifts_time') }} as shifts
+left join {{ ref('d_shifts_time') }} as shifts
     on shifts.game_id = plays.game_id
         and shifts.game_time_seconds = plays.play_total_seconds_elapsed
         and shifts.player_id = plays.player_id
