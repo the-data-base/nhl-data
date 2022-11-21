@@ -33,7 +33,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   +materialized: view
-  dbt_nhl_breakouts:
+  nhl_data:
     # Config indicated by + and applies to all files under models/example/
     analytics:
       +materialized: table
