@@ -35,28 +35,28 @@ shifts as (
         , shifts.duration_mins
         , shifts.duration_seconds
         , case
-            when period = 1 then (start_time_mins * 60) + (start_time_seconds)
-            when period = 2 then (20 * 60) + ((start_time_mins * 60) + (start_time_seconds))
-            when period = 3 then (40 * 60) + ((start_time_mins * 60) + (start_time_seconds))
-            when period = 4 then (60 * 60) + ((start_time_mins * 60) + (start_time_seconds))
-            when period = 5 then (80 * 60) + ((start_time_mins * 60) + (start_time_seconds))
-            when period = 6 then (100 * 60) + ((start_time_mins * 60) + (start_time_seconds))
-            when period = 7 then (120 * 60) + ((start_time_mins * 60) + (start_time_seconds))
-            when period = 8 then (140 * 60) + ((start_time_mins * 60) + (start_time_seconds))
-            when period = 9 then (160 * 60) + ((start_time_mins * 60) + (start_time_seconds))
-            when period = 10 then (180 * 60) + ((start_time_mins * 60) + (start_time_seconds))
+            when period = 1 then (shifts.start_time_mins * 60) + (shifts.start_time_seconds)
+            when period = 2 then (20 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when period = 3 then (40 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when period = 4 then (60 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when period = 5 then (80 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when period = 6 then (100 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when period = 7 then (120 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when period = 8 then (140 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when period = 9 then (160 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when period = 10 then (180 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
         end as start_seconds_elapsed
-        , if(type_code = 505, 0, (duration_mins * 60) + (duration_seconds)) as duration_seconds_elapsed
+        , if(shifts.type_code = 505, 0, (shifts.duration_mins * 60) + (shifts.duration_seconds)) as duration_seconds_elapsed
 
         /* Assister Properties */
         , shifts.goal_assisters
         , shifts.goal_assist_count
         , case
-            when goal_assist_count = '2 assisters' then trim(split(goal_assisters, ',')[offset(0)])
-            when goal_assist_count = '1 assister' then goal_assisters
+            when shifts.goal_assist_count = '2 assisters' then trim(split(shifts.goal_assisters, ',')[offset(0)])
+            when shifts.goal_assist_count = '1 assister' then shifts.goal_assisters
         end as goal_primary_assister_full_name
         , case
-            when goal_assist_count = '2 assisters' then trim(split(goal_assisters, ', ')[offset(1)])
+            when shifts.goal_assist_count = '2 assisters' then trim(split(shifts.goal_assisters, ', ')[offset(1)])
         end as goal_secondary_assister_full_name
         , case
             when schedule.game_type = '02' and shifts.period = 4 then 'overtime'
@@ -77,7 +77,7 @@ shifts as (
     from {{ ref('stg_nhl__shifts') }} as shifts
     left join {{ ref('d_schedule') }} as schedule
         on shifts.game_id = schedule.game_id
-    where 1=1
+    where 1 = 1
         and not (schedule.game_type = '02' and shifts.period = 5) -- remove shootouts
         and end_time != '' -- remove 1129 shifts, dups
 )
