@@ -4,16 +4,18 @@ home_team_scratches as (
     select
         boxscore.game_id
         , scratches as player_id
-    from {{ ref('stg_nhl__boxscore') }} as boxscore
-    , unnest(boxscore.home_team_scratches) as scratches
+    from {{ ref('f_boxscore_team') }} as boxscore
+    , unnest(boxscore.team_scratches) as scratches
+    where team_type = 'Home'
 )
 
 , away_team_scratches as (
     select
         boxscore.game_id
         , scratches as player_id
-    from {{ ref('stg_nhl__boxscore') }} as boxscore
-    , unnest(boxscore.away_team_scratches) as scratches
+    from {{ ref('f_boxscore_team') }} as boxscore
+    , unnest(boxscore.team_scratches) as scratches
+    where team_type = 'Away'
 )
 
 , unioned as (
