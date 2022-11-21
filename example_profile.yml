@@ -1,0 +1,10 @@
+nhl_data:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      location: us-west1
+      method: oauth
+      project: nhl-breakouts
+      dataset: dbt_<my_name> # replace <my_name> with your name
+      threads: 4

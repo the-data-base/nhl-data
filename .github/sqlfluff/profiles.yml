@@ -1,4 +1,4 @@
-dbt_nhl_breakouts:
+nhl_data:
   target: ci
   outputs:
     ci:
