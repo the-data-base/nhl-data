@@ -1,16 +1,14 @@
 with
 -- CTE1
 live_boxscore as (
-    select *
-    from
-        {{ source('meltano', 'live_boxscore') }}
+    select * from {{ source('meltano', 'live_boxscore') }}
 )
 
 -- CTE2
 , home_team_player as (
     select
         /* Identifiers */
-        live_boxscore.gameid as game_id
+        gameid as game_id
         , teams.home.team.id as team_id
         , home_players.person.id as player_id
 
@@ -123,56 +121,57 @@ live_boxscore as (
 -- Final query, return everything
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['boxscore_player.game_id', 'boxscore_player.team_id', 'boxscore_player.player_id']) }} as stg_nhl__boxscore_player_id
+    {{ dbt_utils.surrogate_key(['game_id', 'team_id', 'player_id']) }} as stg_nhl__boxscore_player_id
 
     /* Identifiers */
-    , boxscore_player.game_id
-    , boxscore_player.team_id
-    , boxscore_player.player_id
+    , game_id
+    , team_id
+    , player_id
 
     /* Properties */
-    , boxscore_player.team_name
-    , boxscore_player.team_type
+    , team_name
+    , team_type
 
     /* Player stats */
-    , boxscore_player.player_full_name
-    , boxscore_player.player_roster_status
-    , boxscore_player.player_position_code
-    , boxscore_player.time_on_ice
-    , boxscore_player.assists
-    , boxscore_player.goals
-    , boxscore_player.shots
-    , boxscore_player.hits
-    , boxscore_player.powerplay_goals
-    , boxscore_player.powerplay_assists
-    , boxscore_player.penalty_minutes
-    , boxscore_player.faceoff_wins
-    , boxscore_player.faceoff_taken
-    , boxscore_player.takeaways
-    , boxscore_player.giveaways
-    , boxscore_player.short_handed_goals
-    , boxscore_player.short_handed_assists
-    , boxscore_player.blocked
-    , boxscore_player.plus_minus
-    , boxscore_player.even_time_on_ice
-    , boxscore_player.powerplay_time_on_ice
-    , boxscore_player.short_handed_time_on_ice
-    , boxscore_player.pim
-    , boxscore_player.saves
-    , boxscore_player.powerplay_saves
-    , boxscore_player.short_handed_saves
-    , boxscore_player.even_saves
-    , boxscore_player.short_handed_shots_against
-    , boxscore_player.even_shots_against
-    , boxscore_player.powerplay_shots_against
-    , boxscore_player.decision
-    , boxscore_player.save_percentage
-    , boxscore_player.powerplay_save_percentage
-    , boxscore_player.even_strength_save_percentage
+    , player_full_name
+    , player_roster_status
+    , player_position_code
+    , time_on_ice
+    , assists
+    , goals
+    , shots
+    , hits
+    , powerplay_goals
+    , powerplay_assists
+    , penalty_minutes
+    , faceoff_wins
+    , faceoff_taken
+    , takeaways
+    , giveaways
+    , short_handed_goals
+    , short_handed_assists
+    , blocked
+    , plus_minus
+    , even_time_on_ice
+    , powerplay_time_on_ice
+    , short_handed_time_on_ice
+    , pim
+    , saves
+    , powerplay_saves
+    , short_handed_saves
+    , even_saves
+    , short_handed_shots_against
+    , even_shots_against
+    , powerplay_shots_against
+    , decision
+    , save_percentage
+    , powerplay_save_percentage
+    , even_strength_save_percentage
 
 from boxscore_player
-
-order by
-    boxscore_player.game_id desc
-    , boxscore_player.team_id desc
-    , boxscore_player.player_id desc
+qualify row_number() over(
+    partition by
+        game_id
+        , team_id
+        , player_id
+) = 1

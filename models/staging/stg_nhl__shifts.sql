@@ -1,4 +1,6 @@
-with shifts_raw as (
+with
+
+shifts_raw as (
     select
         s.id as shift_id
         , s.shiftnumber as shift_number
@@ -17,19 +19,19 @@ with shifts_raw as (
         , s.duration
         , case
             when s.starttime is not null
-                 then cast( split(s.starttime, ':')[offset(0)] as int64)
+                 then cast(split(s.starttime, ':')[offset(0)] as int64)
         end as start_time_mins
         , case
             when s.starttime is not null
-                 then cast( split(s.starttime, ':')[offset(1)] as int64)
+                 then cast(split(s.starttime, ':')[offset(1)] as int64)
         end as start_time_seconds
         , case
             when s.duration is not null
-                 then cast( split(s.duration, ':')[offset(0)] as int64)
+                 then cast(split(s.duration, ':')[offset(0)] as int64)
         end as duration_mins
         , case
             when s.duration is not null
-                 then cast( split(s.duration, ':')[offset(1)] as int64)
+                 then cast(split(s.duration, ':')[offset(1)] as int64)
         end as duration_seconds
         , concat(s.firstname, " ", s.lastname) as player_full_name
         , case
@@ -210,7 +212,7 @@ with shifts_raw as (
 
 )
 
-select distinct
+select
     concat('newshiftid_', revised_new_shift_number, new_shift_id) as shift_id
     , game_id
     , player_id
@@ -240,3 +242,8 @@ select distinct
     , goal_primary_assister_full_name
     , goal_secondary_assister_full_name
 from new_shifts_time
+qualify row_number() over(
+    partition by
+        revised_new_shift_number
+        , new_shift_id
+) = 1

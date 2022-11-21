@@ -3,6 +3,11 @@ with
 -- CTE1
 live_boxscore as (
     select * from {{ source('meltano', 'live_boxscore') }}
+    qualify row_number() over(
+        partition by
+            gameid
+            , teams.home.team.id
+    ) = 1
 )
 
 -- CTE2

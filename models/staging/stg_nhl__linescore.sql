@@ -1,6 +1,10 @@
 with
 live_linescore as (
     select * from {{ source('meltano', 'live_linescore') }}
+    qualify row_number() over(
+        partition by
+            gameid
+    ) = 1
 )
 
 , final as (
