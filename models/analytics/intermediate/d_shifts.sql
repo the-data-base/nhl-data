@@ -35,16 +35,16 @@ shifts as (
         , shifts.duration_mins
         , shifts.duration_seconds
         , case
-            when period = 1 then (shifts.start_time_mins * 60) + (shifts.start_time_seconds)
-            when period = 2 then (20 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
-            when period = 3 then (40 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
-            when period = 4 then (60 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
-            when period = 5 then (80 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
-            when period = 6 then (100 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
-            when period = 7 then (120 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
-            when period = 8 then (140 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
-            when period = 9 then (160 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
-            when period = 10 then (180 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when shifts.period = 1 then (shifts.start_time_mins * 60) + (shifts.start_time_seconds)
+            when shifts.period = 2 then (20 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when shifts.period = 3 then (40 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when shifts.period = 4 then (60 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when shifts.period = 5 then (80 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when shifts.period = 6 then (100 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when shifts.period = 7 then (120 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when shifts.period = 8 then (140 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when shifts.period = 9 then (160 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
+            when shifts.period = 10 then (180 * 60) + ((shifts.start_time_mins * 60) + (shifts.start_time_seconds))
         end as start_seconds_elapsed
         , if(shifts.type_code = 505, 0, (shifts.duration_mins * 60) + (shifts.duration_seconds)) as duration_seconds_elapsed
 
@@ -79,7 +79,7 @@ shifts as (
         on shifts.game_id = schedule.game_id
     where 1 = 1
         and not (schedule.game_type = '02' and shifts.period = 5) -- remove shootouts
-        and end_time != '' -- remove 1129 shifts, dups
+        and shifts.end_time != '' -- remove 1129 shifts, dups
 )
 
 
