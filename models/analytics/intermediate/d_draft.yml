@@ -19,8 +19,6 @@ models:
 
       - name: draft_prospect_id
         description: Foreign key that maps to an NHL draft prospect
-        tests:
-          - not_null
 
       - name: draft_team_id
         description: Foreign key that maps to the NHL team that drafted the NHL prospect

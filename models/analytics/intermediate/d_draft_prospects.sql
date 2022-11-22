@@ -1,8 +1,9 @@
 select distinct
     /* Primary Key */
-    draft_prospect_id
+    stg_nhl__draft_prospects_id as draft_prospects_id
 
     /* Identifiers */
+    , draft_prospect_id
     , prospect_player_id
     , prospect_category_id
 
