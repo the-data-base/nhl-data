@@ -146,7 +146,7 @@ boxscore_stats as (
         , event_type
         , event_secondary_type
         , shot_rebound_ind as shots_rebound
-        , last_shot_rebound_ind as shots_rebound
+        , last_shot_rebound_ind as last_shot_rebound
         -- shot calculations
         , case when s.event_type in ('goal', 'shot') then 1 else 0 end as shots_ongoal
         , case when s.event_type = 'blocked_shot' then 1 else 0 end as shots_blocked

@@ -79,6 +79,17 @@ select
     , plays.goal_difference_lag
     , plays.winning_team_lag
     , plays.game_state_lag
+
+    /* Location properties */
+    , loc.adj_play_x_coordinate as adj_x_coordinate
+    , loc.adj_play_y_coordinate as adj_y_coordinate
+    , loc.play_distance
+    , loc.play_angle
+    , loc.rink_side
+    , loc.zone_type
+    , loc.zone
+
+    /* Last shot location properties */
     , plays.last_shot_event_idx
     , plays.last_shot_team_id
     , plays.last_shot_period
@@ -103,26 +114,6 @@ select
             then 1
         else 0
     end as last_shot_rebound_ind
-
-    /* Location properties */
-    , loc.adj_play_x_coordinate as adj_x_coordinate
-    , loc.adj_play_y_coordinate as adj_y_coordinate
-    , loc.play_distance
-    , loc.play_angle
-    , loc.rink_side
-    , loc.zone_type
-    , loc.zone
-
-    /* Last shot location properties */
-    , plays.last_shot_event_idx
-    , plays.last_shot_team_id
-    , plays.last_shot_period
-    , plays.last_shot_total_seconds_elapsed
-    , plays.last_shot_event_type
-    , plays.last_shot_event_secondary_type
-    , plays.last_shot_x_coordinate
-    , plays.last_shot_y_coordinate
-    , plays.last_shot_saved_shot_ind
 
     /* Last play location properties */
     , lag(loc.adj_play_x_coordinate) over (partition by plays.game_id order by plays.event_idx) as last_play_adj_x_coordinate

@@ -50,7 +50,7 @@ models:
         description: Winning team type (home or away)
         tests:
           - accepted_values:
-              values: [Home, Away]
+              values: [Home, Away, Undetermined]
               quote: true
 
       - name: game_absolute_goal_differential
