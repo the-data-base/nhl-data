@@ -1,4 +1,4 @@
-# dbt-nhl-breakouts
+# nhl-data
 Transforming the `raw` nhl data into `analytics-models` with dbt
 
 ![dbt meme](assets/repo-meme.png "dbt meme")
@@ -12,7 +12,7 @@ Transforming the `raw` nhl data into `analytics-models` with dbt
 ## :tada: Introduction
 ---
 
-:wave: Welcome to the `dbt-nhl-breakouts` repo
+:wave: Welcome to the `nhl-data` repo
 
 This repo contains the source code used to transform `raw` nhl data from the NHL Stats API into **analysis-ready models**. In other words, this is where the **SQL magic** happens using `dbt`. Ultimately, this work converts confusing raw data into:
 * Data analyst/scientist friendly datasets all within one data warehouse (BigQuery)
