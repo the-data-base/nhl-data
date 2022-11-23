@@ -13,9 +13,9 @@ shifts as (
         /* Properties */
         , shifts.shift_number
         , case
-            when shifts.team_id = schedule.home_team_id then 'Home'
-            when shifts.team_id = schedule.away_team_id then 'Away'
-            else 'Unknown'
+            when shifts.team_id = schedule.home_team_id then 'home'
+            when shifts.team_id = schedule.away_team_id then 'away'
+            else 'unknown'
         end as home_away_team
         , schedule.game_type
         , schedule.game_type_description
