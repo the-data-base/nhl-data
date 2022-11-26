@@ -82,6 +82,29 @@ shifts as (
         and shifts.end_time != '' -- remove 1129 shifts, dups
 )
 
+, deduped_goals as (
+    /* Seasons 2020 and 2021 had many duplicated goals having the same start time and end time
+    for a given game_id, player_id */
+    select
+        shift_id
+        , game_id
+        , player_id
+        , period
+        , start_time
+        , end_time
+    from shifts
+    where is_goal
+    qualify row_number() over(
+        partition by
+            game_id
+            , player_id
+            , period
+            , start_time
+            , end_time
+        order by
+            shift_id desc -- pick the highest shift_id number among the duplicated goals
+    ) = 1
+)
 
 , find_duplicate_shifts as (
     -- as of 7/10/2022, there were 91 shifts that mapped to 13 plays where the shift was duplicated having the same start time but different durations (thus, different end times)
@@ -181,6 +204,8 @@ left join deduped_shift_attributes
         and shifts.player_id = deduped_shift_attributes.player_id
         and shifts.period = deduped_shift_attributes.period
         and shifts.start_seconds_elapsed = deduped_shift_attributes.start_seconds_elapsed
+left join deduped_goals
+    on shifts.shift_id = deduped_goals.shift_id
 where
-    shifts.is_goal -- include goals
-    or revised_shift_number_for_duplicate_shifts.shift_id is not null -- exclude duplicates from prior steps
+    (shifts.is_goal and deduped_goals.shift_id is not null) -- exclude shift-duplicates for goals
+    or (not shifts.is_goal and revised_shift_number_for_duplicate_shifts.shift_id is not null) -- exclude shift-duplicates for non-goals
