@@ -46,7 +46,7 @@ game_seconds as (
         , case when gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is false then true else false end as is_shift_start_not_period_start
         , case when gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_end is true then true else false end as is_shift_end_period_end
 
-    from {{ ref('stg_nhl__shifts') }} as shifts
+    from {{ ref('d_shifts') }} as shifts
     inner join game_seconds as gs on gs.seconds between shifts.start_seconds_elapsed and shifts.end_seconds_elapsed
     left join {{ ref('d_players') }} as players on players.player_id = shifts.player_id
     --where (case when gs.seconds = shifts.start_seconds_elapsed and is_period_end is true then true else false end) is false -- remove the shift that ends the period

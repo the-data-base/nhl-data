@@ -1,8 +1,24 @@
+with
+
+home_team as (
+    select * from {{ ref('stg_nhl__boxscore') }} where team_type = 'Home'
+)
+
+, away_team as (
+    select * from {{ ref('stg_nhl__boxscore') }} where team_type = 'Away'
+)
+
+, boxscore_player as (
+    select * from home_team
+    union all
+    select * from away_team
+)
+
 select
     /* Primary Key */
-    stg_nhl__boxscore_player_id as boxscore_player_id
+    stg_nhl__boxscore_id as boxscore_player_id
 
-    /* Identifiers */
+    /* Foreign Keys */
     , game_id
     , team_id
     , player_id
@@ -10,7 +26,8 @@ select
     /* Properties */
     , team_name
     , team_type
-    -- player stats
+
+    /* Player stats */
     , player_full_name
     , player_roster_status
     , player_position_code
@@ -45,8 +62,4 @@ select
     , save_percentage
     , powerplay_save_percentage
     , even_strength_save_percentage
-from {{ ref('stg_nhl__boxscore_player') }}
-order by
-    game_id desc
-    , team_id desc
-    , player_id desc
+from boxscore_player

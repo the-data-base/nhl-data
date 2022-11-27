@@ -174,7 +174,7 @@ live_plays as (
     from live_plays
     , unnest(live_plays.players) as players with offset
     left join {{ ref('stg_nhl__schedule') }} as schedule on schedule.game_id = live_plays.gameid
-    left join {{ ref('stg_nhl__boxscore_player') }} as boxscore_player on boxscore_player.game_id = live_plays.gameid and players.player.id = boxscore_player.player_id
+    left join {{ ref('stg_nhl__boxscore') }} as boxscore_player on boxscore_player.game_id = live_plays.gameid and players.player.id = boxscore_player.player_id
     qualify row_number() over(
         partition by
             live_plays.gameid

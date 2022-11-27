@@ -6,7 +6,7 @@ models:
     columns:
       # Primary Key
       - name: shift_id
-        description: Custom identifier for an NHL shift-second
+        description: Unique identifier for an NHL shift
         tests:
           - unique
           - not_null

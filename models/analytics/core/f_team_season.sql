@@ -17,7 +17,7 @@ with t1 as (
         , game_type
         , game_type_description
         , count(*) as games_played
-        , sum(case when team_winner = 'true' then 1 else 0 end) as wins
+        , sum(case when team_winner = true then 1 else 0 end) as wins
         , sum(ifnull(team_goals, 0)) as team_goals
         , sum(ifnull(team_goal_differential, 0)) as team_goal_differential
         , sum(ifnull(team_pim, 0)) as team_pim

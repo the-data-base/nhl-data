@@ -8,80 +8,163 @@ models:
     columns:
       # Primary Key
       - name: stg_nhl__boxscore_id
-        description: Unique surrogate key for the NHL boxscore game
+        description: "Unique surrogate key for a player's summarized activity in an NHL game (game_id + team_id + player_id)"
         tests:
           - not_null
           - unique
 
-      # Identifiers
+      # Foreign Keys
       - name: game_id
         description: |
           Foreign key that maps to an NHL game
           {{ doc("game_id_description") }}
 
-      - name: home_team_id
-        description: Identifier for the home team, foreign key to stg_nhl__teams
+      - name: team_id
+        description: Identifier for the team, foreign key to stg_nhl__teams
 
-      - name: away_team_id
-        description: Identifier for the away team, foreign key to stg_nhl__teams
+      - name: player_id
+        description: Identifier for the player, foreign key to stg_nhl__players
 
       # Properties
-      - name: home_team_name
-        description: Name of the home team
+      ## Team properties
+      - name: team_type
+        description: "Describes the Away / Home status for each team playing in a game"
 
-      - name: home_team_pim
-        description: Total home team penalty infraction minutes
+      - name: team_name
+        description: "Team name"
 
-      - name: home_team_shots
-        description: Total home team shots
+      - name: team_blocked
+        description: "Total team shots blocked"
 
-      - name: home_team_powerplay_goals
-        description: Total home team powerplay goals
+      - name: team_faceoff_percentage
+        description: "Team faceoff percentage"
 
-      - name: home_team_powerplay_opportunities
-        description: Total home team powerplay opportunities
+      - name: team_giveaways
+        description: "Total team giveaways"
 
-      - name: home_team_faceoff_percentage
-        description: Home team faceoff percentage
+      - name: team_goals
+        description: "Total team goals"
 
-      - name: home_team_blocked
-        description: Total home team shots blocked
+      - name: team_hits
+        description: "Total team hits"
 
-      - name: home_team_takeaways
-        description: Total home team takeaways
+      - name: team_pim
+        description: "Total team penalty infraction minutes"
 
-      - name: home_team_giveaways
-        description: Total home team giveaways
+      - name: team_powerplay_goals
+        description: "Total team powerplay goals"
 
-      - name: home_team_hits
-        description: Total home team hits
+      - name: team_powerplay_opportunities
+        description: "Total team powerplay opportunities"
 
-      - name: away_team_name
-        description: Name of the away team
+      - name: team_shots
+        description: "Total team shots"
 
-      - name: away_team_pim
-        description: Total away team penalty infraction minutes
+      - name: team_takeaways
+        description: "Total team takeaways"
 
-      - name: away_team_shots
-        description: Total away team shots
+      - name: team_scratches
+        description: "Total team scratches"
 
-      - name: away_team_powerplay_goals
-        description: Total away team powerplay goals
+      ## Player properties
+      - name: player_full_name
+        description: "Full name of the NHL player"
 
-      - name: away_team_powerplay_opportunities
-        description: Total away team powerplay opportunities
+      - name: player_roster_status
+        description: "Roster status of the NHL player (e.g. Y, N, I)"
 
-      - name: away_team_faceoff_percentage
-        description: Away team faceoff percentage
+      - name: player_position_code
+        description: "Position code (e.g. C, LW, D)"
 
-      - name: away_team_blocked
-        description: Total away team shots blocked
+      - name: assists
+        description: "Number of assists (primary & secondary)"
 
-      - name: away_team_takeaways
-        description: Total away team takeaways
+      - name: blocked
+        description: "Number of blocked shots"
 
-      - name: away_team_giveaways
-        description: Total away team giveaways
+      - name: decision
+        description: "Win (W) or Loss (L) for goalies only (NULL if player)"
 
-      - name: away_team_hits
-        description: Total away team hits
+      - name: even_saves
+        description: "Number of saves made at even strength"
+
+      - name: even_shots_against
+        description: "Number of shots against at even strength"
+
+      - name: even_strength_save_percentage
+        description: "Percentage of shots faced at even strength that were saved (100% * (Number of shots saved / Number of shots))"
+
+      - name: even_time_on_ice
+        description: "Time on ice in minutes:seconds at event-strength (5v5)"
+
+      - name: faceoff_taken
+        description: "Number of faceoffs taken"
+
+      - name: faceoff_wins
+        description: "Number of faceoffs won"
+
+      - name: giveaways
+        description: "Number of giveaways faulted for"
+
+      - name: goals
+        description: "Number of goals scored"
+
+      - name: hits
+        description: "Number of hits made"
+
+      - name: penalty_minutes
+        description: "Number of penalties taken in minutes"
+
+      - name: pim
+        description: "Penalties in minutes:seconds"
+
+      - name: plus_minus
+        description: "Total plus minus in the game - plus for every goal scored while on the ice for, minus for every goal allowed while on the ice"
+
+      - name: powerplay_assists
+        description: "Number of powerplay assists (primary & secondary)"
+
+      - name: powerplay_goals
+        description: "Number of powerplay goals scored"
+
+      - name: powerplay_save_percentage
+        description: "Percentage of shots faced on the powerplay that were saved (100% * (Number of shots saved / Number of shots))"
+
+      - name: powerplay_saves
+        description: "Number of saves made on the powerplay"
+
+      - name: powerplay_shots_against
+        description: "Number of shots against on the powerplay / mad advantage"
+
+      - name: powerplay_time_on_ice
+        description: "Time on ice in minutes:seconds on the man advantage / powerplay (5v4, 5v3, or 4v3)"
+
+      - name: save_percentage
+        description: "Percentage of shots faced that were saved (100% * (Number of shots saved / Number of shots))"
+
+      - name: saves
+        description: "Number of saves made"
+
+      - name: short_handed_assists
+        description: "Number of short-handed assists made"
+
+      - name: short_handed_goals
+        description: "Number of short-handed goals scored"
+
+      - name: short_handed_saves
+        description: "Number of saves made on the penalty kill / short-handed"
+
+      - name: short_handed_shots_against
+        description: "Number of shots against on the penalth kill / short-handed"
+
+      - name: short_handed_time_on_ice
+        description: "Time on ice in minutes:seconds while short-handed / on the penalty kill (4v5, 3v5, or 3v4)"
+
+      - name: shots
+        description: "Number of shots taken"
+
+      - name: takeaways
+        description: "Number of takeaways made"
+
+      - name: time_on_ice
+        description: "Time on ice in minutes:seconds (e.g. 21:30)"

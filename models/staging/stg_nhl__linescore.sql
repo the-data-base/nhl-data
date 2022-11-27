@@ -29,6 +29,7 @@ live_linescore as (
         , case
             when teams.home.goals > teams.away.goals then teams.home.team.name
             when teams.home.goals < teams.away.goals then teams.away.team.name
+            when teams.home.goals = teams.away.goals then 'Tie'
             else 'Undetermined'
         end as game_winning_team_name
         , case
