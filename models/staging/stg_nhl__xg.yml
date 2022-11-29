@@ -1,0 +1,163 @@
+version: 2
+
+models:
+  - name: stg_nhl__xg
+    description: Expected goal (XG) values built in the `nhl-xg` repo - each row is a fenwick shot's xg value
+    columns:
+      # Primary Key
+      - name: stg_nhl__xg_id
+        description: Primary key, which is basically just a new play_id  (game_id + team_id + player_id + event_id)
+        tests:
+          - unique
+          - not_null
+
+      # Identifiers
+      - name: id_play_id
+        description: Unique surrogate key for a player's event-level activity in an NHL game (game_id + team_id + player_id + event_id)
+        tests:
+          - unique
+          - not_null
+
+      - name: id_game_id
+        description: |
+          Foreign key that maps to an NHL game ID
+          {{ doc("game_id_description") }}
+
+      - name: id_game_type
+        description: Code for the type of game, which is retrieved by extracting the the 5th and 6th position from the game_id (e.g. 02 = regular season game)
+
+      - name: id_season_id
+        description: Foreign key that maps to the season ID that the NHL game took place (e.g. "20172018")
+
+      - name: id_season_year
+        description: Numeric representation of season_id
+
+      - name: id_player_id
+        description: Foreign key that maps to an NHL player ID
+          - not_null
+
+      - name: id_player_full_name
+        description: Full name of the player (e.g. Connor McDavid)
+
+      - name: id_strength_state
+        description: Provides the strength state at the time the shot was taken - (shootout, goalie-pulled, even strength, home skater advantage, away skater advantage, other, and null). The logic to create this feature exists in `github\the-data-base\nhl-xg\sql_queries\xg_model.sql`
+
+      - name: id_strength_state_code
+        description: Combines the home indicator and strength state to create 3 strength states (e.g. ev, pp, sh)
+
+      - name: id_is_home
+        description: True or False for whether or not the player was at home or away
+
+      - name: id_fenwick_shot
+        description: Identifier that indicates whether or not the shot was a fenwick shot (all values are 1 since that is the pre-req for an XG model)
+
+      # Actual vs Predictions
+      - name: x_goal
+        description: Whether or not the fenwick shot in question resulted in a goal
+
+      - name: xg_proba
+        description: Expected goal (XG) model prediction probability for the fenwick shot to result in a goal
+
+      - name: xg_pred
+        description: Classification of xg_proba to prediciton (1 = pred goal, 0 = pred no goal), using the logloss value as the threshold
+
+      # Model results
+      - name: model_type
+        description: The type of model used to build the XG values
+
+      - name: model_rocauc
+        description: Model performance metric - roc auc
+
+      - name: model_prauc
+        description: Model performance metric - pr auc
+
+      - name: model_logloss
+        description: Model performance metric - logloss
+
+      - name: model_precision
+        description: Model performance metric - precision
+
+      - name: model_recall
+        description: Model performance metric - recall
+
+      - name: model_seasons
+        description: Model training - the number of season used in the training of the model
+
+      - name: model_season_range
+        description: Model training - the min and max seasons used in the training of the model
+
+      - name: model_fenwick_shots
+        description: Model training - the number of total fenwick shots taken in the training data (not split by strength_stat_code)
+
+      - name: model_pcnt_goals
+        description: Model training - the percent of fenwick shots that resulted in goals in the trianing data (not split by strength_stat_code)
+
+      # Model features
+      - name: shot_distance
+        description: Distance from the opposing goal, calculated by making a right angle with the play's [x,y] and the net [89,0], and finding the hypotenuse with the formula c = sqrt(a^2 + b^2)
+
+      - name: shot_angle
+        description: Angle from the play's [x,y] coordinates to the opposing team's net [89,0]
+
+      - name: shot_xcoord
+        description: Adjusting the axis of plane of the play's x-coordinate based on where the oppsosing team's goalie net is as this is where they will be shooting towards
+
+      - name: shot_ycoord
+        description: Adjusting the axis of plane of the play's y-coordinate based on where the oppsosing team's goalie net is as this is where they will be shooting towards
+
+      - name: shot_backhand
+        description: The number of backhand shots that were either saved or were goals (no misses or blocks)
+
+      - name: shot_deflected
+        description: The number of deflected shots that were either saved or were goals (no misses or blocks)
+
+      - name: shot_slap
+        description: The number of slapshot shots that were either saved or were goals (no misses or blocks)
+
+      - name: shot_snap
+        description: The number of snapshot shots that were either saved or were goals (no misses or blocks)
+
+      - name: shot_tip
+        description: The number of tip-in shots that were either saved or were goals (no misses or blocks)
+
+      - name: shot_wrap
+        description: The number of wraparound shots that were either saved or were goals (no misses or blocks)
+
+      - name: shot_wrist
+        description: The number of wristshot shots that were either saved or were goals (no misses or blocks)
+
+      - name: shot_rebound
+        description: The number of rebounds (shot taken within 2 seconds of previous if taken by same team and same period) that were either saved or were goals (no misses or blocks)
+
+      - name: game_seconds_elapsed
+        description: The time in seconds elapsed in the entire game
+
+      - name: period_seconds_elapsed
+        description: The time in seconds elapsed in the period
+
+      - name: period
+        description: The period in which the event occured (e.g. 3)
+
+      - name: is_home
+        description: True or False for whether or not the player was at home or away
+
+      - name: game_state_5v5
+        description: Game state = '5v5'
+
+      - name: game_state_4v4
+        description: Game state = '4v4'
+
+      - name: game_state_3v3
+        description: Game state = '3v3'
+
+      - name: seconds_since_last_shot
+        description: Seconds elapsed since the last fenwick shot
+
+      - name: _time_loaded
+        description: Timestamp that the data was loaded
+
+      - name: _data_time_loaded
+        description: Timestamp that the model data was loaded
+
+      - name: _model_time_loaded
+        description: Timestamp that the model was created
