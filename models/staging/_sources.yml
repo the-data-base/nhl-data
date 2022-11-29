@@ -17,3 +17,9 @@ sources:
       - name: seasons
       - name: shifts
       - name: teams
+
+  - name: xg
+    database: nhl-breakouts
+    dataset: model_xg
+    tables:
+      - name: xg_.*
