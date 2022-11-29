@@ -2,7 +2,7 @@ with
 
 deduped as (
     select *
-    from {{ source('xg', 'model_xg*') }} as conferences
+    from {{ source('xg', 'xg_*') }} as conferences
 
     qualify row_number() over(
         partition by

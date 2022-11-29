@@ -22,4 +22,4 @@ sources:
     database: nhl-breakouts
     dataset: model_xg
     tables:
-      - name: xg_.*
+      - name: xg_*
