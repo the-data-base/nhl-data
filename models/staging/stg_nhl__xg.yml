@@ -12,6 +12,9 @@ models:
           - not_null
 
       # Identifiers
+      - name: xg_model_id
+        description: Identifier with business logic to help identify model attributes for creating the xg
+
       - name: id_play_id
         description: Unique surrogate key for a player's event-level activity in an NHL game (game_id + team_id + player_id + event_id)
         tests:

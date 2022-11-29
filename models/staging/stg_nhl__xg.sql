@@ -15,6 +15,7 @@ select
     {{ dbt_utils.surrogate_key(['deduped.id_play_id']) }} as stg_nhl__xg_id
 
     /* Identifiers */
+    , concat(id_model_type, "_target_", id_season_id, "_training_", id_model_season_range) as xg_model_id
     , id_play_id
     , id_game_id
     , id_game_type
