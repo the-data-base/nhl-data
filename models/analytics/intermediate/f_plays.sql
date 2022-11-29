@@ -155,6 +155,13 @@ select
     , shifts.home_goalie_on_ice
     , shifts.away_goalie_on_ice
 
+    /* XG stuff */
+    , ifnull(xg.id_fenwick_shot, 0) as xg_fenwick_shot
+    , xg.x_goal
+    , xg.xg_model_id
+    , xg.id_strength_state_code as xg_strength_state_code
+    , xg.xg_proba
+
 from {{ ref('stg_nhl__live_plays') }} as plays
 left join {{ ref('d_shifts_time') }} as shifts
     on shifts.game_id = plays.game_id
@@ -167,3 +174,7 @@ left join {{ ref('stg_nhl__live_plays_location') }} as loc
         and loc.game_id = plays.game_id
         and loc.play_x_coordinate = cast(plays.play_x_coordinate as float64)
         and loc.play_y_coordinate = cast(plays.play_y_coordinate as float64)
+left join {{ ref('stg_nhl__xg') }} as xg
+    on xg.id_play_id = plays.stg_nhl__live_plays_id
+        and xg.id_game_id = plays.game_id
+        and xg.id_player_id = plays.player_id

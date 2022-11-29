@@ -406,3 +406,19 @@ models:
 
       - name: last_shot_rebound_ind
         description: Rebounds indicator - returns a '1' if the shot was taken by same team, in the same period, was on target but did not result in a goal, and the time elapsed between shots was between 0 - 2 seconds
+
+      # XG properties
+      - name: xg_model_id
+        description: Identifier with business logic to help identify model attributes for creating the xg
+
+      - name: xg_strength_state_code
+        description: Combines the home indicator and strength state to create 3 strength states (e.g. ev, pp, sh)
+
+      - name: xg_fenwick_shot
+        description: Identifier that indicates whether or not the shot was a fenwick shot
+
+      - name: x_goal
+        description: Whether or not the fenwick shot in question resulted in a goal
+
+      - name: xg_proba
+        description: For any given fenwick shot, provides the expected goal (XG) model prediction probability (null if not a fenwick shot)
