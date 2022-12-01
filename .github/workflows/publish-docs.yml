@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Checkout pages deployment branch
         uses: actions/checkout@v3
-          ref: pages/docs-site
+          ref: 'pages/docs-site'
 
       - name: Install Python packages
         # NB: This is referencing the requirements.txt file saved in the ci_cd folder in your project.
@@ -53,7 +53,6 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git fetch --all
           git add .
           git commit -m "Add docs artifacts to generate GH pages"
           git push
