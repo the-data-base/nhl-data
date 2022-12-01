@@ -1,0 +1,61 @@
+name: Publish docs
+
+on:
+  push:
+    branches:
+      - main
+      - feature/docs-site
+
+jobs:
+  generate-docs:
+    name: Generate dbt docs
+    runs-on: ubuntu-latest
+
+    # Set environment variables used throughout workflow
+    env:
+      DBT_PROFILES_DIR: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/.github/sqlfluff
+
+      # SPECIFY database connection credentials as env vars below.
+      # Env var values to be fetched from as GitHub Secrets.
+      # HIGHLY recommended you use a unique set of connection credentials for this workflow alone.
+      PROFILES_YML_BIGQUERY_PROJECT: ${{ secrets.PROFILES_YML_BIGQUERY_PROJECT }}
+      PROFILES_YML_BIGQUERY_CREDENTIALS: ${{ secrets.PROFILES_YML_BIGQUERY_CREDENTIALS }}
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+
+      - name: Install Python packages
+        # NB: This is referencing the requirements.txt file saved in the ci_cd folder in your project.
+        run: python -m pip install dbt-bigquery~=1.0.0
+
+      - name: Generate database credentials
+        run: |
+          touch ./.secrets/client_secrets.json
+          echo "$PROFILES_YML_BIGQUERY_CREDENTIALS" >> ./.secrets/client_secrets.json
+        shell: bash
+
+      - name: Test database connection
+        run: dbt debug
+
+      - name: Install dbt packages
+        run: dbt deps
+
+      - name: Compile docs
+        run: dbt docs generate
+
+      - name: Move docs artifacts
+        run: |
+          mkdir -p docs
+          mv target/manifest.json docs/manifest.json
+          mv target/catalog.json docs/catalog.json
+          mv target/run_results.json docs/run_results.json
+
+      - name: Commit docs artifacts
+        uses: actions/checkout@v3
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Add docs artifacts to generate GH pages"
+          git push
