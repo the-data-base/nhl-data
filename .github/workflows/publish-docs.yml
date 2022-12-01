@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Python packages
         # NB: This is referencing the requirements.txt file saved in the ci_cd folder in your project.
@@ -35,14 +35,11 @@ jobs:
           echo "$PROFILES_YML_BIGQUERY_CREDENTIALS" >> ./.secrets/client_secrets.json
         shell: bash
 
-      - name: Test database connection
-        run: dbt debug
-
-      - name: Install dbt packages
-        run: dbt deps
-
-      - name: Compile docs
-        run: dbt docs generate
+      - name: Generate dbt docs
+        run: |
+          dbt debug
+          dbt deps
+          dbt docs generate
 
       - name: Move docs artifacts
         run: |
@@ -52,7 +49,6 @@ jobs:
           mv target/run_results.json docs/run_results.json
 
       - name: Commit docs artifacts
-        uses: actions/checkout@v3
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
