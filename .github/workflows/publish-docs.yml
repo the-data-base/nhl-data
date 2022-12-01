@@ -22,8 +22,9 @@ jobs:
       PROFILES_YML_BIGQUERY_CREDENTIALS: ${{ secrets.PROFILES_YML_BIGQUERY_CREDENTIALS }}
 
     steps:
-      - name: Checkout branch
+      - name: Checkout pages deployment branch
         uses: actions/checkout@v3
+          ref: pages/docs-site
 
       - name: Install Python packages
         # NB: This is referencing the requirements.txt file saved in the ci_cd folder in your project.
@@ -55,5 +56,4 @@ jobs:
           git fetch --all
           git add .
           git commit -m "Add docs artifacts to generate GH pages"
-          git checkout pages/docs-site
           git push
