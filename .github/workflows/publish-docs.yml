@@ -25,23 +25,23 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v3
 
-      - name: Delete gh-pages branch
+      - name: Delete pages/docs-site branch
         uses: dawidd6/action-delete-branch@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branches: gh-pages
+          branches: pages/docs-site
 
-      - name: Create fresh gh-pages branch
+      - name: Create fresh pages/docs-site branch
         uses: peterjgrainger/action-create-branch@v2.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          branch: 'gh-pages'
+          branch: 'pages/docs-site'
 
-      - name: Checkout new gh-pages branch
+      - name: Checkout new pages/docs-site branch
         uses: actions/checkout@v2
         with:
-            ref: gh-pages
+            ref: pages/docs-site
 
       - name: Install Python packages
         # NB: This is referencing the requirements.txt file saved in the ci_cd folder in your project.
