@@ -24,19 +24,6 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v3
 
-      - name: Delete pages/docs-site branch
-        uses: dawidd6/action-delete-branch@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branches: pages/docs-site
-
-      - name: Create fresh pages/docs-site branch
-        uses: peterjgrainger/action-create-branch@v2.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          branch: 'pages/docs-site'
-
       - name: Checkout new pages/docs-site branch
         uses: actions/checkout@v2
         with:
