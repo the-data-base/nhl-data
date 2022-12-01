@@ -1,0 +1,74 @@
+name: Publish docs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-docs:
+    name: Generate dbt docs
+    runs-on: ubuntu-latest
+
+    # Set environment variables used throughout workflow
+    env:
+      DBT_PROFILES_DIR: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/.github/sqlfluff
+
+      # SPECIFY database connection credentials as env vars below.
+      # Env var values to be fetched from as GitHub Secrets.
+      # HIGHLY recommended you use a unique set of connection credentials for this workflow alone.
+      PROFILES_YML_BIGQUERY_PROJECT: ${{ secrets.PROFILES_YML_BIGQUERY_PROJECT }}
+      PROFILES_YML_BIGQUERY_CREDENTIALS: ${{ secrets.PROFILES_YML_BIGQUERY_CREDENTIALS }}
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+
+      - name: Delete pages/docs-site branch
+        uses: dawidd6/action-delete-branch@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branches: pages/docs-site
+
+      - name: Create fresh pages/docs-site branch
+        uses: peterjgrainger/action-create-branch@v2.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branch: 'pages/docs-site'
+
+      - name: Checkout new pages/docs-site branch
+        uses: actions/checkout@v2
+        with:
+            ref: pages/docs-site
+
+      - name: Install Python packages
+        # NB: This is referencing the requirements.txt file saved in the ci_cd folder in your project.
+        run: python -m pip install dbt-bigquery~=1.0.0
+
+      - name: Generate database credentials
+        run: |
+          touch ./.secrets/client_secrets.json
+          echo "$PROFILES_YML_BIGQUERY_CREDENTIALS" >> ./.secrets/client_secrets.json
+        shell: bash
+
+      - name: Generate dbt docs
+        run: |
+          dbt debug
+          dbt deps
+          dbt docs generate
+
+      - name: Move docs artifacts
+        run: |
+          mkdir -p docs
+          mv target/manifest.json docs/manifest.json
+          mv target/catalog.json docs/catalog.json
+          mv target/run_results.json docs/run_results.json
+
+      - name: Commit docs artifacts
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Add docs artifacts to generate GH pages"
+          git push
