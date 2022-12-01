@@ -22,9 +22,26 @@ jobs:
       PROFILES_YML_BIGQUERY_CREDENTIALS: ${{ secrets.PROFILES_YML_BIGQUERY_CREDENTIALS }}
 
     steps:
-      - name: Checkout pages deployment branch
+      - name: Checkout branch
         uses: actions/checkout@v3
-          ref: 'pages/docs-site'
+
+      - name: Delete gh-pages branch
+        uses: dawidd6/action-delete-branch@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branches: gh-pages
+
+      - name: Create fresh gh-pages branch
+        uses: peterjgrainger/action-create-branch@v2.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branch: 'gh-pages'
+
+      - name: Checkout new gh-pages branch
+        uses: actions/checkout@v2
+        with:
+            ref: gh-pages
 
       - name: Install Python packages
         # NB: This is referencing the requirements.txt file saved in the ci_cd folder in your project.
