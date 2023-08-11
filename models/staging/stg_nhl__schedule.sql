@@ -11,7 +11,7 @@ deduped as (
 
 select
     /* Primary Key */
-    {{ dbt_utils.surrogate_key(['gamepk', 'season']) }} as stg_nhl__schedule_id
+    distinct {{ dbt_utils.surrogate_key(['gamepk', 'season']) }} as stg_nhl__schedule_id
 
     /* Identifiers */
     , gamepk as game_id

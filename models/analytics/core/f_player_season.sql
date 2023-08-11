@@ -22,8 +22,10 @@ boxscore_stats as (
         , sum(ifnull(bp.blocked, 0)) as blocked
         , sum(ifnull(bp.plus_minus, 0)) as plus_minus
         , sum(ifnull(bp.pim, 0)) as pim
-        , sum(cast(split(bp.time_on_ice, ':')[offset(0)] as int)) as time_on_ice_mins
-        , sum(cast(split(bp.time_on_ice, ':')[offset(1)] as int)) as time_on_ice_seconds
+        , sum(cast(split(bp.time_on_ice, ':')[offset(0)] as int)) as time_on_ice_mins_raw
+        , sum(cast(split(bp.time_on_ice, ':')[offset(1)] as int)) as time_on_ice_seconds_raw
+        , (sum(cast(split(bp.time_on_ice, ':')[offset(0)] as int)) * 60) + sum(cast(split(bp.time_on_ice, ':')[offset(1)] as int)) as time_on_ice_seconds
+        , sum(cast(split(bp.time_on_ice, ':')[offset(0)] as int)) + (sum(cast(split(bp.time_on_ice, ':')[offset(1)] as int)) / 60) as time_on_ice_minutes
         , sum(ifnull(bp.powerplay_goals, 0)) as powerplay_goals
         , sum(ifnull(bp.powerplay_assists, 0)) as powerplay_assists
         , sum(ifnull(bp.short_handed_goals, 0)) as short_handed_goals
@@ -89,6 +91,11 @@ boxscore_stats as (
         , shot_rebound_ind
         , last_shot_seconds
         , last_shot_rebound_ind
+        , xg_fenwick_shot
+        , x_goal
+        , xg_model_id
+        , xg_strength_state_code
+        , xg_proba
     from {{ ref('f_plays') }} as plays
     left join {{ ref('d_schedule') }} as schedule on schedule.game_id = plays.game_id
     left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
@@ -125,7 +132,7 @@ boxscore_stats as (
     where player_role in ('shooter', 'scorer')
 )
 
--- cte#4: on-ice shots stats: shot & goal summaries
+-- cte#4: on-ice shots stats - shot & goal summaries
 , shots_involvement as (
     select
         player.full_name as player_full_name
@@ -155,12 +162,17 @@ boxscore_stats as (
         , case when s.event_type = 'goal' then 1 else 0 end as shots_scored
         , case when s.event_type in ('blocked_shot', 'missed_shot', 'shot', 'goal') then 1 else 0 end as corsi_shot
         , case when s.event_type in ('missed_shot', 'shot', 'goal') then 1 else 0 end as fenwick_shot
+        , xg_fenwick_shot
+        , x_goal
+        , xg_model_id
+        , xg_strength_state_code
+        , xg_proba
     from shots_flat as s
     left join {{ ref('d_players') }} as player on player.player_id = s.shot_player_id
     where lower(primary_position_code) <> 'g'
 )
 
--- cte#5: on-ice shots stats: summarizing individual shots (i) and on-ice shots
+-- cte#5: on-ice shots stats - summarizing individual shots (i) and on-ice shots
 , onice_shots_stats as (
     select
         game_type
@@ -179,7 +191,10 @@ boxscore_stats as (
         -- on-ice shot calculations: goals for (gf), and goals against (ga)
         , sum(case when shot_type = 'shot for' then shots_scored else 0 end) as shots_gf
         , sum(case when shot_type = 'shot against' then shots_scored else 0 end) as shots_ga
-        -- individual (i) shot calculations: shots-on-goal, fenwick-for, & corsi-for
+        -- on-ice xg shot calculations: probability of a fenwick shot being a goal
+        , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot for'  then shots_scored else 0 end) as shots_xgf
+        , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot against' then shots_scored else 0 end) as shots_xga
+        -- individual (i) shot calculations: shots-on-goal, fenwick-for, corsi-for & expected goals (xg)
         , sum(case when shooter_description = 'shooter' then shots_ongoal else 0 end) as shots_isog
         , sum(case when shooter_description = 'shooter' then fenwick_shot else 0 end) as shots_iff
         , sum(case when shooter_description = 'shooter' then corsi_shot else 0 end) as shots_icf
@@ -187,6 +202,35 @@ boxscore_stats as (
         , sum(case when shooter_description = 'shooter' then shots_missed else 0 end) as shots_imissed
         , sum(case when shooter_description = 'shooter' then shots_saved else 0 end) as shots_isaved
         , sum(case when shooter_description = 'shooter' then shots_scored else 0 end) as shots_iscored
+        , sum(case when xg_fenwick_shot = 1 and shooter_description = 'shooter' then xg_proba else 0 end) as shots_ixg
+        -- individual shot calculations: (for shots on net) broken down by strength state, & shot results (cannot use corsi or blocked as xg_strength_state_code excludes blocked shots (fenwick only))
+        ----- even-strength (ev)
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shooter_description = 'shooter' then shots_ongoal else 0 end) as shots_ev_isog
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shooter_description = 'shooter' then fenwick_shot else 0 end) as shots_ev_iff
+        --, sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shooter_description = 'shooter' then corsi_shot else 0 end) as shots_ev_icf
+        --, sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shooter_description = 'shooter' then shots_blocked else 0 end) as shots_ev_iblocked
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shooter_description = 'shooter' then shots_missed else 0 end) as shots_ev_imissed
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shooter_description = 'shooter' then shots_saved else 0 end) as shots_ev_isaved
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shooter_description = 'shooter' then shots_scored else 0 end) as shots_ev_iscored
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_ev_ixg
+        ----- power-play (pp)
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shooter_description = 'shooter' then shots_ongoal else 0 end) as shots_pp_isog
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shooter_description = 'shooter' then fenwick_shot else 0 end) as shots_pp_iff
+        --, sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shooter_description = 'shooter' then corsi_shot else 0 end) as shots_pp_icf
+        --, sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shooter_description = 'shooter' then shots_blocked else 0 end) as shots_pp_iblocked
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shooter_description = 'shooter' then shots_missed else 0 end) as shots_pp_imissed
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shooter_description = 'shooter' then shots_saved else 0 end) as shots_pp_isaved
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shooter_description = 'shooter' then shots_scored else 0 end) as shots_pp_iscored
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_pp_ixg
+        ----- short-handed (sh)
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shooter_description = 'shooter' then shots_ongoal else 0 end) as shots_sh_isog
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shooter_description = 'shooter' then fenwick_shot else 0 end) as shots_sh_iff
+        --, sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shooter_description = 'shooter' then corsi_shot else 0 end) as shots_sh_icf
+        --, sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shooter_description = 'shooter' then shots_blocked else 0 end) as shots_sh_iblocked
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shooter_description = 'shooter' then shots_missed else 0 end) as shots_sh_imissed
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shooter_description = 'shooter' then shots_saved else 0 end) as shots_sh_isaved
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shooter_description = 'shooter' then shots_scored else 0 end) as shots_sh_iscored
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_sh_ixg
         -- individual shot calculations: (for shots on net) broken down by shot type, & shot results
         ----- all individual shot types (corsi)
         , sum(case when event_secondary_type = 'backhand' and shooter_description = 'shooter' then corsi_shot else 0 end) as shots_backhand_all
@@ -215,6 +259,15 @@ boxscore_stats as (
         , sum(case when event_secondary_type = 'wrap-around' and shooter_description = 'shooter' then shots_scored else 0 end) as shots_wraparound_goal
         , sum(case when event_secondary_type = 'wrist shot' and shooter_description = 'shooter' then shots_scored else 0 end) as shots_wristshot_goal
         , sum(case when shots_rebound = 1 and shooter_description = 'shooter' then shots_scored else 0 end) as shots_rebound_goal
+        ----- xg (expected goals by shot type)
+        , sum(case when xg_fenwick_shot = 1 and event_secondary_type = 'backhand' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_backhand_xg
+        , sum(case when xg_fenwick_shot = 1 and event_secondary_type = 'deflected' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_deflected_xg
+        , sum(case when xg_fenwick_shot = 1 and event_secondary_type = 'slap shot' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_slapshot_xg
+        , sum(case when xg_fenwick_shot = 1 and event_secondary_type = 'snap shot' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_snapshot_xg
+        , sum(case when xg_fenwick_shot = 1 and event_secondary_type = 'tip-in' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_tipin_xg
+        , sum(case when xg_fenwick_shot = 1 and event_secondary_type = 'wrap-around' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_wraparound_xg
+        , sum(case when xg_fenwick_shot = 1 and event_secondary_type = 'wrist shot' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_wristshot_xg
+        , sum(case when xg_fenwick_shot = 1 and shots_rebound = 1 and shooter_description = 'shooter' then xg_proba else 0 end) as shots_rebound_xg
     from shots_involvement
     group by 1, 2, 3, 4
 )
@@ -258,12 +311,14 @@ select
     , boxscore_stats.player_full_name
     /* on-ice player stats */
     -- time on ice
-    , (boxscore_stats.time_on_ice_mins * 60) + (boxscore_stats.time_on_ice_seconds) as time_on_ice_seconds
-    , round((boxscore_stats.time_on_ice_mins) + (boxscore_stats.time_on_ice_seconds / 60), 2) as time_on_ice_minutes
-    , round(((boxscore_stats.time_on_ice_mins) + (boxscore_stats.time_on_ice_seconds / 60)) / boxscore_stats.boxscore_games, 2) as avg_time_on_ice_mins
+    -- time on ice
+    --, (boxscore_stats.time_on_ice_mins_raw * 60) + (boxscore_stats.time_on_ice_seconds_raw) as time_on_ice_seconds
+    --, round((boxscore_stats.time_on_ice_mins_raw) + (boxscore_stats.time_on_ice_seconds_raw / 60), 2) as time_on_ice_minutes
+    , boxscore_stats.time_on_ice_seconds
+    , round(boxscore_stats.time_on_ice_minutes, 2) as time_on_ice_minutes
+    , round(time_on_ice_minutes / boxscore_stats.boxscore_games, 2) as avg_time_on_ice_mins
     -- goal-scoring skater events (goals, assists, points)
     , boxscore_stats.goals
-    , (boxscore_stats.goals / boxscore_stats.boxscore_games) as goals_pergame
     , ogs.goals_gamewinning
     , ogs.goals_chasegoal
     , ogs.goals_gametying
@@ -273,7 +328,16 @@ select
     , ogs.assists_primary
     , ogs.assists_secondary
     , boxscore_stats.goals + boxscore_stats.assists as points
-    , ((boxscore_stats.goals + boxscore_stats.assists) / boxscore_stats.boxscore_games) as points_pergame
+    , case when boxscore_stats.boxscore_games > 0 then round(boxscore_stats.goals / boxscore_stats.boxscore_games, 4) end as goals_pergame
+    , case when boxscore_stats.boxscore_games > 0 then round(boxscore_stats.assists / boxscore_stats.boxscore_games, 4) end as assists_pergame
+    , case when boxscore_stats.boxscore_games > 0 then round(ogs.assists_primary / boxscore_stats.boxscore_games, 4) end as assists_primary_pergame
+    , case when boxscore_stats.boxscore_games > 0 then round(ogs.assists_secondary / boxscore_stats.boxscore_games, 4) end as assists_secondary_pergame
+    , case when boxscore_stats.boxscore_games > 0 then round((boxscore_stats.goals + boxscore_stats.assists) / boxscore_stats.boxscore_games, 4) end as points_pergame
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(boxscore_stats.goals / (time_on_ice_minutes / 60), 4) end as goals_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(boxscore_stats.assists / (time_on_ice_minutes / 60), 4) end as assists_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(ogs.assists_primary / (time_on_ice_minutes / 60), 4) end as asissts_primary_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(ogs.assists_secondary / (time_on_ice_minutes / 60), 4) end as assists_secondary_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round((boxscore_stats.goals + boxscore_stats.assists) / (time_on_ice_minutes / 60), 4) end as points_per60
     -- on-ice shot calculations: fenwick, corsi, shots-on-goal (goals + saves), & goals
     , oss.shots_ff
     , oss.shots_fa
@@ -283,6 +347,8 @@ select
     , oss.shots_sa
     , oss.shots_gf
     , oss.shots_ga
+    , oss.shots_xgf
+    , oss.shots_xga
     -- individual (i) shot calculations: shots-on-goal, fenwick-for, & corsi-for
     , oss.shots_isog
     , oss.shots_iff
@@ -291,6 +357,49 @@ select
     , oss.shots_imissed
     , oss.shots_isaved
     , oss.shots_iscored
+    , oss.shots_ixg
+  -- per-60-on-ice shot calculations: fenwick, corsi, shots-on-goal (goals + saves), & goals
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ff / (time_on_ice_minutes / 60), 4) end as shots_ff_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_fa / (time_on_ice_minutes / 60), 4) end as shots_fa_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_cf / (time_on_ice_minutes / 60), 4) end as shots_cf_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ca / (time_on_ice_minutes / 60), 4) end as shots_ca_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_sf / (time_on_ice_minutes / 60), 4) end as shots_sf_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_sa / (time_on_ice_minutes / 60), 4) end as shots_sa_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_gf / (time_on_ice_minutes / 60), 4) end as shots_gf_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ga / (time_on_ice_minutes / 60), 4) end as shots_ga_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_xgf / (time_on_ice_minutes / 60), 4) end as shots_xgf_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_xga / (time_on_ice_minutes / 60), 4) end as shots_xga_per60
+    -- per-60-individual (i) shot calculations: shots-on-goal, fenwick-for, & corsi-for
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_isog / (time_on_ice_minutes / 60), 4) end as shots_isog_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_iff / (time_on_ice_minutes / 60), 4) end as shots_iff_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_icf / (time_on_ice_minutes / 60), 4) end as shots_icf_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_iblocked / (time_on_ice_minutes / 60), 4) end as shots_iblocked_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_imissed / (time_on_ice_minutes / 60), 4) end as shots_imissed_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_isaved / (time_on_ice_minutes / 60), 4) end as shots_isaved_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_iscored / (time_on_ice_minutes / 60), 4) end as shots_iscored_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ixg / (time_on_ice_minutes / 60), 4) end as shots_ixg_per60
+    -- individual shot calculations: (for shots on net) broken down by strength state
+    ----- even-strength (ev)
+    ,shots_ev_isog
+    ,shots_ev_iff
+    ,shots_ev_imissed
+    ,shots_ev_isaved
+    ,shots_ev_iscored
+    ,shots_ev_ixg
+    ----- power-play (pp)
+    ,shots_pp_isog
+    ,shots_pp_iff
+    ,shots_pp_imissed
+    ,shots_pp_isaved
+    ,shots_pp_iscored
+    ,shots_pp_ixg
+    ----- power-play (pp)
+    ,shots_sh_isog
+    ,shots_sh_iff
+    ,shots_sh_imissed
+    ,shots_sh_isaved
+    ,shots_sh_iscored
+    ,shots_sh_ixg
     -- individual shot calculations: (for shots on net) broken down by shot type, & shot results ... exclude rebounds from agg. calculations
     ----- all individual shot types (corsi)
     , oss.shots_backhand_all
@@ -319,11 +428,21 @@ select
     , oss.shots_wraparound_goal
     , oss.shots_wristshot_goal
     , oss.shots_rebound_goal
+    ----- shot-xg (sum of expected goals)
+    , oss.shots_backhand_xg
+    , oss.shots_deflected_xg
+    , oss.shots_slapshot_xg
+    , oss.shots_snapshot_xg
+    , oss.shots_tipin_xg
+    , oss.shots_wraparound_xg
+    , oss.shots_wristshot_xg
+    , oss.shots_rebound_xg
     ---- on-ice pcnt (%) shooting
     , case when (oss.shots_ff + oss.shots_fa) < 1 then 0 else round(100 * (oss.shots_ff / (oss.shots_ff + oss.shots_fa)), 2) end as pcnt_ff
     , case when (oss.shots_cf + oss.shots_ca) < 1 then 0 else round(100 * (oss.shots_cf / (oss.shots_cf + oss.shots_ca)), 2) end as pcnt_cf
     , case when (oss.shots_sf + oss.shots_sa) < 1 then 0 else round(100 * (oss.shots_sf / (oss.shots_sf + oss.shots_sa)), 2) end as pcnt_sf
     , case when (oss.shots_gf + oss.shots_ga) < 1 then 0 else round(100 * (oss.shots_gf / (oss.shots_gf + oss.shots_ga)), 2) end as pcnt_gf
+    , case when (oss.shots_xgf + oss.shots_xga) < 1 then 0 else round(100 * (oss.shots_xgf / (oss.shots_xgf + oss.shots_xga)), 2) end as pcnt_xgf -- this work?
     ---- individual (i) on-ice pcnt (%) shooting
     ---- #todo filter to a specific number of shots to be in consideration
     , case when (oss.shots_icf) < 1 then 0 else round(100 * (boxscore_stats.goals / oss.shots_icf), 2) end as pcnt_shooting_all

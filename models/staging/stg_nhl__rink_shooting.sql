@@ -26,6 +26,7 @@ with p1p3_plays_shots_home as (
         and lower(plays.event_type) in ('goal', 'missed_shot', 'shot')
         and lower(plays.player_role_team) = 'home'
         and lower(plays.player_role) in ('shooter', 'scorer')
+        and schedule.home_team_id = plays.team_id
     order by
         plays.game_id desc
 )
