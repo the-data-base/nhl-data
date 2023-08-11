@@ -192,7 +192,7 @@ boxscore_stats as (
         , sum(case when shot_type = 'shot for' then shots_scored else 0 end) as shots_gf
         , sum(case when shot_type = 'shot against' then shots_scored else 0 end) as shots_ga
         -- on-ice xg shot calculations: probability of a fenwick shot being a goal
-        , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot for'  then shots_scored else 0 end) as shots_xgf
+        , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot for' then shots_scored else 0 end) as shots_xgf
         , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot against' then shots_scored else 0 end) as shots_xga
         -- individual (i) shot calculations: shots-on-goal, fenwick-for, corsi-for & expected goals (xg)
         , sum(case when shooter_description = 'shooter' then shots_ongoal else 0 end) as shots_isog
@@ -358,7 +358,7 @@ select
     , oss.shots_isaved
     , oss.shots_iscored
     , oss.shots_ixg
-  -- per-60-on-ice shot calculations: fenwick, corsi, shots-on-goal (goals + saves), & goals
+    -- per-60-on-ice shot calculations: fenwick, corsi, shots-on-goal (goals + saves), & goals
     , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ff / (time_on_ice_minutes / 60), 4) end as shots_ff_per60
     , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_fa / (time_on_ice_minutes / 60), 4) end as shots_fa_per60
     , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_cf / (time_on_ice_minutes / 60), 4) end as shots_cf_per60
@@ -380,26 +380,26 @@ select
     , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ixg / (time_on_ice_minutes / 60), 4) end as shots_ixg_per60
     -- individual shot calculations: (for shots on net) broken down by strength state
     ----- even-strength (ev)
-    ,shots_ev_isog
-    ,shots_ev_iff
-    ,shots_ev_imissed
-    ,shots_ev_isaved
-    ,shots_ev_iscored
-    ,shots_ev_ixg
+    , shots_ev_isog
+    , shots_ev_iff
+    , shots_ev_imissed
+    , shots_ev_isaved
+    , shots_ev_iscored
+    , shots_ev_ixg
     ----- power-play (pp)
-    ,shots_pp_isog
-    ,shots_pp_iff
-    ,shots_pp_imissed
-    ,shots_pp_isaved
-    ,shots_pp_iscored
-    ,shots_pp_ixg
+    , shots_pp_isog
+    , shots_pp_iff
+    , shots_pp_imissed
+    , shots_pp_isaved
+    , shots_pp_iscored
+    , shots_pp_ixg
     ----- power-play (pp)
-    ,shots_sh_isog
-    ,shots_sh_iff
-    ,shots_sh_imissed
-    ,shots_sh_isaved
-    ,shots_sh_iscored
-    ,shots_sh_ixg
+    , shots_sh_isog
+    , shots_sh_iff
+    , shots_sh_imissed
+    , shots_sh_isaved
+    , shots_sh_iscored
+    , shots_sh_ixg
     -- individual shot calculations: (for shots on net) broken down by shot type, & shot results ... exclude rebounds from agg. calculations
     ----- all individual shot types (corsi)
     , oss.shots_backhand_all
