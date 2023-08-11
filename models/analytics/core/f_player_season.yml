@@ -106,10 +106,8 @@ models:
       - name: goals_per60
         description: The number of goals scored in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
 
-
       - name: assists_per60
         description: The number of assists in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
-
 
       - name: assists_primary_per60
         description: The number of primary assists in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
@@ -117,10 +115,8 @@ models:
       - name: assists_secondary_per60
         description: The number of assists in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
 
-
       - name: points_per60
         description: The number of assists in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
-
 
       - name: shots_ff
         description: Fenwick shots for while on the ice (goals, saved shots, missed shots)
