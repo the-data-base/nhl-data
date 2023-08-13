@@ -44,7 +44,8 @@ boxscore_stats as (
     left join {{ ref('d_players') }} as player on player.player_id = bp.player_id
     left join {{ ref('f_games_scratches') }} as scratches on scratches.player_id = bp.player_id and scratches.game_id = bp.game_id
 
-    where 1 = 1
+    where
+        1 = 1
         -- keep only regular season and playoff games
         and schedule.game_type in ('02', '03')
         -- remove scratches (fyi... should be the same same as `and bp.time_on_ice is not null`)
@@ -101,14 +102,14 @@ boxscore_stats as (
     left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
     left join {{ ref('d_teams') }} as team on team.team_id = plays.team_id
     where 1 = 1
-        -- remove shootout plays
-        and lower(plays.play_period_type) <> 'shootout'
-        -- keep only regular season and playoff games
-        and schedule.game_type in ('02', '03')
-        -- keep roles involving the shooter, scorer or assister
-        and lower(plays.player_role) in ('shooter', 'scorer', 'assist')
-        -- keep blocked shots, missed shots, shots on target and goals
-        and lower(plays.event_type) in ('blocked_shot', 'missed_shot', 'shot', 'goal')
+    -- remove shootout plays
+    and lower(plays.play_period_type) != 'shootout'
+    -- keep only regular season and playoff games
+    and schedule.game_type in ('02', '03')
+    -- keep roles involving the shooter, scorer or assister
+    and lower(plays.player_role) in ('shooter', 'scorer', 'assist')
+    -- keep blocked shots, missed shots, shots on target and goals
+    and lower(plays.event_type) in ('blocked_shot', 'missed_shot', 'shot', 'goal')
 )
 
 -- cte#3: flatten all shot events on both arrays (home_skaters & away_skaters) so that we can get corsi & fenwick features
@@ -169,7 +170,7 @@ boxscore_stats as (
         , xg_proba
     from shots_flat as s
     left join {{ ref('d_players') }} as player on player.player_id = s.shot_player_id
-    where lower(primary_position_code) <> 'g'
+    where lower(primary_position_code) != 'g'
 )
 
 -- cte#5: on-ice shots stats - summarizing individual shots (i) and on-ice shots
@@ -482,11 +483,13 @@ select
 --,boxscore_stats.losses
 from boxscore_stats
 left join onice_shots_stats as oss
-    on boxscore_stats.player_id = oss.shot_player_id
+    on
+        boxscore_stats.player_id = oss.shot_player_id
         and boxscore_stats.season_id = oss.season_id
         and boxscore_stats.game_type = oss.game_type
 left join onice_goals_stats as ogs
-    on boxscore_stats.player_id = ogs.player_id
+    on
+        boxscore_stats.player_id = ogs.player_id
         and boxscore_stats.season_id = ogs.season_id
         and boxscore_stats.game_type = ogs.game_type
 order by
