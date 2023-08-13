@@ -20,10 +20,10 @@ rules = AL01,AL02,AL03,AL04,AL05,AM01,AM02,AM03,AM05,AM06,CP01,CP02,CP03,CP04,CP
 # CP03 Inconsistent capitalisation of function names.
 # CP04 Inconsistent capitalisation of boolean/null literal.
 # CP05 Inconsistent capitalisation of datatypes.
-# CV01 Use != instead of <> for “not equal to” comparisons.
+# CV01 Use != instead of <> for "not equal to" comparisons.
 # CV02 Use COALESCE instead of IFNULL or NVL.
 # CV03 Trailing commas within select clause.
-# CV05 Comparisons with NULL should use “IS” or “IS NOT".
+# CV05 Comparisons with NULL should use "IS" or "IS NOT".
 # CV07 Top-level statements should not be wrapped in brackets.
 # CV08 Use LEFT JOIN instead of RIGHT JOIN.
 # JJ01 Jinja tags should have a single whitespace on either side.
