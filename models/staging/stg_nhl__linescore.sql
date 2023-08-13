@@ -1,7 +1,7 @@
 with
 live_linescore as (
     select * from {{ source('meltano', 'live_linescore') }}
-    qualify row_number() over(
+    qualify row_number() over (
         partition by
             gameid
     ) = 1
@@ -9,7 +9,7 @@ live_linescore as (
 
 , final as (
     select
-        /* Primary Key */
+    /* Primary Key */
         {{ dbt_utils.surrogate_key(['gameid']) }} as stg_nhl__linescore_id
 
         /* Identifiers */

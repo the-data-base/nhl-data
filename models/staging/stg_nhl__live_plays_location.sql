@@ -64,7 +64,7 @@ select
     -- Rink angle from goal (shooting)... angle = tan^-1( (y2-y1) / (x2-x1) )... where y1 = 0 and x1 = 89
     , case
         when adj_play_x_coordinate = 89 then 0
-        else round(atan( ((adj_play_y_coordinate) / (89 - adj_play_x_coordinate)) ) * (180 / (acos(-1))), 2)
+        else round(atan(((adj_play_y_coordinate) / (89 - adj_play_x_coordinate))) * (180 / (acos(-1))), 2)
     end as play_angle
     -- Rink zones
     , case

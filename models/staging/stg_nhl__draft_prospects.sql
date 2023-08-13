@@ -2,7 +2,7 @@ with
 
 deduped as (
     select * from {{ source('meltano', 'draft_prospects') }}
-    qualify row_number() over(
+    qualify row_number() over (
         partition by
             id
             , nhlplayerid

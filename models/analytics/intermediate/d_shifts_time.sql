@@ -2,7 +2,7 @@ with
 
 game_seconds as (
     -- generates a series of 10800 seconds
-    select -1 + row_number() over() as seconds
+    select -1 + row_number() over () as seconds
     from unnest((select split(format("%10800s", ""), '') as h from (select null))) as pos -- noqa: disable=L036,L042
     order by seconds -- noqa: enable=L036,L042
 )
@@ -40,11 +40,11 @@ game_seconds as (
         , gs.seconds as game_time_seconds
         , (gs.seconds - shifts.start_seconds_elapsed) as shift_time_seconds
         , players.primary_position_abbreviation
-        , case when gs.seconds = shifts.start_seconds_elapsed then true else false end as is_shift_start
-        , case when gs.seconds = shifts.end_seconds_elapsed then true else false end as is_shift_end
-        , case when gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is true then true else false end as is_shift_start_period_start
-        , case when gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is false then true else false end as is_shift_start_not_period_start
-        , case when gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_end is true then true else false end as is_shift_end_period_end
+        , coalesce(gs.seconds = shifts.start_seconds_elapsed, false) as is_shift_start
+        , coalesce(gs.seconds = shifts.end_seconds_elapsed, false) as is_shift_end
+        , coalesce(gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is true, false) as is_shift_start_period_start
+        , coalesce(gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is false, false) as is_shift_start_not_period_start
+        , coalesce(gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_end is true, false) as is_shift_end_period_end
 
     from {{ ref('d_shifts') }} as shifts
     inner join game_seconds as gs on gs.seconds between shifts.start_seconds_elapsed and shifts.end_seconds_elapsed
@@ -150,7 +150,8 @@ select
     , soi.away_forward_on_ice
 from player_shift_seconds as sbs
 left join game_second_skaters_on_ice as soi
-    on sbs.game_id = soi.game_id
+    on
+        sbs.game_id = soi.game_id
         and sbs.game_time_seconds = soi.game_time_seconds
         and sbs.period = soi.period
 left join dedup_game_time_seconds as d on sbs.shift_id = d.remove_shift_id

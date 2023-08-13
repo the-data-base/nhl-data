@@ -68,4 +68,3 @@ select
 from
     {{ ref('stg_nhl__schedule') }} as schedule
 left join {{ ref('stg_nhl__rink_shooting') }} as rs on rs.game_id = schedule.game_id
-

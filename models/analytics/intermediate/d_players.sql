@@ -36,4 +36,3 @@ select
     , extracted_at
     , loaded_at
 from deduplicated
-

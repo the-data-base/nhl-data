@@ -2,7 +2,8 @@
 dialect = bigquery
 templater = jinja
 ignore = parsing,templating
-rules = AL01,AL02,AL03,AL04,AL05,AM01,AM02,AM03,AM05,AM06,CP01,CP02,CP03,CP04,CP05,CV01,CV02,CV03,CV05,CV07,CV08,JJ01,LT01,LT02,LT03,LT04,LT06,LT07,LT08,LT09,LT10,LT11,LT12,LT13,RF01,RF02,RF03,ST01,ST02,ST03
+rules = AL01,AL02,AL03,AL04,AL05,AM01,AM02,AM03,AM05,CP01,CP02,CP03,CP04,CP05,CV01,CV03,CV05,CV07,CV08,JJ01,LT01,LT02,LT03,LT04,LT06,LT07,LT08,LT09,LT10,LT11,LT12,LT13,RF01,RF02,RF03,ST01,ST02,ST03
+large_file_skip_byte_limit = 0
 
 # Rules reference: https://docs.sqlfluff.com/en/stable/rules.html#rules-reference
 # AL01 Implicit/explicit aliasing of table.
@@ -14,14 +15,12 @@ rules = AL01,AL02,AL03,AL04,AL05,AM01,AM02,AM03,AM05,AM06,CP01,CP02,CP03,CP04,CP
 # AM02 UNION [DISTINCT|ALL] is preferred over just UNION.
 # AM03 Ambiguous ordering directions for columns in order by clause.
 # AM05 Join clauses should be fully qualified.
-# AM06 Inconsistent column references in GROUP BY/ORDER BY clauses.
 # CP01 Inconsistent capitalisation of keywords.
 # CP02 Inconsistent capitalisation of unquoted identifiers.
 # CP03 Inconsistent capitalisation of function names.
 # CP04 Inconsistent capitalisation of boolean/null literal.
 # CP05 Inconsistent capitalisation of datatypes.
 # CV01 Use != instead of <> for "not equal to" comparisons.
-# CV02 Use COALESCE instead of IFNULL or NVL.
 # CV03 Trailing commas within select clause.
 # CV05 Comparisons with NULL should use "IS" or "IS NOT".
 # CV07 Top-level statements should not be wrapped in brackets.
@@ -46,8 +45,8 @@ rules = AL01,AL02,AL03,AL04,AL05,AM01,AM02,AM03,AM05,AM06,CP01,CP02,CP03,CP04,CP
 # ST02 Unnecessary CASE statement.
 # ST03 Query defines a CTE (common-table expression) but does not use it.
 
-[sqlfluff:rules]
-comma_style = leading
+[sqlfluff:layout:type:comma]
+line_position = leading
 
 [sqlfluff:rules:layout.indent]
 indent_unit = space
