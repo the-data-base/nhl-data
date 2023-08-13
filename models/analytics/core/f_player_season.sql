@@ -74,9 +74,9 @@ boxscore_stats as (
         , team.team_id
         , team.team_name
         , schedule.game_type
-        , last_goal_game_winning
-        , player_primary_assist
-        , player_secondary_assist
+        , plays.last_goal_game_winning
+        , plays.player_primary_assist
+        , plays.player_secondary_assist
         , lower(schedule.game_type_description) as game_type_description
         , lower(plays.event_description) as event_description
         , lower(plays.event_type) as event_type
@@ -84,19 +84,19 @@ boxscore_stats as (
         , lower(plays.player_role_team) as player_role_team
         , lower(plays.player_role) as player_role
         , lower(plays.play_period_type) as play_period_type
-        , lower(home_result_of_play) as home_result_of_play
-        , lower(away_result_of_play) as away_result_of_play
-        , home_skaters
-        , away_skaters
-        , seconds_since_last_shot
-        , shot_rebound_ind
-        , last_shot_seconds
-        , last_shot_rebound_ind
-        , xg_fenwick_shot
-        , x_goal
-        , xg_model_id
-        , xg_strength_state_code
-        , xg_proba
+        , lower(plays.home_result_of_play) as home_result_of_play
+        , lower(plays.away_result_of_play) as away_result_of_play
+        , plays.home_skaters
+        , plays.away_skaters
+        , plays.seconds_since_last_shot
+        , plays.shot_rebound_ind
+        , plays.last_shot_seconds
+        , plays.last_shot_rebound_ind
+        , plays.xg_fenwick_shot
+        , plays.x_goal
+        , plays.xg_model_id
+        , plays.xg_strength_state_code
+        , plays.xg_proba
     from {{ ref('f_plays') }} as plays
     left join {{ ref('d_schedule') }} as schedule on schedule.game_id = plays.game_id
     left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
@@ -116,45 +116,45 @@ boxscore_stats as (
 , shots_flat as (
     select
         *
-        , player_role_team as shooting_team
-        , player_id as shooter_player_id
+        , home_sga.player_role_team as shooting_team
+        , home_sga.player_id as shooter_player_id
         , 'home' as skater_type
-    from shots_goals_assists
-    , unnest(home_skaters) as shot_player_id
-    where player_role in ('shooter', 'scorer')
+    from shots_goals_assists as home_sga
+    , unnest(home_sga.home_skaters) as shot_player_id
+    where home_sga.player_role in ('shooter', 'scorer')
     union all
     select
         *
-        , player_role_team as shooting_team
-        , player_id as shooter_player_id
+        , away_sga.player_role_team as shooting_team
+        , away_sga.player_id as shooter_player_id
         , 'away' as skater_type
-    from shots_goals_assists
-    , unnest(away_skaters) as shot_player_id
-    where player_role in ('shooter', 'scorer')
+    from shots_goals_assists as away_sga
+    , unnest(away_sga.away_skaters) as shot_player_id
+    where away_sga.player_role in ('shooter', 'scorer')
 )
 
 -- cte#4: on-ice shots stats - shot & goal summaries
 , shots_involvement as (
     select
         player.full_name as player_full_name
-        , shot_player_id
-        , game_id
-        , game_type
-        , season_id
+        , s.shot_player_id
+        , s.game_id
+        , s.game_type
+        , s.season_id
         -- shot descriptors
-        , case when shooting_team = skater_type then 'shot for' else 'shot against' end as shot_type
+        , case when s.shooting_team = s.skater_type then 'shot for' else 'shot against' end as shot_type
         , case
-            when shooter_player_id = shot_player_id then 'shooter'
-            when shooting_team = skater_type then 'shooter teammate'
-            when shooting_team <> skater_type then 'shooter opponent'
+            when s.shooter_player_id = s.shot_player_id then 'shooter'
+            when s.shooting_team = s.skater_type then 'shooter teammate'
+            when s.shooting_team != s.skater_type then 'shooter opponent'
         end as shooter_description
-        , shooting_team
-        , shooter_player_id
-        , skater_type
-        , event_type
-        , event_secondary_type
-        , shot_rebound_ind as shots_rebound
-        , last_shot_rebound_ind as last_shot_rebound
+        , s.shooting_team
+        , s.shooter_player_id
+        , s.skater_type
+        , s.event_type
+        , s.event_secondary_type
+        , s.shot_rebound_ind as shots_rebound
+        , s.last_shot_rebound_ind as last_shot_rebound
         -- shot calculations
         , case when s.event_type in ('goal', 'shot') then 1 else 0 end as shots_ongoal
         , case when s.event_type = 'blocked_shot' then 1 else 0 end as shots_blocked
@@ -163,14 +163,14 @@ boxscore_stats as (
         , case when s.event_type = 'goal' then 1 else 0 end as shots_scored
         , case when s.event_type in ('blocked_shot', 'missed_shot', 'shot', 'goal') then 1 else 0 end as corsi_shot
         , case when s.event_type in ('missed_shot', 'shot', 'goal') then 1 else 0 end as fenwick_shot
-        , xg_fenwick_shot
-        , x_goal
-        , xg_model_id
-        , xg_strength_state_code
-        , xg_proba
+        , s.xg_fenwick_shot
+        , s.x_goal
+        , s.xg_model_id
+        , s.xg_strength_state_code
+        , s.xg_proba
     from shots_flat as s
     left join {{ ref('d_players') }} as player on player.player_id = s.shot_player_id
-    where lower(primary_position_code) != 'g'
+    where lower(player.primary_position_code) != 'g'
 )
 
 -- cte#5: on-ice shots stats - summarizing individual shots (i) and on-ice shots
@@ -270,7 +270,11 @@ boxscore_stats as (
         , sum(case when xg_fenwick_shot = 1 and event_secondary_type = 'wrist shot' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_wristshot_xg
         , sum(case when xg_fenwick_shot = 1 and shots_rebound = 1 and shooter_description = 'shooter' then xg_proba else 0 end) as shots_rebound_xg
     from shots_involvement
-    group by 1, 2, 3, 4
+    group by
+        game_type
+        , season_id
+        , shot_player_id
+        , player_full_name
 )
 
 -- cte#6: on-ice goal stats: goal & assist summaries
@@ -290,7 +294,10 @@ boxscore_stats as (
         , sum(case when sga.player_primary_assist = true and sga.player_role = 'assist' and sga.event_type = 'goal' then 1 else 0 end) as assists_primary
         , sum(case when sga.player_secondary_assist = true and sga.player_role = 'assist' and sga.event_type = 'goal' then 1 else 0 end) as assists_secondary
     from shots_goals_assists as sga
-    group by 1, 2, 3
+    group by
+        sga.player_id
+        , sga.season_id
+        , sga.game_type
 --order by sum(case when sga.event_type = 'goal' and sga.player_role = 'scorer' then 1 else 0 end) desc
 )
 
@@ -317,7 +324,7 @@ select
     --, round((boxscore_stats.time_on_ice_mins_raw) + (boxscore_stats.time_on_ice_seconds_raw / 60), 2) as time_on_ice_minutes
     , boxscore_stats.time_on_ice_seconds
     , round(boxscore_stats.time_on_ice_minutes, 2) as time_on_ice_minutes
-    , round(time_on_ice_minutes / boxscore_stats.boxscore_games, 2) as avg_time_on_ice_mins
+    , round(boxscore_stats.time_on_ice_minutes / boxscore_stats.boxscore_games, 2) as avg_time_on_ice_mins
     -- goal-scoring skater events (goals, assists, points)
     , boxscore_stats.goals
     , ogs.goals_gamewinning
@@ -334,11 +341,11 @@ select
     , case when boxscore_stats.boxscore_games > 0 then round(ogs.assists_primary / boxscore_stats.boxscore_games, 4) end as assists_primary_pergame
     , case when boxscore_stats.boxscore_games > 0 then round(ogs.assists_secondary / boxscore_stats.boxscore_games, 4) end as assists_secondary_pergame
     , case when boxscore_stats.boxscore_games > 0 then round((boxscore_stats.goals + boxscore_stats.assists) / boxscore_stats.boxscore_games, 4) end as points_pergame
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(boxscore_stats.goals / (time_on_ice_minutes / 60), 4) end as goals_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(boxscore_stats.assists / (time_on_ice_minutes / 60), 4) end as assists_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(ogs.assists_primary / (time_on_ice_minutes / 60), 4) end as asissts_primary_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(ogs.assists_secondary / (time_on_ice_minutes / 60), 4) end as assists_secondary_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round((boxscore_stats.goals + boxscore_stats.assists) / (time_on_ice_minutes / 60), 4) end as points_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(boxscore_stats.goals / (boxscore_stats.time_on_ice_minutes / 60), 4) end as goals_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(boxscore_stats.assists / (boxscore_stats.time_on_ice_minutes / 60), 4) end as assists_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(ogs.assists_primary / (boxscore_stats.time_on_ice_minutes / 60), 4) end as asissts_primary_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(ogs.assists_secondary / (boxscore_stats.time_on_ice_minutes / 60), 4) end as assists_secondary_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round((boxscore_stats.goals + boxscore_stats.assists) / (boxscore_stats.time_on_ice_minutes / 60), 4) end as points_per60
     -- on-ice shot calculations: fenwick, corsi, shots-on-goal (goals + saves), & goals
     , oss.shots_ff
     , oss.shots_fa
@@ -360,47 +367,47 @@ select
     , oss.shots_iscored
     , oss.shots_ixg
     -- per-60-on-ice shot calculations: fenwick, corsi, shots-on-goal (goals + saves), & goals
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ff / (time_on_ice_minutes / 60), 4) end as shots_ff_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_fa / (time_on_ice_minutes / 60), 4) end as shots_fa_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_cf / (time_on_ice_minutes / 60), 4) end as shots_cf_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ca / (time_on_ice_minutes / 60), 4) end as shots_ca_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_sf / (time_on_ice_minutes / 60), 4) end as shots_sf_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_sa / (time_on_ice_minutes / 60), 4) end as shots_sa_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_gf / (time_on_ice_minutes / 60), 4) end as shots_gf_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ga / (time_on_ice_minutes / 60), 4) end as shots_ga_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_xgf / (time_on_ice_minutes / 60), 4) end as shots_xgf_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_xga / (time_on_ice_minutes / 60), 4) end as shots_xga_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ff / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_ff_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_fa / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_fa_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_cf / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_cf_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ca / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_ca_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_sf / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_sf_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_sa / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_sa_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_gf / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_gf_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ga / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_ga_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_xgf / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_xgf_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_xga / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_xga_per60
     -- per-60-individual (i) shot calculations: shots-on-goal, fenwick-for, & corsi-for
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_isog / (time_on_ice_minutes / 60), 4) end as shots_isog_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_iff / (time_on_ice_minutes / 60), 4) end as shots_iff_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_icf / (time_on_ice_minutes / 60), 4) end as shots_icf_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_iblocked / (time_on_ice_minutes / 60), 4) end as shots_iblocked_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_imissed / (time_on_ice_minutes / 60), 4) end as shots_imissed_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_isaved / (time_on_ice_minutes / 60), 4) end as shots_isaved_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_iscored / (time_on_ice_minutes / 60), 4) end as shots_iscored_per60
-    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ixg / (time_on_ice_minutes / 60), 4) end as shots_ixg_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_isog / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_isog_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_iff / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_iff_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_icf / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_icf_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_iblocked / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_iblocked_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_imissed / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_imissed_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_isaved / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_isaved_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_iscored / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_iscored_per60
+    , case when boxscore_stats.time_on_ice_seconds > 0 then round(oss.shots_ixg / (boxscore_stats.time_on_ice_minutes / 60), 4) end as shots_ixg_per60
     -- individual shot calculations: (for shots on net) broken down by strength state
     ----- even-strength (ev)
-    , shots_ev_isog
-    , shots_ev_iff
-    , shots_ev_imissed
-    , shots_ev_isaved
-    , shots_ev_iscored
-    , shots_ev_ixg
+    , oss.shots_ev_isog
+    , oss.shots_ev_iff
+    , oss.shots_ev_imissed
+    , oss.shots_ev_isaved
+    , oss.shots_ev_iscored
+    , oss.shots_ev_ixg
     ----- power-play (pp)
-    , shots_pp_isog
-    , shots_pp_iff
-    , shots_pp_imissed
-    , shots_pp_isaved
-    , shots_pp_iscored
-    , shots_pp_ixg
+    , oss.shots_pp_isog
+    , oss.shots_pp_iff
+    , oss.shots_pp_imissed
+    , oss.shots_pp_isaved
+    , oss.shots_pp_iscored
+    , oss.shots_pp_ixg
     ----- power-play (pp)
-    , shots_sh_isog
-    , shots_sh_iff
-    , shots_sh_imissed
-    , shots_sh_isaved
-    , shots_sh_iscored
-    , shots_sh_ixg
+    , oss.oss.shots_sh_isog
+    , oss.shots_sh_iff
+    , oss.shots_sh_imissed
+    , oss.shots_sh_isaved
+    , oss.shots_sh_iscored
+    , oss.shots_sh_ixg
     -- individual shot calculations: (for shots on net) broken down by shot type, & shot results ... exclude rebounds from agg. calculations
     ----- all individual shot types (corsi)
     , oss.shots_backhand_all

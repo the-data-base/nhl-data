@@ -40,11 +40,11 @@ game_seconds as (
         , gs.seconds as game_time_seconds
         , (gs.seconds - shifts.start_seconds_elapsed) as shift_time_seconds
         , players.primary_position_abbreviation
-        , coalesce (gs.seconds = shifts.start_seconds_elapsed, false) as is_shift_start
-        , coalesce (gs.seconds = shifts.end_seconds_elapsed, false) as is_shift_end
-        , coalesce (gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is true, false) as is_shift_start_period_start
-        , coalesce (gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is false, false) as is_shift_start_not_period_start
-        , coalesce (gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_end is true, false) as is_shift_end_period_end
+        , coalesce(gs.seconds = shifts.start_seconds_elapsed, false) as is_shift_start
+        , coalesce(gs.seconds = shifts.end_seconds_elapsed, false) as is_shift_end
+        , coalesce(gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is true, false) as is_shift_start_period_start
+        , coalesce(gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_start is false, false) as is_shift_start_not_period_start
+        , coalesce(gs.seconds = shifts.start_seconds_elapsed and shifts.is_period_end is true, false) as is_shift_end_period_end
 
     from {{ ref('d_shifts') }} as shifts
     inner join game_seconds as gs on gs.seconds between shifts.start_seconds_elapsed and shifts.end_seconds_elapsed
