@@ -14,3 +14,7 @@ select
     , divisions.active as is_active
 
 from {{ source('meltano', 'divisions') }} as divisions
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

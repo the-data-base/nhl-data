@@ -33,3 +33,7 @@ select
     , players._time_extracted as extracted_at
     , players._time_loaded as loaded_at
 from {{ source('meltano', 'people') }} as players
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

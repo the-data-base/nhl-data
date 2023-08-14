@@ -95,3 +95,7 @@ from
     p1_team_game_shots_home as p1
 left join p3_team_game_shots_home as p3 on p3.game_id = p1.game_id and p3.team_id = p1.team_id
 order by p1.game_id
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

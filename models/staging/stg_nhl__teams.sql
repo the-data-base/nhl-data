@@ -36,3 +36,7 @@ select
     , teams._time_extracted as extracted_at
     , teams._time_loaded as loaded_at
 from {{ source('meltano', 'teams') }} as teams
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

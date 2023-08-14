@@ -143,3 +143,7 @@ deduped as (
 )
 
 select * from unioned
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

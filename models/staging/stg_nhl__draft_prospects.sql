@@ -44,3 +44,7 @@ select
     , ranks.draftyear as prospect_rank_draft_year
     , link as prospect_url
 from deduped
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}
