@@ -18,3 +18,7 @@ select
     , seasons._time_extracted as extracted_at
     , seasons._time_loaded as loaded_at
 from {{ source('meltano', 'seasons') }} as seasons
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

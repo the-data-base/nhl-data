@@ -402,7 +402,7 @@ select
     , oss.shots_pp_iscored
     , oss.shots_pp_ixg
     ----- power-play (pp)
-    , oss.oss.shots_sh_isog
+    , oss.shots_sh_isog
     , oss.shots_sh_iff
     , oss.shots_sh_imissed
     , oss.shots_sh_isaved
