@@ -67,3 +67,7 @@ select
     , id_model_insert_model_ts as _model_time_loaded
 
 from deduped
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

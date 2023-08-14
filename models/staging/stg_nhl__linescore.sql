@@ -45,3 +45,7 @@ live_linescore as (
 )
 
 select * from final
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

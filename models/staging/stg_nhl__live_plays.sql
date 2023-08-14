@@ -566,3 +566,7 @@ select
 
 from game_state as gs
 left join last_shot as ls on ls.stg_nhl__live_plays_id = gs.stg_nhl__live_plays_id
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

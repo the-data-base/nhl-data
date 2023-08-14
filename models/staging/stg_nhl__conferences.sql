@@ -12,3 +12,7 @@ select
     , conferences.active as is_active
     , conferences.link as conference_url
 from {{ source('meltano', 'conferences') }} as conferences
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

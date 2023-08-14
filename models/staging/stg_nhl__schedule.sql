@@ -57,3 +57,7 @@ select distinct
     , _time_extracted as extracted_at
     , _time_loaded as loaded_at
 from deduped
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

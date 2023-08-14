@@ -98,3 +98,7 @@ select
     end as zone
 
 from adj_coordinates
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

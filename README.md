@@ -73,7 +73,7 @@ dbt_nhl_breakouts:
 
 Install the SQLFluff templater for dbt:
 ```bash
-pip install sqlfluff-templater-dbt
+pip install sqlfluff
 ```
 
 Run the linter:
