@@ -1,0 +1,14 @@
+config:
+  send_anonymous_usage_stats: False
+
+nhl_data:
+  target: docs_pages
+  outputs:
+    docs_pages:
+      type: bigquery
+      location: us-west1
+      method: service-account
+      project: nhl-breakouts
+      dataset: github # You can also use "schema" here
+      keyfile: .secrets/client_secrets.json
+      threads: 4

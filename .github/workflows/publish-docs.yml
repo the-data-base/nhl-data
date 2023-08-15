@@ -12,31 +12,30 @@ jobs:
 
     # Set environment variables used throughout workflow
     env:
-      DBT_PROFILES_DIR: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/.github/sqlfluff
+      DBT_PROFILES_DIR: /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/.github/dbt
 
       # SPECIFY database connection credentials as env vars below.
       # Env var values to be fetched from as GitHub Secrets.
       # HIGHLY recommended you use a unique set of connection credentials for this workflow alone.
-      PROFILES_YML_BIGQUERY_PROJECT: ${{ secrets.PROFILES_YML_BIGQUERY_PROJECT }}
-      PROFILES_YML_BIGQUERY_CREDENTIALS: ${{ secrets.PROFILES_YML_BIGQUERY_CREDENTIALS }}
+      BIGQUERY_CREDENTIALS: ${{ secrets.DBT_READ_ONLY_KEY }}
 
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
 
       - name: Checkout new pages/docs-site branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
             ref: pages/docs-site
 
       - name: Install Python packages
         # NB: This is referencing the requirements.txt file saved in the ci_cd folder in your project.
-        run: python -m pip install dbt-bigquery~=1.0.0
+        run: python -m pip install dbt-bigquery~=1.6.0
 
       - name: Generate database credentials
         run: |
           touch ./.secrets/client_secrets.json
-          echo "$PROFILES_YML_BIGQUERY_CREDENTIALS" >> ./.secrets/client_secrets.json
+          echo "$BIGQUERY_CREDENTIALS" >> ./.secrets/client_secrets.json
         shell: bash
 
       - name: Generate dbt docs
