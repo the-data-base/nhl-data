@@ -18,3 +18,7 @@ select
 
 from {{ source('meltano', 'draft') }} as draft
 where draft.prospect.fullname != 'Void' -- remove records that contain draft prospect named 'Void' as this appears to be bad data from the API
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

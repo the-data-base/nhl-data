@@ -56,3 +56,7 @@ where
     and not (gameid = 2020030412 and eventnumber = 614 and id = 11050284) -- time of goal was off
     and not (gameid = 2020020745 and eventnumber = 485 and id = 10875539) -- time of goal was off
     and not (gameid = 2020020767 and eventnumber = 209 and id = 10639438) -- time of goal was off
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

@@ -3,7 +3,7 @@ with
 boxscore_reduced as (
     /* stg_nhl__boxscore is on the game/team/player grain, so reduce down to the game/team grain */
     select * from {{ ref('stg_nhl__boxscore') }}
-    qualify row_number() over(
+    qualify row_number() over (
         partition by
             game_id
             , team_id

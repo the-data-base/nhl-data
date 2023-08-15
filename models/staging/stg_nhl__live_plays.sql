@@ -27,12 +27,12 @@ live_plays as (
         end as player_role_team
         -- Get mins elapsed, carrying over the period
         , case
-            when lower(live_plays.about.periodtype) <> 'shootout'
+            when lower(live_plays.about.periodtype) != 'shootout'
                 then cast((substr(live_plays.about.periodtime, 0, 2)) as int64) + (20 * (cast(live_plays.about.period as int64) - 1))
         end as play_minutes_elapsed
         -- Get seconds elapsed,do not carry over the period
         , case
-            when lower(live_plays.about.periodtype) <> 'shootout'
+            when lower(live_plays.about.periodtype) != 'shootout'
                 then cast((substr(live_plays.about.periodtime, 4, 2)) as int64)
         end as play_seconds_elapsed
         , live_plays.about.eventidx as event_idx
@@ -49,14 +49,16 @@ live_plays as (
         -- BEGIN CUMULATIVE COUNTERS BY HOME/AWAY
         -- SHOTS
         , case
-            when live_plays.result.eventtypeid in ('SHOT', 'GOAL')
+            when
+                live_plays.result.eventtypeid in ('SHOT', 'GOAL')
                 and live_plays.team.id = schedule.away_team_id
                 and upper(players.playertype) = 'GOALIE'
                 then 1
             else 0
         end as shot_away
         , case
-            when live_plays.result.eventtypeid in ('SHOT', 'GOAL')
+            when
+                live_plays.result.eventtypeid in ('SHOT', 'GOAL')
                 and live_plays.team.id = schedule.home_team_id
                 and upper(players.playertype) = 'GOALIE'
                 then 1
@@ -64,14 +66,16 @@ live_plays as (
         end as shot_home
         -- HITS
         , case
-            when live_plays.result.eventtypeid in ('HIT')
+            when
+                live_plays.result.eventtypeid in ('HIT')
                 and live_plays.team.id = schedule.away_team_id
                 and upper(players.playertype) = 'HITTER'
                 then 1
             else 0
         end as hit_away
         , case
-            when live_plays.result.eventtypeid in ('HIT')
+            when
+                live_plays.result.eventtypeid in ('HIT')
                 and live_plays.team.id = schedule.home_team_id
                 and upper(players.playertype) = 'HITTER'
                 then 1
@@ -79,14 +83,16 @@ live_plays as (
         end as hit_home
         -- FACEOFFS
         , case
-            when live_plays.result.eventtypeid in ('FACEOFF')
+            when
+                live_plays.result.eventtypeid in ('FACEOFF')
                 and live_plays.team.id = schedule.away_team_id
                 and upper(players.playertype) = 'WINNER'
                 then 1
             else 0
         end as faceoff_away
         , case
-            when live_plays.result.eventtypeid in ('FACEOFF')
+            when
+                live_plays.result.eventtypeid in ('FACEOFF')
                 and live_plays.team.id = schedule.home_team_id
                 and upper(players.playertype) = 'WINNER'
                 then 1
@@ -94,14 +100,16 @@ live_plays as (
         end as faceoff_home
         -- TAKEAWAYS
         , case
-            when live_plays.result.eventtypeid in ('TAKEAWAY')
+            when
+                live_plays.result.eventtypeid in ('TAKEAWAY')
                 and live_plays.team.id = schedule.away_team_id
                 and upper(players.playertype) = 'PLAYERID'
                 then 1
             else 0
         end as takeaway_away
         , case
-            when live_plays.result.eventtypeid in ('TAKEAWAY')
+            when
+                live_plays.result.eventtypeid in ('TAKEAWAY')
                 and live_plays.team.id = schedule.home_team_id
                 and upper(players.playertype) = 'PLAYERID'
                 then 1
@@ -109,14 +117,16 @@ live_plays as (
         end as takeaway_home
         -- GIVEAWAY
         , case
-            when live_plays.result.eventtypeid in ('GIVEAWAY')
+            when
+                live_plays.result.eventtypeid in ('GIVEAWAY')
                 and live_plays.team.id = schedule.away_team_id
                 and upper(players.playertype) = 'PLAYERID'
                 then 1
             else 0
         end as giveaway_away
         , case
-            when live_plays.result.eventtypeid in ('GIVEAWAY')
+            when
+                live_plays.result.eventtypeid in ('GIVEAWAY')
                 and live_plays.team.id = schedule.home_team_id
                 and upper(players.playertype) = 'PLAYERID'
                 then 1
@@ -124,14 +134,16 @@ live_plays as (
         end as giveaway_home
         -- MISSED SHOT
         , case
-            when live_plays.result.eventtypeid in ('MISSED_SHOT')
+            when
+                live_plays.result.eventtypeid in ('MISSED_SHOT')
                 and live_plays.team.id = schedule.away_team_id
                 and upper(players.playertype) = 'SHOOTER'
                 then 1
             else 0
         end as missedshot_away
         , case
-            when live_plays.result.eventtypeid in ('MISSED_SHOT')
+            when
+                live_plays.result.eventtypeid in ('MISSED_SHOT')
                 and live_plays.team.id = schedule.home_team_id
                 and upper(players.playertype) = 'SHOOTER'
                 then 1
@@ -139,14 +151,16 @@ live_plays as (
         end as missedshot_home
         -- BLOCKED SHOT
         , case
-            when live_plays.result.eventtypeid in ('BLOCKED_SHOT')
+            when
+                live_plays.result.eventtypeid in ('BLOCKED_SHOT')
                 and live_plays.team.id = schedule.away_team_id
                 and upper(players.playertype) = 'SHOOTER'
                 then 1
             else 0
         end as blockedshot_away
         , case
-            when live_plays.result.eventtypeid in ('BLOCKED_SHOT')
+            when
+                live_plays.result.eventtypeid in ('BLOCKED_SHOT')
                 and live_plays.team.id = schedule.home_team_id
                 and upper(players.playertype) = 'SHOOTER'
                 then 1
@@ -154,14 +168,16 @@ live_plays as (
         end as blockedshot_home
         -- PENALTIES
         , case
-            when live_plays.result.eventtypeid in ('PENALTY')
+            when
+                live_plays.result.eventtypeid in ('PENALTY')
                 and live_plays.team.id = schedule.away_team_id
                 and upper(players.playertype) = 'PENALTYON'
                 then 1
             else 0
         end as penalty_away
         , case
-            when live_plays.result.eventtypeid in ('PENALTY')
+            when
+                live_plays.result.eventtypeid in ('PENALTY')
                 and live_plays.team.id = schedule.home_team_id
                 and upper(players.playertype) = 'PENALTYON'
                 then 1
@@ -175,7 +191,7 @@ live_plays as (
     , unnest(live_plays.players) as players with offset
     left join {{ ref('stg_nhl__schedule') }} as schedule on schedule.game_id = live_plays.gameid
     left join {{ ref('stg_nhl__boxscore') }} as boxscore_player on boxscore_player.game_id = live_plays.gameid and players.player.id = boxscore_player.player_id
-    qualify row_number() over(
+    qualify row_number() over (
         partition by
             live_plays.gameid
             , live_plays.about.eventidx
@@ -254,11 +270,11 @@ live_plays as (
         -- Cumulative goal descriptors (current state)
         , abs(bp.goals_home - bp.goals_away) as goal_difference_current
         , case
-            when(bp.goals_home - bp.goals_away) = 0
+            when (bp.goals_home - bp.goals_away) = 0
                 then 'Tie'
-            when(bp.goals_home - bp.goals_away) > 0
+            when (bp.goals_home - bp.goals_away) > 0
                 then 'Home'
-            when(bp.goals_home - bp.goals_away) < 0
+            when (bp.goals_home - bp.goals_away) < 0
                 then 'Away'
         end as winning_team_current
         , case
@@ -287,27 +303,27 @@ live_plays as (
         end as last_goal_scored
         -- Cumulative goal descriptors (previous state)
         , case
-            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) <> bp.event_idx
+            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
                 then lag(bp.goals_home, 1) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) <> bp.event_idx
+            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
                 then lag(bp.goals_home, 2) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) <> bp.event_idx
+            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
                 then lag(bp.goals_home, 3) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) <> bp.event_idx
+            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
                 then lag(bp.goals_home, 4) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) <> bp.event_idx
+            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
                 then lag(bp.goals_home, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
         end as goals_home_lag
         , case
-            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) <> bp.event_idx
+            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
                 then lag(bp.goals_away, 1) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) <> bp.event_idx
+            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
                 then lag(bp.goals_away, 2) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) <> bp.event_idx
+            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
                 then lag(bp.goals_away, 3) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) <> bp.event_idx
+            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
                 then lag(bp.goals_away, 4) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) <> bp.event_idx
+            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
                 then lag(bp.goals_away, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
         end as goals_away_lag
 
@@ -321,11 +337,11 @@ live_plays as (
         -- Previous winning team
         , abs(c.goals_home_lag - c.goals_away_lag) as goal_difference_lag
         , case
-            when(c.goals_home_lag - c.goals_away_lag) = 0
+            when (c.goals_home_lag - c.goals_away_lag) = 0
                 then 'Tie'
-            when(c.goals_home_lag - c.goals_away_lag) > 0
+            when (c.goals_home_lag - c.goals_away_lag) > 0
                 then 'Home'
-            when(c.goals_home_lag - c.goals_away_lag) < 0
+            when (c.goals_home_lag - c.goals_away_lag) < 0
                 then 'Away'
         end as winning_team_lag
         -- Previous game state
@@ -345,24 +361,30 @@ live_plays as (
         , case
             when c.goal_difference_current = abs(c.goals_home_lag - c.goals_away_lag)
                 then 'No change'
-            when c.goals_home > c.goals_home_lag
+            when
+                c.goals_home > c.goals_home_lag
                 and c.goals_home < c.goals_away
                 then 'Chase goal'
-            when c.goals_home > c.goals_home_lag
+            when
+                c.goals_home > c.goals_home_lag
                 and c.goals_home = c.goals_away
                 then 'Tying goal scored'
-            when c.goals_home < c.goals_home_lag
+            when
+                c.goals_home < c.goals_home_lag
                 and c.goals_home = c.goals_away
                 then 'Tying goal allowed'
-            when c.goals_home > c.goals_home_lag
+            when
+                c.goals_home > c.goals_home_lag
                 and c.goals_home_lag = c.goals_away_lag
                 and c.goals_home > c.goals_away
                 then 'Go-ahead goal scored'
-            when c.goals_home > c.goals_home_lag
+            when
+                c.goals_home > c.goals_home_lag
                 and c.goals_home_lag > c.goals_away_lag
                 and c.goals_home > c.goals_away
                 then 'Buffer goal'
-            when c.goals_away > c.goals_away_lag
+            when
+                c.goals_away > c.goals_away_lag
                 and c.goals_away_lag = c.goals_home_lag
                 and c.goals_away > c.goals_home
                 then 'Go-ahead goal allowed'
@@ -371,40 +393,48 @@ live_plays as (
         , case
             when c.goal_difference_current = abs(c.goals_home_lag - c.goals_away_lag)
                 then 'No change'
-            when c.goals_away > c.goals_away_lag
+            when
+                c.goals_away > c.goals_away_lag
                 and c.goals_away < c.goals_home
                 then 'Chase goal'
-            when c.goals_away > c.goals_away_lag
+            when
+                c.goals_away > c.goals_away_lag
                 and c.goals_away = c.goals_home
                 then 'Tying goal scored'
-            when c.goals_home > c.goals_home_lag
+            when
+                c.goals_home > c.goals_home_lag
                 and c.goals_home = c.goals_away
                 then 'Tying goal allowed'
-            when c.goals_away > c.goals_away_lag
+            when
+                c.goals_away > c.goals_away_lag
                 and c.goals_away_lag = c.goals_home_lag
                 and c.goals_away > c.goals_home
                 then 'Go-ahead goal scored'
-            when c.goals_away > c.goals_away_lag
+            when
+                c.goals_away > c.goals_away_lag
                 and c.goals_away_lag > c.goals_home_lag
                 and c.goals_away > c.goals_home
                 then 'Buffer goal'
-            when c.goals_home > c.goals_home_lag
+            when
+                c.goals_home > c.goals_home_lag
                 and c.goals_home_lag = c.goals_away_lag
                 and c.goals_home > c.goals_away
                 then 'Go-ahead goal allowed'
         end as away_result_of_play
         -- Either team - last goal a game winning goal?
         , case
-            when c.last_goal_scored = 1                       -- last goal
+            when
+                c.last_goal_scored = 1                       -- last goal
                 and abs(c.goals_away_lag - c.goals_home_lag) = 0  -- game was tied last play
-                and abs(c.goals_away - c.goals_home) <> 0         -- game no longer tied
+                and abs(c.goals_away - c.goals_home) != 0         -- game no longer tied
                 then 1
             else 0
         end as last_goal_game_winning
         -- Either team - last goal game tying?
         -- #TODO this is not working as intended - goals that tied the games go to OT, and so there is 0 game tying goals with this logic
         , case
-            when c.last_goal_scored = 1                       -- last goal
+            when
+                c.last_goal_scored = 1                       -- last goal
                 and abs(c.goals_away_lag - c.goals_home_lag) = 1  -- game was within 1 goal last play
                 and abs(c.goals_away - c.goals_home) = 0          -- game now tied
                 then 1
@@ -439,19 +469,19 @@ live_plays as (
         , lag(play_y_coordinate) over (partition by game_id order by event_idx) as last_shot_y_coordinate
         -- last_shot_saved_shot_ind = shot taken by same team in the same period
         , case
-            when play_period <> lag(play_period) over (partition by game_id order by event_idx)
-                                                                                     then 0
-            when team_id <> lag(team_id) over (partition by game_id order by event_idx)
-                                                                             then 0
+            when play_period != lag(play_period) over (partition by game_id order by event_idx)
+                then 0
+            when team_id != lag(team_id) over (partition by game_id order by event_idx)
+                then 0
             when lower(lag(event_type) over (partition by game_id order by event_idx)) = 'shot'
-                                                                           then 1
+                then 1
         end as last_shot_saved_shot_ind
     from game_state as gs
     where 1 = 1
-        --keep blocked shots, missed shots, shots on target and goals
-        and lower(gs.event_type) in ('blocked_shot', 'missed_shot', 'shot', 'goal')
-        -- keep roles involving the shooter & scorer
-        and lower(gs.player_role) in ('shooter', 'scorer')
+    --keep blocked shots, missed shots, shots on target and goals
+    and lower(gs.event_type) in ('blocked_shot', 'missed_shot', 'shot', 'goal')
+    -- keep roles involving the shooter & scorer
+    and lower(gs.player_role) in ('shooter', 'scorer')
 )
 
 -- #return: game_state joined with last_shot features
@@ -536,3 +566,7 @@ select
 
 from game_state as gs
 left join last_shot as ls on ls.stg_nhl__live_plays_id = gs.stg_nhl__live_plays_id
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

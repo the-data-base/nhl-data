@@ -61,9 +61,6 @@ models:
       - name: goals
         description: The number of goals scored in the regular season
 
-      - name: goals_pergame
-        description: The number of goals scored in the regular season divided by the number of games played
-
       - name: goals_gamewinning
         description: The number of goals scored that ended up becoming the game winning goal (either last goal scored in regulation, or the OT winner)
 
@@ -91,8 +88,35 @@ models:
       - name: points
         description: The number of points scored in the regular season
 
+      - name: goals_pergame
+        description: The number of goals scored in the regular season divided by the number of games played
+
+      - name: assists_pergame
+        description: The number of assists in the regular season divided by the number of games played
+
+      - name: assists_primary_pergame
+        description: The number of primary assists in the regular season divided by the number of games played
+
+      - name: assists_secondary_pergame
+        description: The number of secondary assists in the regular season divided by the number of games played
+
       - name: points_pergame
         description: The number of points scored in the regular season divided by the number of games played
+
+      - name: goals_per60
+        description: The number of goals scored in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: assists_per60
+        description: The number of assists in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: assists_primary_per60
+        description: The number of primary assists in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: assists_secondary_per60
+        description: The number of assists in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: points_per60
+        description: The number of assists in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
 
       - name: shots_ff
         description: Fenwick shots for while on the ice (goals, saved shots, missed shots)
@@ -118,6 +142,12 @@ models:
       - name: shots_ga
         description: Goals against while on the ice (goals)
 
+      - name: shots_xgf
+        description: Expected goals for while on the ice (xg)
+
+      - name: shots_xga
+        description: Expected goals against while on the ice (xg)
+
       - name: shots_isog
         description: Total individual shots on goal (goals, saved shots)
 
@@ -138,6 +168,135 @@ models:
 
       - name: shots_iscored
         description: Total individual shots that were goals (goals)
+
+      - name: shots_ixg
+        description: The sum of an individual's expected goal probability (xg)
+
+      - name: shots_ff_per60
+        description: Fenwick shots for while on the ice (goals, saved shots, missed shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_fa_per60
+        description: Fenwick shots against while on the ice (goals, saved shots, missed shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_cf_per60
+        description: Corsi shots for while on the ice (goals, saved shots, missed shots, blocked shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_ca_per60
+        description: Corsi shots against while on the ice (goals, saved shots, missed shots, blocked shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_sf_per60
+        description: Shots for while on the ice (goals, saved shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_sa_per60
+        description: Shots against while on the ice (goals, saved shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_gf_per60
+        description: Goals for while on the ice (goals) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_ga_per60
+        description: Goals against while on the ice (goals) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_xgf_per60
+        description: Expected goals for while on the ice (xg) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_xga_per60
+        description: Expected goals against while on the ice (xg) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_isog_per60
+        description: Total individual shots on goal (goals, saved shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_iff_per60
+        description: Total individual Fenwick shots for (goals, saved shots, missed shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_icf_per60
+        description: Total individual Corsi shots for (goals, saved shots, missed shots, blocked shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_iblocked_per60
+        description: Total individual shots that were blocked (blocked shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_imissed_per60
+        description: Total individual shots that were missed (missed shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_isaved_per60
+        description: Total individual shots that were saved (saved shots) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_iscored_per60
+        description: Total individual shots that were goals (goals) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_ixg_per60
+        description: The sum of an individual's expected goal probability (xg) divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots_ev_isog
+        description: Total individual shots on goal (goals, saved shots) during even-strength minutes
+
+      - name: shots_ev_iff
+        description: Total individual Fenwick shots for (goals, saved shots, missed shots) during even-strength minutes
+
+      - name: shots_ev_icf
+        description: Total individual Corsi shots for (goals, saved shots, missed shots, blocked shots) during even-strength minutes
+
+      - name: shots_ev_iblocked
+        description: Total individual shots that were blocked (blocked shots) during even-strength minutes
+
+      - name: shots_ev_imissed
+        description: Total individual shots that were missed (missed shots) during even-strength minutes
+
+      - name: shots_ev_isaved
+        description: Total individual shots that were saved (saved shots) during even-strength minutes
+
+      - name: shots_ev_iscored
+        description: Total individual shots that were goals (goals) during even-strength minutes
+
+      - name: shots_ev_ixg
+        description: The sum of an individual's expected goal probability (xg) during even-strength minutes
+
+      - name: shots_pp_isog
+        description: Total individual shots on goal (goals, saved shots) during power-play minutes
+
+      - name: shots_pp_iff
+        description: Total individual Fenwick shots for (goals, saved shots, missed shots) during power-play minutes
+
+      - name: shots_pp_icf
+        description: Total individual Corsi shots for (goals, saved shots, missed shots, blocked shots) during power-play minutes
+
+      - name: shots_pp_iblocked
+        description: Total individual shots that were blocked (blocked shots) during power-play minutes
+
+      - name: shots_pp_imissed
+        description: Total individual shots that were missed (missed shots) during power-play minutes
+
+      - name: shots_pp_isaved
+        description: Total individual shots that were saved (saved shots) during power-play minutes
+
+      - name: shots_pp_iscored
+        description: Total individual shots that were goals (goals) during power-play minutes
+
+      - name: shots_pp_ixg
+        description: The sum of an individual's expected goal probability (xg) during power-play minutes
+
+      - name: shots_sh_isog
+        description: Total individual shots on goal (goals, saved shots) during short-handed minutes
+
+      - name: shots_sh_iff
+        description: Total individual Fenwick shots for (goals, saved shots, missed shots) during short-handed minutes
+
+      - name: shots_sh_icf
+        description: Total individual Corsi shots for (goals, saved shots, missed shots, blocked shots) during short-handed minutes
+
+      - name: shots_sh_iblocked
+        description: Total individual shots that were blocked (blocked shots) during short-handed minutes
+
+      - name: shots_sh_imissed
+        description: Total individual shots that were missed (missed shots) during short-handed minutes
+
+      - name: shots_sh_isaved
+        description: Total individual shots that were saved (saved shots) during short-handed minutes
+
+      - name: shots_sh_iscored
+        description: Total individual shots that were goals (goals) during short-handed minutes
+
+      - name: shots_sh_ixg
+        description: The sum of an individual's expected goal probability (xg) during short-handed minutes
 
       ## Skater shot types
       - name: shots_backhand_all
@@ -214,6 +373,29 @@ models:
       - name: shots_rebound_goal
         description: The number of rebounds (shot taken within 2 seconds of previous if taken by same team and same period) that were goals
 
+      - name: shots_backhand_xg
+        description: The sum of expected goals (xg) from backhand shots
+
+      - name: shots_deflected_xg
+        description: The sum of expected goals (xg) from deflected shots
+
+      - name: shots_slapshot_xg
+        description: The sum of expected goals (xg) from slapshot shots
+
+      - name: shots_snapshot_xg
+        description: The sum of expected goals (xg) from snapshot shots
+
+      - name: shots_tipin_xg
+        description: The sum of expected goals (xg) from tipin shots
+
+      - name: shots_wraparound_xg
+        description: The sum of expected goals (xg) from wrap-around shots
+
+      - name: shots_wristshot_xg
+        description: The sum of expected goals (xg) from wristshot shots
+
+      - name: shots_rebound_xg
+        description: The sum of expected goals (xg) from rebound (shot taken within 2 seconds of previous if taken by same team and same period) shots
 
       - name: pcnt_ff
         description: Fenwick for percentage (while on the ice) = Fenwick shots for / (Fenwick shots for + Fenwick shots against)
@@ -226,6 +408,9 @@ models:
 
       - name: pcnt_gf
         description: Goals for percentage (while on the ice) = Goals for / (Goals  for + Goals against)
+
+      - name: pcnt_xgf
+        description: Expected goals (xg) for percentage (while on the ice) = xg for / (xg for + xg against)
 
       ## Skater shot results by type (shot-conversion)
       - name: pcnt_shooting_all

@@ -33,4 +33,3 @@ select distinct
     , prospect_rank_draft_year
     , prospect_url
 from {{ ref('stg_nhl__draft_prospects') }}
-

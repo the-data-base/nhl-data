@@ -56,7 +56,8 @@ select
     end as seconds_since_last_shot
     -- rebounds: if the last shot was take by the same team in the same period, and the time elapsed between shots was between 0 - 2 seconds, then 1 else 0
     , case
-        when plays.last_shot_saved_shot_ind = 1
+        when
+            plays.last_shot_saved_shot_ind = 1
             and (plays.play_total_seconds_elapsed - plays.last_shot_total_seconds_elapsed) <= 2
             then 1
         else 0
@@ -107,7 +108,8 @@ select
     end as last_shot_seconds
     -- rebounds: if the last shot was take by the same team in the same period, and the time elapsed between shots was between 0 - 2 seconds, then 1 else 0
     , case
-        when plays.last_shot_saved_shot_ind = 1
+        when
+            plays.last_shot_saved_shot_ind = 1
             and plays.last_play_period = plays.play_period
             and lower(plays.last_play_event_type) in ('blocked_shot', 'missed_shot', 'shot', 'goal')
             and (plays.play_total_seconds_elapsed - plays.last_shot_total_seconds_elapsed) <= 2
@@ -156,7 +158,7 @@ select
     , shifts.away_goalie_on_ice
 
     /* XG stuff */
-    , ifnull(xg.id_fenwick_shot, 0) as xg_fenwick_shot
+    , coalesce(xg.id_fenwick_shot, 0) as xg_fenwick_shot
     , xg.x_goal
     , xg.xg_model_id
     , xg.id_strength_state_code as xg_strength_state_code
@@ -164,17 +166,20 @@ select
 
 from {{ ref('stg_nhl__live_plays') }} as plays
 left join {{ ref('d_shifts_time') }} as shifts
-    on shifts.game_id = plays.game_id
+    on
+        shifts.game_id = plays.game_id
         and shifts.game_time_seconds = plays.play_total_seconds_elapsed
         and shifts.player_id = plays.player_id
         and shifts.period = plays.play_period
         and shifts.is_goal is false
 left join {{ ref('stg_nhl__live_plays_location') }} as loc
-    on loc.play_id = plays.stg_nhl__live_plays_id
+    on
+        loc.play_id = plays.stg_nhl__live_plays_id
         and loc.game_id = plays.game_id
         and loc.play_x_coordinate = cast(plays.play_x_coordinate as float64)
         and loc.play_y_coordinate = cast(plays.play_y_coordinate as float64)
 left join {{ ref('stg_nhl__xg') }} as xg
-    on xg.id_play_id = plays.stg_nhl__live_plays_id
+    on
+        xg.id_play_id = plays.stg_nhl__live_plays_id
         and xg.id_game_id = plays.game_id
         and xg.id_player_id = plays.player_id

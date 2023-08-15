@@ -2,7 +2,7 @@ with
 
 deduped as (
     select * from {{ source('meltano', 'live_boxscore') }}
-    qualify row_number() over( -- deduplicate gameids that were ingested more than once
+    qualify row_number() over ( -- deduplicate gameids that were ingested more than once
         partition by
             gameid
     ) = 1
@@ -10,7 +10,7 @@ deduped as (
 
 , home_boxscore as (
     select
-        /* Primary Key */
+    /* Primary Key */
         {{ dbt_utils.surrogate_key(['gameid', 'teams.home.team.id', 'players.person.id']) }} as stg_nhl__boxscore_id
 
         /* Foreign Keys */
@@ -74,7 +74,7 @@ deduped as (
 
 , away_boxscore as (
     select
-        /* Primary Key */
+    /* Primary Key */
         {{ dbt_utils.surrogate_key(['gameid', 'teams.away.team.id', 'players.person.id']) }} as stg_nhl__boxscore_id
 
         /* Foreign Keys */
@@ -143,3 +143,7 @@ deduped as (
 )
 
 select * from unioned
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

@@ -2,14 +2,14 @@ with
 
 deduped as (
     select * from {{ source('meltano', 'schedule') }}
-    qualify row_number() over(
+    qualify row_number() over (
         partition by
             gamepk
             , season
     ) = 1
 )
 
-select
+select distinct
     /* Primary Key */
     {{ dbt_utils.surrogate_key(['gamepk', 'season']) }} as stg_nhl__schedule_id
 
@@ -57,3 +57,7 @@ select
     , _time_extracted as extracted_at
     , _time_loaded as loaded_at
 from deduped
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

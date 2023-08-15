@@ -18,15 +18,15 @@ with t1 as (
         , game_type_description
         , count(*) as games_played
         , sum(case when team_winner = true then 1 else 0 end) as wins
-        , sum(ifnull(team_goals, 0)) as team_goals
-        , sum(ifnull(team_goal_differential, 0)) as team_goal_differential
-        , sum(ifnull(team_pim, 0)) as team_pim
-        , sum(ifnull(team_shots, 0)) as team_shots
-        , round(sum(ifnull(team_powerplay_goals, 0)), 0) as team_powerplay_goals
-        , sum(ifnull(team_hits, 0)) as team_hits
-        , sum(ifnull(team_blocked, 0)) as team_blocked
-        , sum(ifnull(team_takeaways, 0)) as team_takeaways
-        , sum(ifnull(team_giveaways, 0)) as team_giveaways
+        , sum(coalesce(team_goals, 0)) as team_goals
+        , sum(coalesce(team_goal_differential, 0)) as team_goal_differential
+        , sum(coalesce(team_pim, 0)) as team_pim
+        , sum(coalesce(team_shots, 0)) as team_shots
+        , round(sum(coalesce(team_powerplay_goals, 0)), 0) as team_powerplay_goals
+        , sum(coalesce(team_hits, 0)) as team_hits
+        , sum(coalesce(team_blocked, 0)) as team_blocked
+        , sum(coalesce(team_takeaways, 0)) as team_takeaways
+        , sum(coalesce(team_giveaways, 0)) as team_giveaways
     from t1
     group by 1, 2, 3, 4, 5
 )

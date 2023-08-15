@@ -3,11 +3,7 @@ with
 deduped as (
     select *
     from {{ source('xg', 'xg_*') }}
-    qualify row_number() over(
-        partition by
-            id_play_id
-            , id_player_id
-    ) = 1
+    qualify row_number() over (partition by id_play_id, id_player_id) = 1
 )
 
 select
@@ -71,3 +67,7 @@ select
     , id_model_insert_model_ts as _model_time_loaded
 
 from deduped
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}

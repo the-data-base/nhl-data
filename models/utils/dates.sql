@@ -20,19 +20,15 @@ with date_spine as (
     from date_spine
 )
 
-, dim_date as (
-    select
-        date_id
-        , date_day
-        , day_of_week_name
-        , quarter_number
-        , concat("Q", quarter_number, ' ', year_number) as quarter_desc
-        , month_number
-        , month_name
-        , concat("M", lpad(cast(month_number as string), 2, '0'), ' ', year_number) as month_desc
-        , week_number
-        , concat("Wk ", lpad(cast(week_number as string), 2, '0'), ' ', year_number) as week_desc
-    from date_periods
-)
-
-select * from dim_date
+select
+    date_id
+    , date_day
+    , day_of_week_name
+    , quarter_number
+    , concat("Q", quarter_number, ' ', year_number) as quarter_desc
+    , month_number
+    , month_name
+    , concat("M", lpad(cast(month_number as string), 2, '0'), ' ', year_number) as month_desc
+    , week_number
+    , concat("Wk ", lpad(cast(week_number as string), 2, '0'), ' ', year_number) as week_desc
+from date_periods

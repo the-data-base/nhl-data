@@ -2,7 +2,7 @@ with
 
 shifts as (
     select
-        /* Primary Key */
+    /* Primary Key */
         shifts.shift_id
 
         /* Foreign Keys */
@@ -77,7 +77,8 @@ shifts as (
     from {{ ref('stg_nhl__shifts') }} as shifts
     left join {{ ref('d_schedule') }} as schedule
         on shifts.game_id = schedule.game_id
-    where 1 = 1
+    where
+        1 = 1
         and not (schedule.game_type = '02' and shifts.period = 5) -- remove shootouts
         and shifts.end_time != '' -- remove 1129 shifts, dups
 )
@@ -94,7 +95,7 @@ shifts as (
         , end_time
     from shifts
     where is_goal
-    qualify row_number() over(
+    qualify row_number() over (
         partition by
             game_id
             , player_id
@@ -117,7 +118,7 @@ shifts as (
         , start_seconds_elapsed
         , event_number
         , shift_number
-        , row_number() over(
+        , row_number() over (
             partition by
                 game_id
                 , player_id
@@ -155,7 +156,7 @@ shifts as (
         , start_seconds_elapsed
         , period
         , shift_number as original_shift_number
-        , row_number() over(
+        , row_number() over (
             partition by
                 game_id
                 , player_id
@@ -200,7 +201,8 @@ from shifts
 left join revised_shift_number_for_duplicate_shifts
     on shifts.shift_id = revised_shift_number_for_duplicate_shifts.shift_id
 left join deduped_shift_attributes
-    on shifts.game_id = deduped_shift_attributes.game_id
+    on
+        shifts.game_id = deduped_shift_attributes.game_id
         and shifts.player_id = deduped_shift_attributes.player_id
         and shifts.period = deduped_shift_attributes.period
         and shifts.start_seconds_elapsed = deduped_shift_attributes.start_seconds_elapsed

@@ -16,7 +16,7 @@ linescore as (
 
 , final as (
     select
-        /* Primary Key */
+    /* Primary Key */
         linescore.game_id
 
         /* Identifiers */
@@ -56,10 +56,12 @@ linescore as (
         , boxscore_away_team.team_hits as away_team_hits
     from linescore
     left join boxscore_home_team
-        on linescore.game_id = boxscore_home_team.game_id
+        on
+            linescore.game_id = boxscore_home_team.game_id
             and linescore.home_team_id = boxscore_home_team.team_id
     left join boxscore_away_team
-        on linescore.game_id = boxscore_away_team.game_id
+        on
+            linescore.game_id = boxscore_away_team.game_id
             and linescore.away_team_id = boxscore_away_team.team_id
 )
 

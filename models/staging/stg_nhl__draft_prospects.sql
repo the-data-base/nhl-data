@@ -2,7 +2,7 @@ with
 
 deduped as (
     select * from {{ source('meltano', 'draft_prospects') }}
-    qualify row_number() over(
+    qualify row_number() over (
         partition by
             id
             , nhlplayerid
@@ -44,3 +44,7 @@ select
     , ranks.draftyear as prospect_rank_draft_year
     , link as prospect_url
 from deduped
+
+{% if not use_full_dataset() %}
+limit 1000
+{% endif %}
