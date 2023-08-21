@@ -397,6 +397,15 @@ models:
       - name: shots_rebound_xg
         description: The sum of expected goals (xg) from rebound (shot taken within 2 seconds of previous if taken by same team and same period) shots
 
+      - name: penalty_shot_attempts
+        description: The sum of shots that came from penalty shot attempts
+
+      - name: penalty_shot_goals
+        description: The sum of goals that came from penalty shot attempts
+
+      - name: empty_net_goals
+        description: The sum of goals that occured when the opposing goalie was pulled (not in the net)
+
       - name: pcnt_ff
         description: Fenwick for percentage (while on the ice) = Fenwick shots for / (Fenwick shots for + Fenwick shots against)
 

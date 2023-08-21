@@ -212,7 +212,79 @@ live_plays as (
         , bp.event_id
         , bp.player_id
         , bp.team_id
-
+        -- last play metrics (fixed on 8/20/2023)
+        , case
+            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, play_time)
+        end as last_play_event_idx
+        , case
+            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.player_role_team, 1) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.player_role_team, 2) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.player_role_team, 3) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.player_role_team, 4) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.player_role_team, 5) over (partition by game_id order by bp.game_id, event_idx, play_time)
+        end as last_player_role_team
+        , case
+            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_type, 1) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_type, 2) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_type, 3) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_type, 4) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_type, 5) over (partition by game_id order by bp.game_id, event_idx, play_time)
+        end as last_play_event_type
+        , case
+            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_secondary_type, 1) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_secondary_type, 2) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_secondary_type, 3) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_secondary_type, 4) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_secondary_type, 5) over (partition by game_id order by bp.game_id, event_idx, play_time)
+        end as last_play_event_secondary_type
+        , case
+            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_description, 1) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_description, 2) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_description, 3) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_description, 4) over (partition by game_id order by bp.game_id, event_idx, play_time)
+            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then lag(bp.event_description, 5) over (partition by game_id order by bp.game_id, event_idx, play_time)
+        end as last_play_event_description
+        , case
+            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then ifnull(lag(bp.play_period, 1) over (partition by game_id order by bp.game_id, event_idx, play_time), play_period)
+            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then ifnull(lag(bp.play_period, 2) over (partition by game_id order by bp.game_id, event_idx, play_time), play_period)
+            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then ifnull(lag(bp.play_period, 3) over (partition by game_id order by bp.game_id, event_idx, play_time), play_period)
+            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then ifnull(lag(bp.play_period, 4) over (partition by game_id order by bp.game_id, event_idx, play_time), play_period)
+            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
+                then ifnull(lag(bp.play_period, 5) over (partition by game_id order by bp.game_id, event_idx, play_time), play_period)
+        end as last_play_period
         /* Properties */
         , bp.player_full_name
         , bp.player_index
@@ -224,11 +296,6 @@ live_plays as (
         , bp.event_code
         , bp.event_description
         , bp.event_secondary_type
-        , lag(bp.player_role_team) over (partition by game_id order by event_idx) as last_player_role_team
-        , lag(bp.event_type) over (partition by game_id order by event_idx) as last_play_event_type
-        , lag(bp.event_secondary_type) over (partition by game_id order by event_idx) as last_play_event_secondary_type
-        , lag(bp.event_description) over (partition by game_id order by event_idx) as last_play_event_description
-        , ifnull(lag(bp.play_period) over (partition by game_id order by event_idx), play_period) as last_play_period
         , bp.penalty_severity
         , bp.penalty_minutes
         , bp.play_x_coordinate
@@ -507,6 +574,7 @@ select
     , gs.event_type
     , gs.event_secondary_type
     , gs.event_description
+    , gs.last_play_event_idx
     , gs.last_player_role_team
     , gs.last_play_event_type
     , gs.last_play_event_secondary_type
