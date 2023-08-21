@@ -90,15 +90,12 @@ boxscore_stats as (
         , plays.away_skaters
         , plays.seconds_since_last_shot
         , plays.shot_rebound_ind
+        , home_goalie_pulled
+        , away_goalie_pulled
         , case
             when (lower(substr(plays.last_play_event_secondary_type, 0, 4)) = 'ps -') and (lower(plays.event_type) in ('shot', 'goal', 'missed_shot')) then 1
             else 0
         end as penalty_shot_attempt
-        , case
-            when (plays.event_type = 'goal') and (lower(plays.player_role_team) = 'home') and (plays.away_goalie_pulled is true) then 1
-            when (plays.event_type = 'goal') and (lower(plays.player_role_team) = 'away') and (plays.home_goalie_pulled is true) then 1
-            else 0
-        end as empty_net_goal
         , plays.last_shot_seconds
         , plays.last_shot_rebound_ind
         , plays.xg_fenwick_shot
@@ -165,7 +162,11 @@ boxscore_stats as (
         , s.shot_rebound_ind as shots_rebound
         , s.last_shot_rebound_ind as last_shot_rebound
         , s.penalty_shot_attempt
-        , s.empty_net_goal
+        , case
+            when (s.event_type = 'goal') and (s.skater_type = 'home') and (s.shooter_player_id = s.shot_player_id) and (s.away_goalie_pulled is true) then 1
+            when (s.event_type = 'goal') and (s.skater_type = 'away') and (s.shooter_player_id = s.shot_player_id) and (s.home_goalie_pulled is true) then 1
+            else 0
+        end as empty_net_goal
         -- shot calculations
         , case when s.event_type in ('goal', 'shot') then 1 else 0 end as shots_ongoal
         , case when s.event_type = 'blocked_shot' then 1 else 0 end as shots_blocked
