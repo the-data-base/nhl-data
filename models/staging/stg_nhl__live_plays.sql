@@ -211,7 +211,7 @@ live_plays as (
     select
         game_id
         , event_idx
-        , lag(event_idx) over(partition by game_id order by event_idx) as last_play_event_idx
+        , lag(event_idx) over (partition by game_id order by event_idx) as last_play_event_idx
     from unique_plays
 )
 
@@ -323,9 +323,10 @@ live_plays as (
         , last_play_details.goals_away as goals_away_lag
 
     from base_plays as bp
-    left join unique_plays_last as upl on
-        bp.game_id = upl.game_id
-        and bp.event_idx = upl.event_idx
+    left join unique_plays_last as upl
+        on
+            bp.game_id = upl.game_id
+            and bp.event_idx = upl.event_idx
     left join base_plays as last_play_details on
         bp.game_id = last_play_details.game_id
         and upl.last_play_event_idx = last_play_details.event_idx
