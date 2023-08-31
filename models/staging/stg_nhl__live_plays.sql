@@ -204,6 +204,13 @@ live_plays as (
     select distinct
         game_id
         , event_idx
+        , player_role_team
+        , event_type
+        , event_secondary_type
+        , event_description
+        , play_period
+        , goals_home
+        , goals_away
     from base_plays
 )
 
@@ -213,6 +220,24 @@ live_plays as (
         , event_idx
         , lag(event_idx) over (partition by game_id order by event_idx) as last_play_event_idx
     from unique_plays
+)
+
+, last_play_details as (
+    select
+        upl.game_id
+        , upl.event_idx
+        , upl.last_play_event_idx
+        , up.player_role_team as last_player_role_team
+        , up.event_type as last_play_event_type
+        , up.event_secondary_type as last_play_event_secondary_type
+        , up.event_description as last_play_event_description
+        , up.play_period as last_play_period
+        , up.goals_home as goals_home_lag
+        , up.goals_away as goals_away_lag
+    from unique_plays_last as upl
+    left join unique_plays as up on
+        upl.game_id = up.game_id
+        and upl.last_play_event_idx = up.event_idx
 )
 
 -- #cte3: Add in cumulative metrics
@@ -228,12 +253,12 @@ live_plays as (
         , bp.player_id
         , bp.team_id
         -- last play metrics (fixed on 8/20/2023)
-        , last_play_details.event_idx as last_play_event_idx
-        , last_play_details.player_role_team as last_player_role_team
-        , last_play_details.event_type as last_play_event_type
-        , last_play_details.event_secondary_type as last_play_event_secondary_type
-        , last_play_details.event_description as last_play_event_description
-        , coalesce(last_play_details.play_period, bp.play_period) as last_play_period
+        , last_play_details.last_play_event_idx
+        , last_play_details.last_player_role_team
+        , last_play_details.last_play_event_type
+        , last_play_details.last_play_event_secondary_type
+        , last_play_details.last_play_event_description
+        , coalesce(last_play_details.last_play_period, bp.play_period) as last_play_period
 
         /* Properties */
         , bp.player_full_name
@@ -319,17 +344,17 @@ live_plays as (
             else 0
         end as last_goal_scored
         -- Cumulative goal descriptors (previous state)
-        , last_play_details.goals_home as goals_home_lag
-        , last_play_details.goals_away as goals_away_lag
+        , last_play_details.goals_home_lag
+        , last_play_details.goals_away_lag
 
     from base_plays as bp
     left join unique_plays_last as upl
         on
             bp.game_id = upl.game_id
             and bp.event_idx = upl.event_idx
-    left join base_plays as last_play_details on
+    left join last_play_details on
         bp.game_id = last_play_details.game_id
-        and upl.last_play_event_idx = last_play_details.event_idx
+        and upl.event_idx = last_play_details.event_idx
 )
 
 -- #cte4: gets the state of the game as a result of the play
