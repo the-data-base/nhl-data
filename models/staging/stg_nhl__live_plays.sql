@@ -200,6 +200,46 @@ live_plays as (
     ) = 1
 )
 
+, unique_plays as (
+    select distinct
+        game_id
+        , event_idx
+        , player_role_team
+        , event_type
+        , event_secondary_type
+        , event_description
+        , play_period
+        , goals_home
+        , goals_away
+    from base_plays
+)
+
+, unique_plays_last as (
+    select
+        game_id
+        , event_idx
+        , lag(event_idx) over (partition by game_id order by event_idx) as last_play_event_idx
+    from unique_plays
+)
+
+, last_play_details as (
+    select
+        upl.game_id
+        , upl.event_idx
+        , upl.last_play_event_idx
+        , up.player_role_team as last_player_role_team
+        , up.event_type as last_play_event_type
+        , up.event_secondary_type as last_play_event_secondary_type
+        , up.event_description as last_play_event_description
+        , up.play_period as last_play_period
+        , up.goals_home as goals_home_lag
+        , up.goals_away as goals_away_lag
+    from unique_plays_last as upl
+    left join unique_plays as up on
+        upl.game_id = up.game_id
+        and upl.last_play_event_idx = up.event_idx
+)
+
 -- #cte3: Add in cumulative metrics
 , base_plays_cumulative as (
     select
@@ -213,83 +253,18 @@ live_plays as (
         , bp.player_id
         , bp.team_id
         -- last play metrics (fixed on 8/20/2023)
-        , case
-            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, play_time)
-        end as last_play_event_idx
-        , case
-            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.player_role_team, 1) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.player_role_team, 2) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.player_role_team, 3) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.player_role_team, 4) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.player_role_team, 5) over (partition by game_id order by bp.game_id, event_idx, play_time)
-        end as last_player_role_team
-        , case
-            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_type, 1) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_type, 2) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_type, 3) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_type, 4) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_type, 5) over (partition by game_id order by bp.game_id, event_idx, play_time)
-        end as last_play_event_type
-        , case
-            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_secondary_type, 1) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_secondary_type, 2) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_secondary_type, 3) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_secondary_type, 4) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_secondary_type, 5) over (partition by game_id order by bp.game_id, event_idx, play_time)
-        end as last_play_event_secondary_type
-        , case
-            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_description, 1) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_description, 2) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_description, 3) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_description, 4) over (partition by game_id order by bp.game_id, event_idx, play_time)
-            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then lag(bp.event_description, 5) over (partition by game_id order by bp.game_id, event_idx, play_time)
-        end as last_play_event_description
-        , case
-            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then ifnull(lag(bp.play_period, 1) over (partition by game_id order by bp.game_id, event_idx, play_time), play_period)
-            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then ifnull(lag(bp.play_period, 2) over (partition by game_id order by bp.game_id, event_idx, play_time), play_period)
-            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then ifnull(lag(bp.play_period, 3) over (partition by game_id order by bp.game_id, event_idx, play_time), play_period)
-            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then ifnull(lag(bp.play_period, 4) over (partition by game_id order by bp.game_id, event_idx, play_time), play_period)
-            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, player_index, play_time) != bp.event_idx
-                then ifnull(lag(bp.play_period, 5) over (partition by game_id order by bp.game_id, event_idx, play_time), play_period)
-        end as last_play_period
+        , last_play_details.last_play_event_idx
+        , last_play_details.last_player_role_team
+        , last_play_details.last_play_event_type
+        , last_play_details.last_play_event_secondary_type
+        , last_play_details.last_play_event_description
+        , coalesce(last_play_details.last_play_period, bp.play_period) as last_play_period
+
         /* Properties */
         , bp.player_full_name
         , bp.player_index
-        , upper(bp.player_role) = 'ASSIST' and player_index = 1 as player_primary_assist
-        , upper(bp.player_role) = 'ASSIST' and player_index = 2 as player_secondary_assist
+        , upper(bp.player_role) = 'ASSIST' and bp.player_index = 1 as player_primary_assist
+        , upper(bp.player_role) = 'ASSIST' and bp.player_index = 2 as player_secondary_assist
         , bp.player_role
         , bp.player_role_team
         , bp.event_type
@@ -308,29 +283,29 @@ live_plays as (
         , ((bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as play_total_seconds_elapsed
         , bp.play_time
         -- Count cumulative shot totals
-        , sum(bp.shot_away) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as shots_away
-        , sum(bp.shot_home) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as shots_home
+        , sum(bp.shot_away) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as shots_away
+        , sum(bp.shot_home) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as shots_home
         -- Count hit totals
-        , sum(bp.hit_away) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as hits_away
-        , sum(bp.hit_home) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as hits_home
+        , sum(bp.hit_away) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as hits_away
+        , sum(bp.hit_home) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as hits_home
         -- Count faceoff totals
-        , sum(bp.faceoff_away) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as faceoffs_away
-        , sum(bp.faceoff_home) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as faceoffs_home
+        , sum(bp.faceoff_away) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as faceoffs_away
+        , sum(bp.faceoff_home) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as faceoffs_home
         -- Count takeaways totals
-        , sum(bp.takeaway_away) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as takeaways_away
-        , sum(bp.takeaway_home) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as takeaways_home
+        , sum(bp.takeaway_away) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as takeaways_away
+        , sum(bp.takeaway_home) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as takeaways_home
         -- Count giveaways totals
-        , sum(bp.giveaway_away) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as giveaways_away
-        , sum(bp.giveaway_home) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as giveaways_home
+        , sum(bp.giveaway_away) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as giveaways_away
+        , sum(bp.giveaway_home) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as giveaways_home
         -- Count missedshot totals
-        , sum(bp.missedshot_away) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as missedshots_away
-        , sum(bp.missedshot_home) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as missedshots_home
+        , sum(bp.missedshot_away) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as missedshots_away
+        , sum(bp.missedshot_home) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as missedshots_home
         -- Count blockedshot totals
-        , sum(bp.blockedshot_away) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as blockedshots_away
-        , sum(bp.blockedshot_home) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as blockedshots_home
+        , sum(bp.blockedshot_away) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as blockedshots_away
+        , sum(bp.blockedshot_home) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as blockedshots_home
         -- Count penalty totals
-        , sum(bp.penalty_away) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as penalties_away
-        , sum(bp.penalty_home) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as penalties_home
+        , sum(bp.penalty_away) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as penalties_away
+        , sum(bp.penalty_home) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) as penalties_home
         -- Cumulative goal counts
         , bp.goals_away
         , bp.goals_home
@@ -358,43 +333,28 @@ live_plays as (
         end as game_state_current
         -- First goal flag
         , case
-            when min(if(bp.event_type = 'GOAL', bp.event_idx, null)) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed) rows between unbounded preceding and unbounded following) = bp.event_idx
+            when min(if(bp.event_type = 'GOAL', bp.event_idx, null)) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed) rows between unbounded preceding and unbounded following) = bp.event_idx
                 then 1
             else 0
         end as first_goal_scored
         -- Last goal flag
         , case
-            when max(if(bp.event_type = 'GOAL', bp.event_idx, null)) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed) rows between unbounded preceding and unbounded following) = bp.event_idx
+            when max(if(bp.event_type = 'GOAL', bp.event_idx, null)) over (partition by bp.game_id order by bp.game_id, bp.event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed) rows between unbounded preceding and unbounded following) = bp.event_idx
                 then 1
             else 0
         end as last_goal_scored
         -- Cumulative goal descriptors (previous state)
-        , case
-            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
-                then lag(bp.goals_home, 1) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
-                then lag(bp.goals_home, 2) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
-                then lag(bp.goals_home, 3) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
-                then lag(bp.goals_home, 4) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
-                then lag(bp.goals_home, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-        end as goals_home_lag
-        , case
-            when lag(bp.event_idx, 1) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
-                then lag(bp.goals_away, 1) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 2) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
-                then lag(bp.goals_away, 2) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 3) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
-                then lag(bp.goals_away, 3) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 4) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
-                then lag(bp.goals_away, 4) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-            when lag(bp.event_idx, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed)) != bp.event_idx
-                then lag(bp.goals_away, 5) over (partition by game_id order by bp.game_id, event_idx, (bp.play_minutes_elapsed * 60) + (bp.play_seconds_elapsed))
-        end as goals_away_lag
+        , last_play_details.goals_home_lag
+        , last_play_details.goals_away_lag
 
     from base_plays as bp
+    left join unique_plays_last as upl
+        on
+            bp.game_id = upl.game_id
+            and bp.event_idx = upl.event_idx
+    left join last_play_details on
+        bp.game_id = last_play_details.game_id
+        and upl.event_idx = last_play_details.event_idx
 )
 
 -- #cte4: gets the state of the game as a result of the play
