@@ -90,8 +90,8 @@ boxscore_stats as (
         , plays.away_skaters
         , plays.seconds_since_last_shot
         , plays.shot_rebound_ind
-        , home_goalie_pulled
-        , away_goalie_pulled
+        , plays.home_goalie_pulled
+        , plays.away_goalie_pulled
         , case
             when (lower(substr(plays.last_play_event_secondary_type, 0, 4)) = 'ps -') and (lower(plays.event_type) in ('shot', 'goal', 'missed_shot')) then 1
             else 0
