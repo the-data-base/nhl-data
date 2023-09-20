@@ -148,6 +148,24 @@ models:
       - name: shots_xga
         description: Expected goals against while on the ice (xg)
 
+      - name: shots_ev_xgf
+        description: Expected goals for while on the ice (xg) during even-strength game states
+
+      - name: shots_ev_xga
+        description: Expected goals against while on the ice (xg) during even-strength game states
+
+      - name: shots_pp_xgf
+        description: Expected goals for while on the ice (xg) during power-play game states
+
+      - name: shots_pp_xga
+        description: Expected goals against while on the ice (xg) during power-play game states
+
+      - name: shots_sh_xgf
+        description: Expected goals for while on the ice (xg) during short-handed games states
+
+      - name: shots_sh_xga
+        description: Expected goals against while on the ice (xg) during short-handed games states
+
       - name: shots_isog
         description: Total individual shots on goal (goals, saved shots)
 
