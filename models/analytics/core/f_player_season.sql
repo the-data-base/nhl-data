@@ -208,7 +208,7 @@ boxscore_stats as (
         -- on-ice xg shot calculations: probability of a fenwick shot being a goal
         , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot for' then shots_scored else 0 end) as shots_xgf
         , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot against' then shots_scored else 0 end) as shots_xga
-           ----- even-strength (ev)
+        ----- even-strength (ev)
         , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shot_type = 'shot for' then xg_proba else 0 end) as shots_ev_xgf
         , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shot_type = 'shot against' then xg_proba else 0 end) as shots_ev_xga
         ----- power-play (pp)
