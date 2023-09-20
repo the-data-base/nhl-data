@@ -57,6 +57,18 @@ models:
       - name: avg_time_on_ice_mins
         description: The number of minutes played in the regular seasons divided by the number of games played in the regular season (e.g. 20.5 = 20 minutes and 30 seconds)
 
+      - name: minor_pim_drawn
+        description: The number of minor penalty minutes the player drew
+
+      - name: minor_pim_taken
+        description: The number of minor penalty minutes the player took
+
+      - name: major_pim_drawn
+        description: The number of major penalty minutes the player drew
+
+      - name: major_pim_taken
+        description: The number of major penalty minutes the player took
+
       ## Goal-scoring skater events (Goals, Assists, Points)
       - name: goals
         description: The number of goals scored in the regular season
