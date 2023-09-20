@@ -193,8 +193,17 @@ boxscore_stats as (
         , sum(case when shot_type = 'shot for' then shots_scored else 0 end) as shots_gf
         , sum(case when shot_type = 'shot against' then shots_scored else 0 end) as shots_ga
         -- on-ice xg shot calculations: probability of a fenwick shot being a goal
-        , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot for' then shots_scored else 0 end) as shots_xgf
-        , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot against' then shots_scored else 0 end) as shots_xga
+        , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot for' then xg_proba else 0 end) as shots_xgf
+        , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot against' then xg_proba else 0 end) as shots_xga
+        ----- even-strength (ev)
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shot_type = 'shot for' then xg_proba else 0 end) as shots_ev_xgf
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shot_type = 'shot against' then xg_proba else 0 end) as shots_ev_xga
+        ----- power-play (pp)
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shot_type = 'shot for' then xg_proba else 0 end) as shots_pp_xgf
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shot_type = 'shot against' then xg_proba else 0 end) as shots_pp_xga
+        ----- short-handed (sh)
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shot_type = 'shot for' then xg_proba else 0 end) as shots_sh_xgf
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shot_type = 'shot against' then xg_proba else 0 end) as shots_sh_xga
         -- individual (i) shot calculations: shots-on-goal, fenwick-for, corsi-for & expected goals (xg)
         , sum(case when shooter_description = 'shooter' then shots_ongoal else 0 end) as shots_isog
         , sum(case when shooter_description = 'shooter' then fenwick_shot else 0 end) as shots_iff
@@ -357,6 +366,12 @@ select
     , oss.shots_ga
     , oss.shots_xgf
     , oss.shots_xga
+    , oss.shots_ev_xgf
+    , oss.shots_ev_xga
+    , oss.shots_pp_xgf
+    , oss.shots_pp_xga
+    , oss.shots_sh_xgf
+    , oss.shots_sh_xga
     -- individual (i) shot calculations: shots-on-goal, fenwick-for, & corsi-for
     , oss.shots_isog
     , oss.shots_iff
