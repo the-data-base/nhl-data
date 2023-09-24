@@ -324,7 +324,26 @@ boxscore_stats as (
         sga.player_id
         , sga.season_id
         , sga.game_type
---order by sum(case when sga.event_type = 'goal' and sga.player_role = 'scorer' then 1 else 0 end) desc
+)
+
+-- cte#7: summarizes penalty mins at the player-season-game_type level
+, penalty_stats as (
+    select
+        plays.player_id
+        , season.season_id
+        , schedule.game_type
+        , sum(case when lower(plays.penalty_severity) = 'minor' and lower(plays.player_role) = 'penaltyon' then plays.penalty_minutes else 0 end) as minor_pim_taken
+        , sum(case when lower(plays.penalty_severity) = 'minor' and lower(plays.player_role) = 'drewby' then plays.penalty_minutes else 0 end) as minor_pim_drawn
+        , sum(case when lower(plays.penalty_severity) = 'major' and lower(plays.player_role) = 'penaltyon' then plays.penalty_minutes else 0 end) as major_pim_taken
+        , sum(case when lower(plays.penalty_severity) = 'major' and lower(plays.player_role) = 'drewby' then plays.penalty_minutes else 0 end) as major_pim_drawn
+    from {{ ref('f_plays') }} as plays
+    left join {{ ref('d_schedule') }} as schedule on schedule.game_id = plays.game_id
+    left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
+    where lower(plays.event_type) = 'penalty'
+    group by
+        plays.player_id
+        , season.season_id
+        , schedule.game_type
 )
 
 -- #return: combine boxscore_stats & onice_stats at the player-season-game_type level of granularity
@@ -351,6 +370,10 @@ select
     , boxscore_stats.time_on_ice_seconds
     , round(boxscore_stats.time_on_ice_minutes, 2) as time_on_ice_minutes
     , round(boxscore_stats.time_on_ice_minutes / boxscore_stats.boxscore_games, 2) as avg_time_on_ice_mins
+    , ps.minor_pim_drawn
+    , ps.minor_pim_taken
+    , ps.major_pim_drawn
+    , ps.major_pim_taken
     -- goal-scoring skater events (goals, assists, points)
     , boxscore_stats.goals
     , ogs.goals_gamewinning
@@ -535,5 +558,10 @@ left join onice_goals_stats as ogs
         boxscore_stats.player_id = ogs.player_id
         and boxscore_stats.season_id = ogs.season_id
         and boxscore_stats.game_type = ogs.game_type
+left join penalty_stats as ps
+    on
+        boxscore_stats.player_id = ps.player_id
+        and boxscore_stats.season_id = ps.season_id
+        and boxscore_stats.game_type = ps.game_type
 order by
     boxscore_stats.goals desc
