@@ -328,23 +328,22 @@ boxscore_stats as (
 
 -- cte#7: summarizes penalty mins at the player-season-game_type level
 , penalty_stats as (
-  select
-    plays.player_id
-    ,season.season_id
-    ,schedule.game_type
-    ,sum(case when lower(plays.penalty_severity) = 'minor' and lower(plays.player_role) = 'penaltyon' then plays.penalty_minutes else 0 end) as minor_pim_taken
-    ,sum(case when lower(plays.penalty_severity) = 'minor' and lower(plays.player_role) = 'drewby' then plays.penalty_minutes else 0 end) as minor_pim_drawn
-    ,sum(case when lower(plays.penalty_severity) = 'major' and lower(plays.player_role) = 'penaltyon' then plays.penalty_minutes else 0 end) as major_pim_taken
-    ,sum(case when lower(plays.penalty_severity) = 'major' and lower(plays.player_role) = 'drewby' then plays.penalty_minutes else 0 end) as major_pim_drawn
-  from {{ ref('f_plays') }} as plays
+    select
+        plays.player_id
+        , season.season_id
+        , schedule.game_type
+        , sum(case when lower(plays.penalty_severity) = 'minor' and lower(plays.player_role) = 'penaltyon' then plays.penalty_minutes else 0 end) as minor_pim_taken
+        , sum(case when lower(plays.penalty_severity) = 'minor' and lower(plays.player_role) = 'drewby' then plays.penalty_minutes else 0 end) as minor_pim_drawn
+        , sum(case when lower(plays.penalty_severity) = 'major' and lower(plays.player_role) = 'penaltyon' then plays.penalty_minutes else 0 end) as major_pim_taken
+        , sum(case when lower(plays.penalty_severity) = 'major' and lower(plays.player_role) = 'drewby' then plays.penalty_minutes else 0 end) as major_pim_drawn
+    from {{ ref('f_plays') }} as plays
     left join {{ ref('d_schedule') }} as schedule on schedule.game_id = plays.game_id
     left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
-  where 1 = 1
-    and lower(plays.event_type) = 'penalty'
-  group by
-    plays.player_id
-    ,season.season_id
-    ,schedule.game_type
+    where lower(plays.event_type) = 'penalty'
+    group by
+        plays.player_id
+        , season.season_id
+        , schedule.game_type
 )
 
 -- #return: combine boxscore_stats & onice_stats at the player-season-game_type level of granularity
