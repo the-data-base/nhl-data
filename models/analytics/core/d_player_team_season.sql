@@ -31,9 +31,9 @@ select
     , pts.season_id
     /* properties */
     , pts.player_season_teams
-    , case when min(pts.season_start_dt) over (partition by pts.player_id, pts.season_id) = pts.season_start_dt then 1 else 0 end as is_player_team_start_season
-    , case when max(pts.season_end_dt) over (partition by pts.player_id, pts.season_id) = pts.season_end_dt then 1 else 0 end as is_player_team_end_season
-    , case when max(pts.season_end_dt) over (partition by pts.player_id, pts.season_id) = pts.season_end_dt and pts.season_id = pts.current_season_id and player.is_active is true then 1 else 0 end as is_player_current_team
+    , coalesce(min(pts.season_start_dt) over (partition by pts.player_id, pts.season_id) = pts.season_start_dt, false) as is_player_team_start_season
+    , coalesce(max(pts.season_end_dt) over (partition by pts.player_id, pts.season_id) = pts.season_end_dt, false) as is_player_team_end_season
+    , coalesce(max(pts.season_end_dt) over (partition by pts.player_id, pts.season_id) = pts.season_end_dt and player.is_active, false) as is_player_current_team
     , coalesce(not player.is_active, true) as is_player_retired
     , pts.games_played
     , pts.time_on_ice_minutes

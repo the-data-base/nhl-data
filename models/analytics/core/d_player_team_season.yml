@@ -32,7 +32,7 @@ models:
         description: Whether or not the NHL player ended the season on the team
 
       - name: is_player_current_team
-        description: Whether or not the NHL player is currently on that team (True / False). Note that "current" is defined as an NHL player being active, had to have played in the most recent season, and their latest game being played for the team.
+        description: Whether or not the NHL player is currently on that team (True / False). Note that "current" is defined as an NHL player being active, and their latest game played was for the team.
 
       - name: is_player_retired
         description: Whether or not the NHL player is currently retired (True / False)
