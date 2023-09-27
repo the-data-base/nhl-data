@@ -73,6 +73,9 @@ models:
       - name: goals
         description: The number of goals scored in the regular season
 
+      - name: goals_overtime
+        description: The number of goals scored in Overtime
+
       - name: goals_gamewinning
         description: The number of goals scored that ended up becoming the game winning goal (either last goal scored in regulation, or the OT winner)
 
@@ -129,6 +132,9 @@ models:
 
       - name: points_per60
         description: The number of assists in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
+
+      - name: shots
+        description: Total number of shots (sourced from f_boxscore_player)
 
       - name: shots_ff
         description: Fenwick shots for while on the ice (goals, saved shots, missed shots)

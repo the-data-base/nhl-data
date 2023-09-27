@@ -84,6 +84,7 @@ boxscore_stats as (
         , lower(plays.player_role_team) as player_role_team
         , lower(plays.player_role) as player_role
         , lower(plays.play_period_type) as play_period_type
+        , case when plays.play_period > 3 then 1 else 0 end as overtime
         , lower(plays.home_result_of_play) as home_result_of_play
         , lower(plays.away_result_of_play) as away_result_of_play
         , plays.home_skaters
@@ -311,6 +312,7 @@ boxscore_stats as (
         , sga.game_type
         , max(sga.event_description) as example_eventdescription
         -- goal types
+        , sum(case when sga.overtime = 1 and sga.player_role = 'scorer' then 1 else 0 end) as goals_overtime
         , sum(case when sga.last_goal_game_winning = 1 and sga.player_role = 'scorer' then 1 else 0 end) as goals_gamewinning
         , sum(case when (sga.home_result_of_play = 'chase goal' or sga.away_result_of_play = 'chase goal') and sga.player_role = 'scorer' then 1 else 0 end) as goals_chasegoal
         , sum(case when (sga.home_result_of_play = 'tying goal scored' or sga.away_result_of_play = 'tying goal scored') and sga.player_role = 'scorer' then 1 else 0 end) as goals_gametying
@@ -376,6 +378,7 @@ select
     , ps.major_pim_taken
     -- goal-scoring skater events (goals, assists, points)
     , boxscore_stats.goals
+    , ogs.goals_overtime
     , ogs.goals_gamewinning
     , ogs.goals_chasegoal
     , ogs.goals_gametying
@@ -396,6 +399,7 @@ select
     , case when boxscore_stats.time_on_ice_seconds > 0 then round(ogs.assists_secondary / (boxscore_stats.time_on_ice_minutes / 60), 4) end as assists_secondary_per60
     , case when boxscore_stats.time_on_ice_seconds > 0 then round((boxscore_stats.goals + boxscore_stats.assists) / (boxscore_stats.time_on_ice_minutes / 60), 4) end as points_per60
     -- on-ice shot calculations: fenwick, corsi, shots-on-goal (goals + saves), & goals
+    , boxscore_stats.shots as shots
     , oss.shots_ff
     , oss.shots_fa
     , oss.shots_cf
