@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: d_player_team_season
+    description: Model-ready, dimensions dataset at the player-team-season level
+    columns:
+      # Primary Key
+      - name: player_team_season_id
+        description: Unique identifier at the player-team-season level (player_id + team_id + season_id)
+        tests:
+          - unique
+          - not_null
+
+      # Foreign Keys
+      - name: player_id
+        description: Foreign key that maps to an NHL player ID
+
+      - name: team_id
+        description: Foreign key that maps to an NHL team ID
+
+      - name: season_id
+        description: Foreign key that maps to an NHL season ID (e.g. "20172018")
+
+      # Properties
+      - name: player_season_teams
+        description: The number of teams that a player played for in the season (e.g. If "3", the player played for 3 different teams in that season)
+
+      - name: is_player_team_start_season
+        description: Whether or not the NHL player started the season on the team
+
+      - name: is_player_team_end_season
+        description: Whether or not the NHL player ended the season on the team
+
+      - name: is_player_current_team
+        description: Whether or not the NHL player is currently on that team (True / False). Note that "current" is defined as an NHL player being active, and their latest game played was for the team.
+
+      - name: is_player_retired
+        description: Whether or not the NHL player is currently retired (True / False)
+
+      - name: games_played
+        description: The number of games played for the team in the season
+
+      - name: time_on_ice_minutes
+        description: The number of minutes played for the team in the season
+
+      - name: player_season_team_first_dt
+        description: The date that a NHL player made his debut (first game) for the team in the season
+
+      - name: player_season_team_last_dt
+        description: The date that a NHL player made his farewell (last game) for the team in the season
+
+      - name: career_first_dt
+        description: The date of the very first NHL regular season or playoff game played by the NHL player during his career
+
+      - name: career_last_dt
+        description: The date of the most recent NHL regular season or playoff game played by the NHL player during his career
