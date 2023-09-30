@@ -186,19 +186,23 @@ live_plays as (
         -- GOALS
         , live_plays.about.goals.away as goals_away
         , live_plays.about.goals.home as goals_home
-        , case 
+        , case
             when
-                (upper(live_plays.result.eventtypeid) = 'GOAL'
-                and live_plays.team.id = schedule.home_team_id
-                and upper(players.player_type) = 'SCORER'
-                and upper(live_plays.about.periodtype) != 'SHOOTOUT'
-                and live_plays.about.goals.home - linescore.away_team_goals = 1)
-                or 
-                (upper(live_plays.result.eventtypeid) = 'GOAL'
-                and live_plays.team.id = schedule.away_team_id
-                and upper(players.player_type) = 'SCORER'
-                and upper(live_plays.about.periodtype) != 'SHOOTOUT'
-                and live_plays.about.goals.away - linescore.home_team_goals = 1)
+                (
+                    upper(live_plays.result.eventtypeid) = 'GOAL'
+                    and live_plays.team.id = schedule.home_team_id
+                    and upper(players.playertype) = 'SCORER'
+                    and upper(live_plays.about.periodtype) != 'SHOOTOUT'
+                    and live_plays.about.goals.home - linescore.away_team_goals = 1
+                )
+                or
+                (
+                    upper(live_plays.result.eventtypeid) = 'GOAL'
+                    and live_plays.team.id = schedule.away_team_id
+                    and upper(players.playertype) = 'SCORER'
+                    and upper(live_plays.about.periodtype) != 'SHOOTOUT'
+                    and live_plays.about.goals.away - linescore.home_team_goals = 1
+                )
                 then 1
             else 0
         end as game_winning_goal
