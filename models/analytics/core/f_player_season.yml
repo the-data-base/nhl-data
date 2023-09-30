@@ -57,9 +57,24 @@ models:
       - name: avg_time_on_ice_mins
         description: The number of minutes played in the regular seasons divided by the number of games played in the regular season (e.g. 20.5 = 20 minutes and 30 seconds)
 
+      - name: minor_pim_drawn
+        description: The number of minor penalty minutes the player drew
+
+      - name: minor_pim_taken
+        description: The number of minor penalty minutes the player took
+
+      - name: major_pim_drawn
+        description: The number of major penalty minutes the player drew
+
+      - name: major_pim_taken
+        description: The number of major penalty minutes the player took
+
       ## Goal-scoring skater events (Goals, Assists, Points)
       - name: goals
         description: The number of goals scored in the regular season
+
+      - name: goals_overtime
+        description: The number of goals scored in Overtime
 
       - name: goals_gamewinning
         description: The number of goals scored that ended up becoming the game winning goal (either last goal scored in regulation, or the OT winner)
@@ -118,6 +133,9 @@ models:
       - name: points_per60
         description: The number of assists in the regular season divided by the number of minutes played per 60 (mins played / 60 mins)
 
+      - name: shots
+        description: Total number of shots (sourced from f_boxscore_player)
+
       - name: shots_ff
         description: Fenwick shots for while on the ice (goals, saved shots, missed shots)
 
@@ -147,6 +165,24 @@ models:
 
       - name: shots_xga
         description: Expected goals against while on the ice (xg)
+
+      - name: shots_ev_xgf
+        description: Expected goals for while on the ice (xg) during even-strength game states
+
+      - name: shots_ev_xga
+        description: Expected goals against while on the ice (xg) during even-strength game states
+
+      - name: shots_pp_xgf
+        description: Expected goals for while on the ice (xg) during power-play game states
+
+      - name: shots_pp_xga
+        description: Expected goals against while on the ice (xg) during power-play game states
+
+      - name: shots_sh_xgf
+        description: Expected goals for while on the ice (xg) during short-handed games states
+
+      - name: shots_sh_xga
+        description: Expected goals against while on the ice (xg) during short-handed games states
 
       - name: shots_isog
         description: Total individual shots on goal (goals, saved shots)
@@ -396,6 +432,15 @@ models:
 
       - name: shots_rebound_xg
         description: The sum of expected goals (xg) from rebound (shot taken within 2 seconds of previous if taken by same team and same period) shots
+
+      - name: penalty_shot_attempts
+        description: The sum of shots that came from penalty shot attempts
+
+      - name: penalty_shot_goals
+        description: The sum of goals that came from penalty shot attempts
+
+      - name: empty_net_goals
+        description: The sum of goals that occured when the opposing goalie was pulled (not in the net)
 
       - name: pcnt_ff
         description: Fenwick for percentage (while on the ice) = Fenwick shots for / (Fenwick shots for + Fenwick shots against)

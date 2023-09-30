@@ -85,12 +85,19 @@ boxscore_stats as (
         , lower(plays.player_role_team) as player_role_team
         , lower(plays.player_role) as player_role
         , lower(plays.play_period_type) as play_period_type
+        , case when plays.play_period > 3 then 1 else 0 end as overtime
         , lower(plays.home_result_of_play) as home_result_of_play
         , lower(plays.away_result_of_play) as away_result_of_play
         , plays.home_skaters
         , plays.away_skaters
         , plays.seconds_since_last_shot
         , plays.shot_rebound_ind
+        , plays.home_goalie_pulled
+        , plays.away_goalie_pulled
+        , case
+            when (lower(substr(plays.last_play_event_secondary_type, 0, 4)) = 'ps -') and (lower(plays.event_type) in ('shot', 'goal', 'missed_shot')) then 1
+            else 0
+        end as penalty_shot_attempt
         , plays.last_shot_seconds
         , plays.last_shot_rebound_ind
         , plays.xg_fenwick_shot
@@ -156,6 +163,12 @@ boxscore_stats as (
         , s.event_secondary_type
         , s.shot_rebound_ind as shots_rebound
         , s.last_shot_rebound_ind as last_shot_rebound
+        , s.penalty_shot_attempt
+        , case
+            when (s.event_type = 'goal') and (s.skater_type = 'home') and (s.shooter_player_id = s.shot_player_id) and (s.away_goalie_pulled is true) then 1
+            when (s.event_type = 'goal') and (s.skater_type = 'away') and (s.shooter_player_id = s.shot_player_id) and (s.home_goalie_pulled is true) then 1
+            else 0
+        end as empty_net_goal
         -- shot calculations
         , case when s.event_type in ('goal', 'shot') then 1 else 0 end as shots_ongoal
         , case when s.event_type = 'blocked_shot' then 1 else 0 end as shots_blocked
@@ -164,6 +177,7 @@ boxscore_stats as (
         , case when s.event_type = 'goal' then 1 else 0 end as shots_scored
         , case when s.event_type in ('blocked_shot', 'missed_shot', 'shot', 'goal') then 1 else 0 end as corsi_shot
         , case when s.event_type in ('missed_shot', 'shot', 'goal') then 1 else 0 end as fenwick_shot
+        -- xg stuff
         , s.xg_fenwick_shot
         , s.x_goal
         , s.xg_model_id
@@ -196,6 +210,15 @@ boxscore_stats as (
         -- on-ice xg shot calculations: probability of a fenwick shot being a goal
         , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot for' then shots_scored else 0 end) as shots_xgf
         , sum(case when xg_fenwick_shot = 1 and shot_type = 'shot against' then shots_scored else 0 end) as shots_xga
+        ----- even-strength (ev)
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shot_type = 'shot for' then xg_proba else 0 end) as shots_ev_xgf
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'ev' and shot_type = 'shot against' then xg_proba else 0 end) as shots_ev_xga
+        ----- power-play (pp)
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shot_type = 'shot for' then xg_proba else 0 end) as shots_pp_xgf
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'pp' and shot_type = 'shot against' then xg_proba else 0 end) as shots_pp_xga
+        ----- short-handed (sh)
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shot_type = 'shot for' then xg_proba else 0 end) as shots_sh_xgf
+        , sum(case when xg_fenwick_shot = 1 and xg_strength_state_code = 'sh' and shot_type = 'shot against' then xg_proba else 0 end) as shots_sh_xga
         -- individual (i) shot calculations: shots-on-goal, fenwick-for, corsi-for & expected goals (xg)
         , sum(case when shooter_description = 'shooter' then shots_ongoal else 0 end) as shots_isog
         , sum(case when shooter_description = 'shooter' then fenwick_shot else 0 end) as shots_iff
@@ -270,6 +293,10 @@ boxscore_stats as (
         , sum(case when xg_fenwick_shot = 1 and event_secondary_type = 'wrap-around' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_wraparound_xg
         , sum(case when xg_fenwick_shot = 1 and event_secondary_type = 'wrist shot' and shooter_description = 'shooter' then xg_proba else 0 end) as shots_wristshot_xg
         , sum(case when xg_fenwick_shot = 1 and shots_rebound = 1 and shooter_description = 'shooter' then xg_proba else 0 end) as shots_rebound_xg
+        -- lastly... specialty cases (penalty shots & empty net)
+        , sum(case when shot_type = 'shot for' then penalty_shot_attempt else 0 end) as penalty_shot_attempts
+        , sum(case when shot_type = 'shot for' and shots_scored = 1 then penalty_shot_attempt else 0 end) as penalty_shot_goals
+        , sum(case when shot_type = 'shot for' then empty_net_goal else 0 end) as empty_net_goals
     from shots_involvement
     group by
         game_type
@@ -286,6 +313,7 @@ boxscore_stats as (
         , sga.game_type
         , max(sga.event_description) as example_eventdescription
         -- goal types
+        , sum(case when sga.overtime = 1 and sga.player_role = 'scorer' then 1 else 0 end) as goals_overtime
         , sum(case when sga.game_winning_goal = 1 and sga.player_role = 'scorer' then 1 else 0 end) as goals_gamewinning
         , sum(case when (sga.home_result_of_play = 'chase goal' or sga.away_result_of_play = 'chase goal') and sga.player_role = 'scorer' then 1 else 0 end) as goals_chasegoal
         , sum(case when (sga.home_result_of_play = 'tying goal scored' or sga.away_result_of_play = 'tying goal scored') and sga.player_role = 'scorer' then 1 else 0 end) as goals_gametying
@@ -299,7 +327,26 @@ boxscore_stats as (
         sga.player_id
         , sga.season_id
         , sga.game_type
---order by sum(case when sga.event_type = 'goal' and sga.player_role = 'scorer' then 1 else 0 end) desc
+)
+
+-- cte#7: summarizes penalty mins at the player-season-game_type level
+, penalty_stats as (
+    select
+        plays.player_id
+        , season.season_id
+        , schedule.game_type
+        , sum(case when lower(plays.penalty_severity) = 'minor' and lower(plays.player_role) = 'penaltyon' then plays.penalty_minutes else 0 end) as minor_pim_taken
+        , sum(case when lower(plays.penalty_severity) = 'minor' and lower(plays.player_role) = 'drewby' then plays.penalty_minutes else 0 end) as minor_pim_drawn
+        , sum(case when lower(plays.penalty_severity) = 'major' and lower(plays.player_role) = 'penaltyon' then plays.penalty_minutes else 0 end) as major_pim_taken
+        , sum(case when lower(plays.penalty_severity) = 'major' and lower(plays.player_role) = 'drewby' then plays.penalty_minutes else 0 end) as major_pim_drawn
+    from {{ ref('f_plays') }} as plays
+    left join {{ ref('d_schedule') }} as schedule on schedule.game_id = plays.game_id
+    left join {{ ref('d_seasons') }} as season on season.season_id = schedule.season_id
+    where lower(plays.event_type) = 'penalty'
+    group by
+        plays.player_id
+        , season.season_id
+        , schedule.game_type
 )
 
 -- #return: combine boxscore_stats & onice_stats at the player-season-game_type level of granularity
@@ -326,8 +373,13 @@ select
     , boxscore_stats.time_on_ice_seconds
     , round(boxscore_stats.time_on_ice_minutes, 2) as time_on_ice_minutes
     , round(boxscore_stats.time_on_ice_minutes / boxscore_stats.boxscore_games, 2) as avg_time_on_ice_mins
+    , ps.minor_pim_drawn
+    , ps.minor_pim_taken
+    , ps.major_pim_drawn
+    , ps.major_pim_taken
     -- goal-scoring skater events (goals, assists, points)
     , boxscore_stats.goals
+    , ogs.goals_overtime
     , ogs.goals_gamewinning
     , ogs.goals_chasegoal
     , ogs.goals_gametying
@@ -348,6 +400,7 @@ select
     , case when boxscore_stats.time_on_ice_seconds > 0 then round(ogs.assists_secondary / (boxscore_stats.time_on_ice_minutes / 60), 4) end as assists_secondary_per60
     , case when boxscore_stats.time_on_ice_seconds > 0 then round((boxscore_stats.goals + boxscore_stats.assists) / (boxscore_stats.time_on_ice_minutes / 60), 4) end as points_per60
     -- on-ice shot calculations: fenwick, corsi, shots-on-goal (goals + saves), & goals
+    , boxscore_stats.shots as shots
     , oss.shots_ff
     , oss.shots_fa
     , oss.shots_cf
@@ -358,6 +411,12 @@ select
     , oss.shots_ga
     , oss.shots_xgf
     , oss.shots_xga
+    , oss.shots_ev_xgf
+    , oss.shots_ev_xga
+    , oss.shots_pp_xgf
+    , oss.shots_pp_xga
+    , oss.shots_sh_xgf
+    , oss.shots_sh_xga
     -- individual (i) shot calculations: shots-on-goal, fenwick-for, & corsi-for
     , oss.shots_isog
     , oss.shots_iff
@@ -446,6 +505,10 @@ select
     , oss.shots_wraparound_xg
     , oss.shots_wristshot_xg
     , oss.shots_rebound_xg
+    ---- special case shots/goals
+    , oss.penalty_shot_attempts
+    , oss.penalty_shot_goals
+    , oss.empty_net_goals
     ---- on-ice pcnt (%) shooting
     , case when (oss.shots_ff + oss.shots_fa) < 1 then 0 else round(100 * (oss.shots_ff / (oss.shots_ff + oss.shots_fa)), 2) end as pcnt_ff
     , case when (oss.shots_cf + oss.shots_ca) < 1 then 0 else round(100 * (oss.shots_cf / (oss.shots_cf + oss.shots_ca)), 2) end as pcnt_cf
@@ -500,5 +563,10 @@ left join onice_goals_stats as ogs
         boxscore_stats.player_id = ogs.player_id
         and boxscore_stats.season_id = ogs.season_id
         and boxscore_stats.game_type = ogs.game_type
+left join penalty_stats as ps
+    on
+        boxscore_stats.player_id = ps.player_id
+        and boxscore_stats.season_id = ps.season_id
+        and boxscore_stats.game_type = ps.game_type
 order by
     boxscore_stats.goals desc
