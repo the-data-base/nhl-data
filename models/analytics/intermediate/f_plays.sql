@@ -66,6 +66,7 @@ select
     , plays.penalties_home
     , plays.first_goal_scored
     , plays.last_goal_scored
+    , plays.game_winning_goal
     , plays.goals_away
     , plays.goals_home
     , plays.goal_difference_current

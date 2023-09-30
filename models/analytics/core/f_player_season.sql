@@ -75,6 +75,7 @@ boxscore_stats as (
         , team.team_name
         , schedule.game_type
         , plays.last_goal_game_winning
+        , plays.game_winning_goal
         , plays.player_primary_assist
         , plays.player_secondary_assist
         , lower(schedule.game_type_description) as game_type_description
@@ -285,7 +286,7 @@ boxscore_stats as (
         , sga.game_type
         , max(sga.event_description) as example_eventdescription
         -- goal types
-        , sum(case when sga.last_goal_game_winning = 1 and sga.player_role = 'scorer' then 1 else 0 end) as goals_gamewinning
+        , sum(case when sga.game_winning_goal = 1 and sga.player_role = 'scorer' then 1 else 0 end) as goals_gamewinning
         , sum(case when (sga.home_result_of_play = 'chase goal' or sga.away_result_of_play = 'chase goal') and sga.player_role = 'scorer' then 1 else 0 end) as goals_chasegoal
         , sum(case when (sga.home_result_of_play = 'tying goal scored' or sga.away_result_of_play = 'tying goal scored') and sga.player_role = 'scorer' then 1 else 0 end) as goals_gametying
         , sum(case when (sga.home_result_of_play = 'go-ahead goal scored' or sga.away_result_of_play = 'go-ahead goal scored') and sga.player_role = 'scorer' then 1 else 0 end) as goals_goahead

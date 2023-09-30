@@ -172,6 +172,9 @@ models:
       - name: last_goal_scored
         description: Whether or not the event in question was the last goal of the game (1 or 0)
 
+      - name: game_winning_goal
+        description: Whether or not the event in question was the game winning goal (1 or 0)
+
       - name: goals_away
         description: Cumulative away team goals scored in the game at the point in time where the event occured
 
