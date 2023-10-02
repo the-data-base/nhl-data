@@ -26,6 +26,18 @@ boxscore_stats as (
         , sum(cast(split(bp.time_on_ice, ':')[offset(1)] as int)) as time_on_ice_seconds_raw
         , (sum(cast(split(bp.time_on_ice, ':')[offset(0)] as int)) * 60) + sum(cast(split(bp.time_on_ice, ':')[offset(1)] as int)) as time_on_ice_seconds
         , sum(cast(split(bp.time_on_ice, ':')[offset(0)] as int)) + (sum(cast(split(bp.time_on_ice, ':')[offset(1)] as int)) / 60) as time_on_ice_minutes
+        , sum(cast(split(bp.even_time_on_ice, ':')[offset(0)] as int)) as ev_time_on_ice_mins_raw
+        , sum(cast(split(bp.even_time_on_ice, ':')[offset(1)] as int)) as ev_time_on_ice_seconds_raw
+        , (sum(cast(split(bp.even_time_on_ice, ':')[offset(0)] as int)) * 60) + sum(cast(split(bp.even_time_on_ice, ':')[offset(1)] as int)) as ev_time_on_ice_seconds
+        , sum(cast(split(bp.even_time_on_ice, ':')[offset(0)] as int)) + (sum(cast(split(bp.even_time_on_ice, ':')[offset(1)] as int)) / 60) as ev_time_on_ice_minutes
+        , sum(cast(split(bp.powerplay_time_on_ice, ':')[offset(0)] as int)) as pp_time_on_ice_mins_raw
+        , sum(cast(split(bp.powerplay_time_on_ice, ':')[offset(1)] as int)) as pp_time_on_ice_seconds_raw
+        , (sum(cast(split(bp.powerplay_time_on_ice, ':')[offset(0)] as int)) * 60) + sum(cast(split(bp.powerplay_time_on_ice, ':')[offset(1)] as int)) as pp_time_on_ice_seconds
+        , sum(cast(split(bp.powerplay_time_on_ice, ':')[offset(0)] as int)) + (sum(cast(split(bp.powerplay_time_on_ice, ':')[offset(1)] as int)) / 60) as pp_time_on_ice_minutes
+        , sum(cast(split(bp.short_handed_time_on_ice, ':')[offset(0)] as int)) as sh_time_on_ice_mins_raw
+        , sum(cast(split(bp.short_handed_time_on_ice, ':')[offset(1)] as int)) as sh_time_on_ice_seconds_raw
+        , (sum(cast(split(bp.short_handed_time_on_ice, ':')[offset(0)] as int)) * 60) + sum(cast(split(bp.short_handed_time_on_ice, ':')[offset(1)] as int)) as sh_time_on_ice_seconds
+        , sum(cast(split(bp.short_handed_time_on_ice, ':')[offset(0)] as int)) + (sum(cast(split(bp.short_handed_time_on_ice, ':')[offset(1)] as int)) / 60) as sh_time_on_ice_minutes
         , sum(ifnull(bp.powerplay_goals, 0)) as powerplay_goals
         , sum(ifnull(bp.powerplay_assists, 0)) as powerplay_assists
         , sum(ifnull(bp.short_handed_goals, 0)) as short_handed_goals
@@ -372,6 +384,15 @@ select
     , boxscore_stats.time_on_ice_seconds
     , round(boxscore_stats.time_on_ice_minutes, 2) as time_on_ice_minutes
     , round(boxscore_stats.time_on_ice_minutes / boxscore_stats.boxscore_games, 2) as avg_time_on_ice_mins
+    , boxscore_stats.ev_time_on_ice_seconds
+    , round(boxscore_stats.ev_time_on_ice_minutes, 2) as ev_time_on_ice_minutes
+    , round(boxscore_stats.ev_time_on_ice_minutes / boxscore_stats.boxscore_games, 2) as avg_ev_time_on_ice_mins
+    , boxscore_stats.pp_time_on_ice_seconds
+    , round(boxscore_stats.pp_time_on_ice_minutes, 2) as pp_time_on_ice_minutes
+    , round(boxscore_stats.pp_time_on_ice_minutes / boxscore_stats.boxscore_games, 2) as avg_pp_time_on_ice_mins
+    , boxscore_stats.sh_time_on_ice_seconds
+    , round(boxscore_stats.sh_time_on_ice_minutes, 2) as sh_time_on_ice_minutes
+    , round(boxscore_stats.sh_time_on_ice_minutes / boxscore_stats.boxscore_games, 2) as avg_sh_time_on_ice_mins
     , ps.minor_pim_drawn
     , ps.minor_pim_taken
     , ps.major_pim_drawn
