@@ -186,11 +186,32 @@ live_plays as (
         -- GOALS
         , live_plays.about.goals.away as goals_away
         , live_plays.about.goals.home as goals_home
+        , case
+            when
+                (
+                    upper(live_plays.result.eventtypeid) = 'GOAL'
+                    and live_plays.team.id = schedule.home_team_id
+                    and upper(players.playertype) = 'SCORER'
+                    and upper(live_plays.about.periodtype) != 'SHOOTOUT'
+                    and live_plays.about.goals.home - linescore.away_team_goals = 1
+                )
+                or
+                (
+                    upper(live_plays.result.eventtypeid) = 'GOAL'
+                    and live_plays.team.id = schedule.away_team_id
+                    and upper(players.playertype) = 'SCORER'
+                    and upper(live_plays.about.periodtype) != 'SHOOTOUT'
+                    and live_plays.about.goals.away - linescore.home_team_goals = 1
+                )
+                then 1
+            else 0
+        end as game_winning_goal
 
     from live_plays
     , unnest(live_plays.players) as players with offset
     left join {{ ref('stg_nhl__schedule') }} as schedule on schedule.game_id = live_plays.gameid
     left join {{ ref('stg_nhl__boxscore') }} as boxscore_player on boxscore_player.game_id = live_plays.gameid and players.player.id = boxscore_player.player_id
+    left join {{ ref('stg_nhl__linescore') }} as linescore on linescore.game_id = live_plays.gameid
     qualify row_number() over (
         partition by
             live_plays.gameid
@@ -343,6 +364,8 @@ live_plays as (
                 then 1
             else 0
         end as last_goal_scored
+        -- Game winning goal flag
+        , bp.game_winning_goal
         -- Cumulative goal descriptors (previous state)
         , last_play_details.goals_home_lag
         , last_play_details.goals_away_lag
@@ -568,6 +591,7 @@ select
     , gs.penalties_home
     , gs.first_goal_scored
     , gs.last_goal_scored
+    , gs.game_winning_goal
     , gs.goals_away
     , gs.goals_home
     , gs.goal_difference_current
